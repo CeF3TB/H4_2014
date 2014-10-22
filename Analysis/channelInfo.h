@@ -42,7 +42,7 @@
 
 
 #define CEF3_CHANNELS 4
-#define CEF3_ADC_START_CHANNEL 0
+#define CEF3_START_CHANNEL 0
 
 
 #endif 
