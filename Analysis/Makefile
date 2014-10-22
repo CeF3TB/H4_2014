@@ -12,15 +12,13 @@ EXTRALIBS := -L$(ROOTSYS)/lib  -lHtml -lMathCore -lGenVector -lMinuit -lTMVA
 
 
 
-all: 
+all: makeAnalysisTree
 
 
 
-makePedestalFile: makePedestalFile.cpp 
-	$(CC) -Wall $(INCLUDES) -o makePedestalFile makePedestalFile.cpp $(ROOTFLAG) $(EXTRALIBS)
 
-makeAnalysisTree: makeAnalysisTree.cpp RunHelper.o  
-	$(CC) -Wall $(INCLUDES) -o makeAnalysisTree makeAnalysisTree.cpp RunHelper.o $(ROOTFLAG) $(EXTRALIBS)
+makeAnalysisTree: makeAnalysisTree.cpp RunHelper.o HodoCluster.o
+	$(CC) -Wall $(INCLUDES) -o makeAnalysisTree makeAnalysisTree.cpp RunHelper.o HodoCluster.o $(ROOTFLAG) $(EXTRALIBS)
 
 
 
