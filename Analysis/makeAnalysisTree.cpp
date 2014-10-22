@@ -52,6 +52,78 @@ int main( int argc, char* argv[] ) {
 
 
    // Declaration of leaf types
+   std::vector<float>   *digiPersPlot_gr0_ch0_X;
+   std::vector<float>   *digiPersPlot_gr0_ch0_Y;
+   std::vector<float>   *digiPersPlot_gr0_ch0_max_amplitude;
+   std::vector<float>   *digiPersPlot_gr0_ch0_pedestal;
+   std::vector<float>   *digiPersPlot_gr0_ch0_pedestal_rms;
+   std::vector<float>   *digiPersPlot_gr0_ch0_time_at_frac30;
+   std::vector<float>   *digiPersPlot_gr0_ch0_time_at_frac50;
+   std::vector<float>   *digiPersPlot_gr0_ch0_time_at_max;
+   std::vector<float>   *digiPersPlot_gr0_ch1_X;
+   std::vector<float>   *digiPersPlot_gr0_ch1_Y;
+   std::vector<float>   *digiPersPlot_gr0_ch1_max_amplitude;
+   std::vector<float>   *digiPersPlot_gr0_ch1_pedestal;
+   std::vector<float>   *digiPersPlot_gr0_ch1_pedestal_rms;
+   std::vector<float>   *digiPersPlot_gr0_ch1_time_at_frac30;
+   std::vector<float>   *digiPersPlot_gr0_ch1_time_at_frac50;
+   std::vector<float>   *digiPersPlot_gr0_ch1_time_at_max;
+   std::vector<float>   *digiPersPlot_gr0_ch2_X;
+   std::vector<float>   *digiPersPlot_gr0_ch2_Y;
+   std::vector<float>   *digiPersPlot_gr0_ch2_max_amplitude;
+   std::vector<float>   *digiPersPlot_gr0_ch2_pedestal;
+   std::vector<float>   *digiPersPlot_gr0_ch2_pedestal_rms;
+   std::vector<float>   *digiPersPlot_gr0_ch2_time_at_frac30;
+   std::vector<float>   *digiPersPlot_gr0_ch2_time_at_frac50;
+   std::vector<float>   *digiPersPlot_gr0_ch2_time_at_max;
+   std::vector<float>   *digiPersPlot_gr0_ch3_X;
+   std::vector<float>   *digiPersPlot_gr0_ch3_Y;
+   std::vector<float>   *digiPersPlot_gr0_ch3_max_amplitude;
+   std::vector<float>   *digiPersPlot_gr0_ch3_pedestal;
+   std::vector<float>   *digiPersPlot_gr0_ch3_pedestal_rms;
+   std::vector<float>   *digiPersPlot_gr0_ch3_time_at_frac30;
+   std::vector<float>   *digiPersPlot_gr0_ch3_time_at_frac50;
+   std::vector<float>   *digiPersPlot_gr0_ch3_time_at_max;
+   std::vector<float>   *digiPersPlot_gr0_ch4_X;
+   std::vector<float>   *digiPersPlot_gr0_ch4_Y;
+   std::vector<float>   *digiPersPlot_gr0_ch4_max_amplitude;
+   std::vector<float>   *digiPersPlot_gr0_ch4_pedestal;
+   std::vector<float>   *digiPersPlot_gr0_ch4_pedestal_rms;
+   std::vector<float>   *digiPersPlot_gr0_ch4_time_at_frac30;
+   std::vector<float>   *digiPersPlot_gr0_ch4_time_at_frac50;
+   std::vector<float>   *digiPersPlot_gr0_ch4_time_at_max;
+   std::vector<float>   *digiPersPlot_gr0_ch5_X;
+   std::vector<float>   *digiPersPlot_gr0_ch5_Y;
+   std::vector<float>   *digiPersPlot_gr0_ch5_max_amplitude;
+   std::vector<float>   *digiPersPlot_gr0_ch5_pedestal;
+   std::vector<float>   *digiPersPlot_gr0_ch5_pedestal_rms;
+   std::vector<float>   *digiPersPlot_gr0_ch5_time_at_frac30;
+   std::vector<float>   *digiPersPlot_gr0_ch5_time_at_frac50;
+   std::vector<float>   *digiPersPlot_gr0_ch5_time_at_max;
+   std::vector<float>   *digiPersPlot_gr0_ch6_X;
+   std::vector<float>   *digiPersPlot_gr0_ch6_Y;
+   std::vector<float>   *digiPersPlot_gr0_ch6_max_amplitude;
+   std::vector<float>   *digiPersPlot_gr0_ch6_pedestal;
+   std::vector<float>   *digiPersPlot_gr0_ch6_pedestal_rms;
+   std::vector<float>   *digiPersPlot_gr0_ch6_time_at_frac30;
+   std::vector<float>   *digiPersPlot_gr0_ch6_time_at_frac50;
+   std::vector<float>   *digiPersPlot_gr0_ch6_time_at_max;
+   std::vector<float>   *digiPersPlot_gr0_ch7_X;
+   std::vector<float>   *digiPersPlot_gr0_ch7_Y;
+   std::vector<float>   *digiPersPlot_gr0_ch7_max_amplitude;
+   std::vector<float>   *digiPersPlot_gr0_ch7_pedestal;
+   std::vector<float>   *digiPersPlot_gr0_ch7_pedestal_rms;
+   std::vector<float>   *digiPersPlot_gr0_ch7_time_at_frac30;
+   std::vector<float>   *digiPersPlot_gr0_ch7_time_at_frac50;
+   std::vector<float>   *digiPersPlot_gr0_ch7_time_at_max;
+   std::vector<float>   *digiPersPlot_gr0_ch8_X;
+   std::vector<float>   *digiPersPlot_gr0_ch8_Y;
+   std::vector<float>   *digiPersPlot_gr0_ch8_max_amplitude;
+   std::vector<float>   *digiPersPlot_gr0_ch8_pedestal;
+   std::vector<float>   *digiPersPlot_gr0_ch8_pedestal_rms;
+   std::vector<float>   *digiPersPlot_gr0_ch8_time_at_frac30;
+   std::vector<float>   *digiPersPlot_gr0_ch8_time_at_frac50;
+   std::vector<float>   *digiPersPlot_gr0_ch8_time_at_max;
    std::vector<float>   *ADC_board_11301_0;
    std::vector<float>   *ADC_board_11301_1;
    std::vector<float>   *ADC_board_11301_2;
@@ -129,6 +201,78 @@ int main( int argc, char* argv[] ) {
    std::vector<float>   *nTotalEvts;
 
    // List of branches
+   TBranch        *b_digiPersPlot_gr0_ch0_X;   //!
+   TBranch        *b_digiPersPlot_gr0_ch0_Y;   //!
+   TBranch        *b_digiPersPlot_gr0_ch0_max_amplitude;   //!
+   TBranch        *b_digiPersPlot_gr0_ch0_pedestal;   //!
+   TBranch        *b_digiPersPlot_gr0_ch0_pedestal_rms;   //!
+   TBranch        *b_digiPersPlot_gr0_ch0_time_at_frac30;   //!
+   TBranch        *b_digiPersPlot_gr0_ch0_time_at_frac50;   //!
+   TBranch        *b_digiPersPlot_gr0_ch0_time_at_max;   //!
+   TBranch        *b_digiPersPlot_gr0_ch1_X;   //!
+   TBranch        *b_digiPersPlot_gr0_ch1_Y;   //!
+   TBranch        *b_digiPersPlot_gr0_ch1_max_amplitude;   //!
+   TBranch        *b_digiPersPlot_gr0_ch1_pedestal;   //!
+   TBranch        *b_digiPersPlot_gr0_ch1_pedestal_rms;   //!
+   TBranch        *b_digiPersPlot_gr0_ch1_time_at_frac30;   //!
+   TBranch        *b_digiPersPlot_gr0_ch1_time_at_frac50;   //!
+   TBranch        *b_digiPersPlot_gr0_ch1_time_at_max;   //!
+   TBranch        *b_digiPersPlot_gr0_ch2_X;   //!
+   TBranch        *b_digiPersPlot_gr0_ch2_Y;   //!
+   TBranch        *b_digiPersPlot_gr0_ch2_max_amplitude;   //!
+   TBranch        *b_digiPersPlot_gr0_ch2_pedestal;   //!
+   TBranch        *b_digiPersPlot_gr0_ch2_pedestal_rms;   //!
+   TBranch        *b_digiPersPlot_gr0_ch2_time_at_frac30;   //!
+   TBranch        *b_digiPersPlot_gr0_ch2_time_at_frac50;   //!
+   TBranch        *b_digiPersPlot_gr0_ch2_time_at_max;   //!
+   TBranch        *b_digiPersPlot_gr0_ch3_X;   //!
+   TBranch        *b_digiPersPlot_gr0_ch3_Y;   //!
+   TBranch        *b_digiPersPlot_gr0_ch3_max_amplitude;   //!
+   TBranch        *b_digiPersPlot_gr0_ch3_pedestal;   //!
+   TBranch        *b_digiPersPlot_gr0_ch3_pedestal_rms;   //!
+   TBranch        *b_digiPersPlot_gr0_ch3_time_at_frac30;   //!
+   TBranch        *b_digiPersPlot_gr0_ch3_time_at_frac50;   //!
+   TBranch        *b_digiPersPlot_gr0_ch3_time_at_max;   //!
+   TBranch        *b_digiPersPlot_gr0_ch4_X;   //!
+   TBranch        *b_digiPersPlot_gr0_ch4_Y;   //!
+   TBranch        *b_digiPersPlot_gr0_ch4_max_amplitude;   //!
+   TBranch        *b_digiPersPlot_gr0_ch4_pedestal;   //!
+   TBranch        *b_digiPersPlot_gr0_ch4_pedestal_rms;   //!
+   TBranch        *b_digiPersPlot_gr0_ch4_time_at_frac30;   //!
+   TBranch        *b_digiPersPlot_gr0_ch4_time_at_frac50;   //!
+   TBranch        *b_digiPersPlot_gr0_ch4_time_at_max;   //!
+   TBranch        *b_digiPersPlot_gr0_ch5_X;   //!
+   TBranch        *b_digiPersPlot_gr0_ch5_Y;   //!
+   TBranch        *b_digiPersPlot_gr0_ch5_max_amplitude;   //!
+   TBranch        *b_digiPersPlot_gr0_ch5_pedestal;   //!
+   TBranch        *b_digiPersPlot_gr0_ch5_pedestal_rms;   //!
+   TBranch        *b_digiPersPlot_gr0_ch5_time_at_frac30;   //!
+   TBranch        *b_digiPersPlot_gr0_ch5_time_at_frac50;   //!
+   TBranch        *b_digiPersPlot_gr0_ch5_time_at_max;   //!
+   TBranch        *b_digiPersPlot_gr0_ch6_X;   //!
+   TBranch        *b_digiPersPlot_gr0_ch6_Y;   //!
+   TBranch        *b_digiPersPlot_gr0_ch6_max_amplitude;   //!
+   TBranch        *b_digiPersPlot_gr0_ch6_pedestal;   //!
+   TBranch        *b_digiPersPlot_gr0_ch6_pedestal_rms;   //!
+   TBranch        *b_digiPersPlot_gr0_ch6_time_at_frac30;   //!
+   TBranch        *b_digiPersPlot_gr0_ch6_time_at_frac50;   //!
+   TBranch        *b_digiPersPlot_gr0_ch6_time_at_max;   //!
+   TBranch        *b_digiPersPlot_gr0_ch7_X;   //!
+   TBranch        *b_digiPersPlot_gr0_ch7_Y;   //!
+   TBranch        *b_digiPersPlot_gr0_ch7_max_amplitude;   //!
+   TBranch        *b_digiPersPlot_gr0_ch7_pedestal;   //!
+   TBranch        *b_digiPersPlot_gr0_ch7_pedestal_rms;   //!
+   TBranch        *b_digiPersPlot_gr0_ch7_time_at_frac30;   //!
+   TBranch        *b_digiPersPlot_gr0_ch7_time_at_frac50;   //!
+   TBranch        *b_digiPersPlot_gr0_ch7_time_at_max;   //!
+   TBranch        *b_digiPersPlot_gr0_ch8_X;   //!
+   TBranch        *b_digiPersPlot_gr0_ch8_Y;   //!
+   TBranch        *b_digiPersPlot_gr0_ch8_max_amplitude;   //!
+   TBranch        *b_digiPersPlot_gr0_ch8_pedestal;   //!
+   TBranch        *b_digiPersPlot_gr0_ch8_pedestal_rms;   //!
+   TBranch        *b_digiPersPlot_gr0_ch8_time_at_frac30;   //!
+   TBranch        *b_digiPersPlot_gr0_ch8_time_at_frac50;   //!
+   TBranch        *b_digiPersPlot_gr0_ch8_time_at_max;   //!
    TBranch        *b_ADC_board_11301_0;   //!
    TBranch        *b_ADC_board_11301_1;   //!
    TBranch        *b_ADC_board_11301_2;   //!
@@ -206,6 +350,78 @@ int main( int argc, char* argv[] ) {
    TBranch        *b_nTotalEvts;   //!
 
    // Set object pointer
+   digiPersPlot_gr0_ch0_X = 0;
+   digiPersPlot_gr0_ch0_Y = 0;
+   digiPersPlot_gr0_ch0_max_amplitude = 0;
+   digiPersPlot_gr0_ch0_pedestal = 0;
+   digiPersPlot_gr0_ch0_pedestal_rms = 0;
+   digiPersPlot_gr0_ch0_time_at_frac30 = 0;
+   digiPersPlot_gr0_ch0_time_at_frac50 = 0;
+   digiPersPlot_gr0_ch0_time_at_max = 0;
+   digiPersPlot_gr0_ch1_X = 0;
+   digiPersPlot_gr0_ch1_Y = 0;
+   digiPersPlot_gr0_ch1_max_amplitude = 0;
+   digiPersPlot_gr0_ch1_pedestal = 0;
+   digiPersPlot_gr0_ch1_pedestal_rms = 0;
+   digiPersPlot_gr0_ch1_time_at_frac30 = 0;
+   digiPersPlot_gr0_ch1_time_at_frac50 = 0;
+   digiPersPlot_gr0_ch1_time_at_max = 0;
+   digiPersPlot_gr0_ch2_X = 0;
+   digiPersPlot_gr0_ch2_Y = 0;
+   digiPersPlot_gr0_ch2_max_amplitude = 0;
+   digiPersPlot_gr0_ch2_pedestal = 0;
+   digiPersPlot_gr0_ch2_pedestal_rms = 0;
+   digiPersPlot_gr0_ch2_time_at_frac30 = 0;
+   digiPersPlot_gr0_ch2_time_at_frac50 = 0;
+   digiPersPlot_gr0_ch2_time_at_max = 0;
+   digiPersPlot_gr0_ch3_X = 0;
+   digiPersPlot_gr0_ch3_Y = 0;
+   digiPersPlot_gr0_ch3_max_amplitude = 0;
+   digiPersPlot_gr0_ch3_pedestal = 0;
+   digiPersPlot_gr0_ch3_pedestal_rms = 0;
+   digiPersPlot_gr0_ch3_time_at_frac30 = 0;
+   digiPersPlot_gr0_ch3_time_at_frac50 = 0;
+   digiPersPlot_gr0_ch3_time_at_max = 0;
+   digiPersPlot_gr0_ch4_X = 0;
+   digiPersPlot_gr0_ch4_Y = 0;
+   digiPersPlot_gr0_ch4_max_amplitude = 0;
+   digiPersPlot_gr0_ch4_pedestal = 0;
+   digiPersPlot_gr0_ch4_pedestal_rms = 0;
+   digiPersPlot_gr0_ch4_time_at_frac30 = 0;
+   digiPersPlot_gr0_ch4_time_at_frac50 = 0;
+   digiPersPlot_gr0_ch4_time_at_max = 0;
+   digiPersPlot_gr0_ch5_X = 0;
+   digiPersPlot_gr0_ch5_Y = 0;
+   digiPersPlot_gr0_ch5_max_amplitude = 0;
+   digiPersPlot_gr0_ch5_pedestal = 0;
+   digiPersPlot_gr0_ch5_pedestal_rms = 0;
+   digiPersPlot_gr0_ch5_time_at_frac30 = 0;
+   digiPersPlot_gr0_ch5_time_at_frac50 = 0;
+   digiPersPlot_gr0_ch5_time_at_max = 0;
+   digiPersPlot_gr0_ch6_X = 0;
+   digiPersPlot_gr0_ch6_Y = 0;
+   digiPersPlot_gr0_ch6_max_amplitude = 0;
+   digiPersPlot_gr0_ch6_pedestal = 0;
+   digiPersPlot_gr0_ch6_pedestal_rms = 0;
+   digiPersPlot_gr0_ch6_time_at_frac30 = 0;
+   digiPersPlot_gr0_ch6_time_at_frac50 = 0;
+   digiPersPlot_gr0_ch6_time_at_max = 0;
+   digiPersPlot_gr0_ch7_X = 0;
+   digiPersPlot_gr0_ch7_Y = 0;
+   digiPersPlot_gr0_ch7_max_amplitude = 0;
+   digiPersPlot_gr0_ch7_pedestal = 0;
+   digiPersPlot_gr0_ch7_pedestal_rms = 0;
+   digiPersPlot_gr0_ch7_time_at_frac30 = 0;
+   digiPersPlot_gr0_ch7_time_at_frac50 = 0;
+   digiPersPlot_gr0_ch7_time_at_max = 0;
+   digiPersPlot_gr0_ch8_X = 0;
+   digiPersPlot_gr0_ch8_Y = 0;
+   digiPersPlot_gr0_ch8_max_amplitude = 0;
+   digiPersPlot_gr0_ch8_pedestal = 0;
+   digiPersPlot_gr0_ch8_pedestal_rms = 0;
+   digiPersPlot_gr0_ch8_time_at_frac30 = 0;
+   digiPersPlot_gr0_ch8_time_at_frac50 = 0;
+   digiPersPlot_gr0_ch8_time_at_max = 0;
    ADC_board_11301_0 = 0;
    ADC_board_11301_1 = 0;
    ADC_board_11301_2 = 0;
@@ -282,6 +498,78 @@ int main( int argc, char* argv[] ) {
    nFibersOnY2 = 0;
    nTotalEvts = 0;
 
+   tree->SetBranchAddress("digiPersPlot_gr0_ch0_X", &digiPersPlot_gr0_ch0_X, &b_digiPersPlot_gr0_ch0_X);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch0_Y", &digiPersPlot_gr0_ch0_Y, &b_digiPersPlot_gr0_ch0_Y);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch0_max_amplitude", &digiPersPlot_gr0_ch0_max_amplitude, &b_digiPersPlot_gr0_ch0_max_amplitude);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch0_pedestal", &digiPersPlot_gr0_ch0_pedestal, &b_digiPersPlot_gr0_ch0_pedestal);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch0_pedestal_rms", &digiPersPlot_gr0_ch0_pedestal_rms, &b_digiPersPlot_gr0_ch0_pedestal_rms);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch0_time_at_frac30", &digiPersPlot_gr0_ch0_time_at_frac30, &b_digiPersPlot_gr0_ch0_time_at_frac30);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch0_time_at_frac50", &digiPersPlot_gr0_ch0_time_at_frac50, &b_digiPersPlot_gr0_ch0_time_at_frac50);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch0_time_at_max", &digiPersPlot_gr0_ch0_time_at_max, &b_digiPersPlot_gr0_ch0_time_at_max);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch1_X", &digiPersPlot_gr0_ch1_X, &b_digiPersPlot_gr0_ch1_X);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch1_Y", &digiPersPlot_gr0_ch1_Y, &b_digiPersPlot_gr0_ch1_Y);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch1_max_amplitude", &digiPersPlot_gr0_ch1_max_amplitude, &b_digiPersPlot_gr0_ch1_max_amplitude);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch1_pedestal", &digiPersPlot_gr0_ch1_pedestal, &b_digiPersPlot_gr0_ch1_pedestal);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch1_pedestal_rms", &digiPersPlot_gr0_ch1_pedestal_rms, &b_digiPersPlot_gr0_ch1_pedestal_rms);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch1_time_at_frac30", &digiPersPlot_gr0_ch1_time_at_frac30, &b_digiPersPlot_gr0_ch1_time_at_frac30);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch1_time_at_frac50", &digiPersPlot_gr0_ch1_time_at_frac50, &b_digiPersPlot_gr0_ch1_time_at_frac50);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch1_time_at_max", &digiPersPlot_gr0_ch1_time_at_max, &b_digiPersPlot_gr0_ch1_time_at_max);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch2_X", &digiPersPlot_gr0_ch2_X, &b_digiPersPlot_gr0_ch2_X);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch2_Y", &digiPersPlot_gr0_ch2_Y, &b_digiPersPlot_gr0_ch2_Y);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch2_max_amplitude", &digiPersPlot_gr0_ch2_max_amplitude, &b_digiPersPlot_gr0_ch2_max_amplitude);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch2_pedestal", &digiPersPlot_gr0_ch2_pedestal, &b_digiPersPlot_gr0_ch2_pedestal);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch2_pedestal_rms", &digiPersPlot_gr0_ch2_pedestal_rms, &b_digiPersPlot_gr0_ch2_pedestal_rms);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch2_time_at_frac30", &digiPersPlot_gr0_ch2_time_at_frac30, &b_digiPersPlot_gr0_ch2_time_at_frac30);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch2_time_at_frac50", &digiPersPlot_gr0_ch2_time_at_frac50, &b_digiPersPlot_gr0_ch2_time_at_frac50);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch2_time_at_max", &digiPersPlot_gr0_ch2_time_at_max, &b_digiPersPlot_gr0_ch2_time_at_max);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch3_X", &digiPersPlot_gr0_ch3_X, &b_digiPersPlot_gr0_ch3_X);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch3_Y", &digiPersPlot_gr0_ch3_Y, &b_digiPersPlot_gr0_ch3_Y);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch3_max_amplitude", &digiPersPlot_gr0_ch3_max_amplitude, &b_digiPersPlot_gr0_ch3_max_amplitude);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch3_pedestal", &digiPersPlot_gr0_ch3_pedestal, &b_digiPersPlot_gr0_ch3_pedestal);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch3_pedestal_rms", &digiPersPlot_gr0_ch3_pedestal_rms, &b_digiPersPlot_gr0_ch3_pedestal_rms);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch3_time_at_frac30", &digiPersPlot_gr0_ch3_time_at_frac30, &b_digiPersPlot_gr0_ch3_time_at_frac30);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch3_time_at_frac50", &digiPersPlot_gr0_ch3_time_at_frac50, &b_digiPersPlot_gr0_ch3_time_at_frac50);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch3_time_at_max", &digiPersPlot_gr0_ch3_time_at_max, &b_digiPersPlot_gr0_ch3_time_at_max);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch4_X", &digiPersPlot_gr0_ch4_X, &b_digiPersPlot_gr0_ch4_X);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch4_Y", &digiPersPlot_gr0_ch4_Y, &b_digiPersPlot_gr0_ch4_Y);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch4_max_amplitude", &digiPersPlot_gr0_ch4_max_amplitude, &b_digiPersPlot_gr0_ch4_max_amplitude);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch4_pedestal", &digiPersPlot_gr0_ch4_pedestal, &b_digiPersPlot_gr0_ch4_pedestal);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch4_pedestal_rms", &digiPersPlot_gr0_ch4_pedestal_rms, &b_digiPersPlot_gr0_ch4_pedestal_rms);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch4_time_at_frac30", &digiPersPlot_gr0_ch4_time_at_frac30, &b_digiPersPlot_gr0_ch4_time_at_frac30);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch4_time_at_frac50", &digiPersPlot_gr0_ch4_time_at_frac50, &b_digiPersPlot_gr0_ch4_time_at_frac50);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch4_time_at_max", &digiPersPlot_gr0_ch4_time_at_max, &b_digiPersPlot_gr0_ch4_time_at_max);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch5_X", &digiPersPlot_gr0_ch5_X, &b_digiPersPlot_gr0_ch5_X);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch5_Y", &digiPersPlot_gr0_ch5_Y, &b_digiPersPlot_gr0_ch5_Y);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch5_max_amplitude", &digiPersPlot_gr0_ch5_max_amplitude, &b_digiPersPlot_gr0_ch5_max_amplitude);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch5_pedestal", &digiPersPlot_gr0_ch5_pedestal, &b_digiPersPlot_gr0_ch5_pedestal);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch5_pedestal_rms", &digiPersPlot_gr0_ch5_pedestal_rms, &b_digiPersPlot_gr0_ch5_pedestal_rms);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch5_time_at_frac30", &digiPersPlot_gr0_ch5_time_at_frac30, &b_digiPersPlot_gr0_ch5_time_at_frac30);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch5_time_at_frac50", &digiPersPlot_gr0_ch5_time_at_frac50, &b_digiPersPlot_gr0_ch5_time_at_frac50);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch5_time_at_max", &digiPersPlot_gr0_ch5_time_at_max, &b_digiPersPlot_gr0_ch5_time_at_max);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch6_X", &digiPersPlot_gr0_ch6_X, &b_digiPersPlot_gr0_ch6_X);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch6_Y", &digiPersPlot_gr0_ch6_Y, &b_digiPersPlot_gr0_ch6_Y);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch6_max_amplitude", &digiPersPlot_gr0_ch6_max_amplitude, &b_digiPersPlot_gr0_ch6_max_amplitude);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch6_pedestal", &digiPersPlot_gr0_ch6_pedestal, &b_digiPersPlot_gr0_ch6_pedestal);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch6_pedestal_rms", &digiPersPlot_gr0_ch6_pedestal_rms, &b_digiPersPlot_gr0_ch6_pedestal_rms);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch6_time_at_frac30", &digiPersPlot_gr0_ch6_time_at_frac30, &b_digiPersPlot_gr0_ch6_time_at_frac30);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch6_time_at_frac50", &digiPersPlot_gr0_ch6_time_at_frac50, &b_digiPersPlot_gr0_ch6_time_at_frac50);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch6_time_at_max", &digiPersPlot_gr0_ch6_time_at_max, &b_digiPersPlot_gr0_ch6_time_at_max);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch7_X", &digiPersPlot_gr0_ch7_X, &b_digiPersPlot_gr0_ch7_X);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch7_Y", &digiPersPlot_gr0_ch7_Y, &b_digiPersPlot_gr0_ch7_Y);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch7_max_amplitude", &digiPersPlot_gr0_ch7_max_amplitude, &b_digiPersPlot_gr0_ch7_max_amplitude);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch7_pedestal", &digiPersPlot_gr0_ch7_pedestal, &b_digiPersPlot_gr0_ch7_pedestal);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch7_pedestal_rms", &digiPersPlot_gr0_ch7_pedestal_rms, &b_digiPersPlot_gr0_ch7_pedestal_rms);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch7_time_at_frac30", &digiPersPlot_gr0_ch7_time_at_frac30, &b_digiPersPlot_gr0_ch7_time_at_frac30);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch7_time_at_frac50", &digiPersPlot_gr0_ch7_time_at_frac50, &b_digiPersPlot_gr0_ch7_time_at_frac50);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch7_time_at_max", &digiPersPlot_gr0_ch7_time_at_max, &b_digiPersPlot_gr0_ch7_time_at_max);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch8_X", &digiPersPlot_gr0_ch8_X, &b_digiPersPlot_gr0_ch8_X);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch8_Y", &digiPersPlot_gr0_ch8_Y, &b_digiPersPlot_gr0_ch8_Y);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch8_max_amplitude", &digiPersPlot_gr0_ch8_max_amplitude, &b_digiPersPlot_gr0_ch8_max_amplitude);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch8_pedestal", &digiPersPlot_gr0_ch8_pedestal, &b_digiPersPlot_gr0_ch8_pedestal);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch8_pedestal_rms", &digiPersPlot_gr0_ch8_pedestal_rms, &b_digiPersPlot_gr0_ch8_pedestal_rms);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch8_time_at_frac30", &digiPersPlot_gr0_ch8_time_at_frac30, &b_digiPersPlot_gr0_ch8_time_at_frac30);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch8_time_at_frac50", &digiPersPlot_gr0_ch8_time_at_frac50, &b_digiPersPlot_gr0_ch8_time_at_frac50);
+   tree->SetBranchAddress("digiPersPlot_gr0_ch8_time_at_max", &digiPersPlot_gr0_ch8_time_at_max, &b_digiPersPlot_gr0_ch8_time_at_max);
    tree->SetBranchAddress("ADC_board_11301_0", &ADC_board_11301_0, &b_ADC_board_11301_0);
    tree->SetBranchAddress("ADC_board_11301_1", &ADC_board_11301_1, &b_ADC_board_11301_1);
    tree->SetBranchAddress("ADC_board_11301_2", &ADC_board_11301_2, &b_ADC_board_11301_2);
@@ -438,7 +726,7 @@ int main( int argc, char* argv[] ) {
 
      if( iEntry %  5000 == 0 ) std::cout << "Entry: " << iEntry << " / " << nentries << std::endl;
 
-     outTree->Write();
+     outTree->Fill();
 
    } // for entries
 
