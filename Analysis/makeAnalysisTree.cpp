@@ -63,6 +63,9 @@ int main( int argc, char* argv[] ) {
 
 
    // Declaration of leaf types
+   UInt_t          runNumber;
+   UInt_t          spillNumber;
+   UInt_t          evtNumber;
    std::vector<float>   *ADCvalues;
    std::vector<float>   *digi_max_amplitude;
    std::vector<float>   *digi_pedestal;
@@ -72,6 +75,9 @@ int main( int argc, char* argv[] ) {
    std::vector<float>   *digi_time_at_max;
 
    // List of branches
+   TBranch        *b_runNumber;   //!
+   TBranch        *b_spillNumber;   //!
+   TBranch        *b_evtNumber;   //!
    TBranch        *b_ADCvalues;   //!
    TBranch        *b_digi_max_amplitude;   //!
    TBranch        *b_digi_pedestal;   //!
@@ -89,6 +95,9 @@ int main( int argc, char* argv[] ) {
    digi_time_at_frac50 = 0;
    digi_time_at_max = 0;
 
+   tree->SetBranchAddress("runNumber", &runNumber, &b_runNumber);
+   tree->SetBranchAddress("spillNumber", &spillNumber, &b_spillNumber);
+   tree->SetBranchAddress("evtNumber", &evtNumber, &b_evtNumber);
    tree->SetBranchAddress("ADCvalues", &ADCvalues, &b_ADCvalues);
    tree->SetBranchAddress("digi_max_amplitude", &digi_max_amplitude, &b_digi_max_amplitude);
    tree->SetBranchAddress("digi_pedestal", &digi_pedestal, &b_digi_pedestal);
@@ -109,10 +118,9 @@ int main( int argc, char* argv[] ) {
 
 
 
-   int run;
-   outTree->Branch( "run", &run, "run/i" );
-   int event;
-   outTree->Branch( "event", &event, "event/i" );
+   outTree->Branch( "run", &runNumber, "run/i" );
+   outTree->Branch( "spill", &spillNumber, "spill/i" );
+   outTree->Branch( "event", &evtNumber, "event/i" );
 
    float s1;
    outTree->Branch( "s1", &s1, "s1/F" );
