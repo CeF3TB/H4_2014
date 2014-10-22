@@ -8,6 +8,7 @@
 #include "interface/HodoCluster.h"
 #include "CommonTools/interface/RunHelper.h"
 
+#include "TApplication.h"
 
 
 void assignValues( std::vector<float> &target, std::vector<float> source, unsigned int startPos );
@@ -22,6 +23,8 @@ std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreW
 
 
 int main( int argc, char* argv[] ) {
+
+  TApplication* a = new TApplication("a", 0, 0);
 
 
    if( argc<2 ) {
