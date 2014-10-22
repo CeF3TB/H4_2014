@@ -61,6 +61,15 @@ int main( int argc, char* argv[] ) {
   system( Form("mkdir -p %s", outputdir.c_str()) );
 
 
+  drawSingleVariable( outputdir, tree, "wc_x", "wc_x", "", 50, -20., 20., "X( WC ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_y", "wc_y", "", 50, -20., 20., "Y( WC ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoX1", "pos_hodoX1[0]", "nClusters_hodoX1==1", 50, -20., 20., "X( hodoX1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY1", "pos_hodoY1[0]", "nClusters_hodoY1==1", 50, -20., 20., "Y( hodoY1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoX2", "pos_hodoX2[0]", "nClusters_hodoX2==1", 50, -20., 20., "X( hodoX2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY2", "pos_hodoY2[0]", "nClusters_hodoY2==1", 50, -20., 20., "Y( hodoY2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoSmallX", "pos_hodoSmallX[0]", "nClusters_hodoSmallX", 50, -20., 20., "X( hodoSmallX ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoSmallY", "pos_hodoSmallY[0]", "nClusters_hodoSmallY", 50, -20., 20., "Y( hodoSmallY ) [mm]"  );
+
   drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX1", "wc_x - pos_hodoX1[0]", "nClusters_hodoX1==1", 50, -20., 20., "X( WC - HodoX1 ) [mm]"  );
   drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY1", "wc_y - pos_hodoY1[0]", "nClusters_hodoY1==1", 50, -20., 20., "Y( WC - HodoY1 ) [mm]"  );
   drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX2", "wc_x - pos_hodoX2[0]", "nClusters_hodoX2==1", 50, -20., 20., "X( WC - HodoX2 ) [mm]"  );
