@@ -5,12 +5,19 @@
 #include "TBranch.h"
 
 #include "channelInfo.h"
-
+#include "interface/HodoCluster.h"
 #include "CommonTools/interface/RunHelper.h"
 
 
 
 void assignValues( std::vector<float> &target, std::vector<float> source, unsigned int startPos );
+
+void doHodoReconstruction( std::vector<float> values, int &nClusters, int *nFibres, float *pos, float fibreWidth, int clusterMaxFibres );
+std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreWidth, int nClusterMax );
+
+
+
+
 
 
 
@@ -128,20 +135,45 @@ int main( int argc, char* argv[] ) {
    outTree->Branch( "yBeam", &yBeam, "yBeam/F");
 
 
-   std::vector<float> hodoSmallX( HODOSMALLX_CHANNELS, -1. );
-   outTree->Branch( "hodoSmallX", &hodoSmallX );
-   std::vector<float> hodoSmallY( HODOSMALLY_CHANNELS, -1. );
-   outTree->Branch( "hodoSmallY", &hodoSmallY );
 
-   std::vector<float> hodoX1( HODOX1_CHANNELS, -1. );
-   outTree->Branch( "hodoX1", &hodoX1 );
-   std::vector<float> hodoY1( HODOY1_CHANNELS, -1. );
-   outTree->Branch( "hodoY1", &hodoY1 );
+   int nClusters_hodoX1;
+   outTree->Branch( "nClusters_hodoX1", &nClusters_hodoX1, "nClusters_hodoX1/I" );
+   int nFibres_hodoX1[HODOX1_CHANNELS];
+   outTree->Branch( "nFibres_hodoX1", nFibres_hodoX1, "nFibres_hodoX1[nClusters_hodoX1]/F" );
+   float pos_hodoX1[HODOX1_CHANNELS];
+   outTree->Branch( "pos_hodoX1", pos_hodoX1, "pos_hodoX1[nClusters_hodoX1]/F" );
+   int nClusters_hodoY1;
+   outTree->Branch( "nClusters_hodoY1", &nClusters_hodoY1, "nClusters_hodoY1/I" );
+   int nFibres_hodoY1[HODOY1_CHANNELS];
+   outTree->Branch( "nFibres_hodoY1", nFibres_hodoY1, "nFibres_hodoY1[nClusters_hodoY1]/F" );
+   float pos_hodoY1[HODOY1_CHANNELS];
+   outTree->Branch( "pos_hodoY1", pos_hodoY1, "pos_hodoY1[nClusters_hodoY1]/F" );
 
-   std::vector<float> hodoX2( HODOX2_CHANNELS, -1. );
-   outTree->Branch( "hodoX2", &hodoX2 );
-   std::vector<float> hodoY2( HODOY2_CHANNELS, -1. );
-   outTree->Branch( "hodoY2", &hodoY2 );
+   int nClusters_hodoX2;
+   outTree->Branch( "nClusters_hodoX2", &nClusters_hodoX2, "nClusters_hodoX2/I" );
+   int nFibres_hodoX2[HODOX2_CHANNELS];
+   outTree->Branch( "nFibres_hodoX2", nFibres_hodoX2, "nFibres_hodoX2[nClusters_hodoX2]/F" );
+   float pos_hodoX2[HODOX2_CHANNELS];
+   outTree->Branch( "pos_hodoX2", pos_hodoX2, "pos_hodoX2[nClusters_hodoX2]/F" );
+   int nClusters_hodoY2;
+   outTree->Branch( "nClusters_hodoY2", &nClusters_hodoY2, "nClusters_hodoY2/I" );
+   int nFibres_hodoY2[HODOY2_CHANNELS];
+   outTree->Branch( "nFibres_hodoY2", nFibres_hodoY2, "nFibres_hodoY2[nClusters_hodoY2]/F" );
+   float pos_hodoY2[HODOY2_CHANNELS];
+   outTree->Branch( "pos_hodoY2", pos_hodoY2, "pos_hodoY2[nClusters_hodoY2]/F" );
+
+   int nClusters_hodoSmallX;
+   outTree->Branch( "nClusters_hodoSmallX", &nClusters_hodoSmallX, "nClusters_hodoSmallX/I" );
+   int nFibres_hodoSmallX[HODOSMALLX_CHANNELS];
+   outTree->Branch( "nFibres_hodoSmallX", nFibres_hodoSmallX, "nFibres_hodoSmallX[nClusters_hodoSmallX]/F" );
+   float pos_hodoSmallX[HODOSMALLX_CHANNELS];
+   outTree->Branch( "pos_hodoSmallX", pos_hodoSmallX, "pos_hodoSmallX[nClusters_hodoSmallX]/F" );
+   int nClusters_hodoSmallY;
+   outTree->Branch( "nClusters_hodoSmallY", &nClusters_hodoSmallY, "nClusters_hodoSmallY/I" );
+   int nFibres_hodoSmallY[HODOSMALLY_CHANNELS];
+   outTree->Branch( "nFibres_hodoSmallY", nFibres_hodoSmallY, "nFibres_hodoSmallY[nClusters_hodoSmallY]/F" );
+   float pos_hodoSmallY[HODOSMALLY_CHANNELS];
+   outTree->Branch( "pos_hodoSmallY", pos_hodoSmallY, "pos_hodoSmallY[nClusters_hodoSmallY]/F" );
 
 
    float wc_x;
@@ -164,14 +196,30 @@ int main( int argc, char* argv[] ) {
 
      assignValues( bgo, *ADCvalues, BGO_ADC_START_CHANNEL );
 
-     assignValues( hodoX1, *ADCvalues, HODOX1_ADC_START_CHANNEL );
-     assignValues( hodoY1, *ADCvalues, HODOY1_ADC_START_CHANNEL );
+     std::vector<float> hodoX1_values(HODOX1_CHANNELS, -1.);
+     std::vector<float> hodoY1_values(HODOY1_CHANNELS, -1.);
+     assignValues( hodoX1_values, *ADCvalues, HODOX1_ADC_START_CHANNEL );
+     assignValues( hodoY1_values, *ADCvalues, HODOY1_ADC_START_CHANNEL );
 
-     assignValues( hodoX2, *ADCvalues, HODOX2_ADC_START_CHANNEL );
-     assignValues( hodoY2, *ADCvalues, HODOY2_ADC_START_CHANNEL );
+     std::vector<float> hodoX2_values(HODOX2_CHANNELS, -1.);
+     std::vector<float> hodoY2_values(HODOY2_CHANNELS, -1.);
+     assignValues( hodoX2_values, *ADCvalues, HODOX2_ADC_START_CHANNEL );
+     assignValues( hodoY2_values, *ADCvalues, HODOY2_ADC_START_CHANNEL );
 
-     assignValues( hodoSmallX, *ADCvalues, HODOSMALLX_ADC_START_CHANNEL );
-     assignValues( hodoSmallY, *ADCvalues, HODOSMALLY_ADC_START_CHANNEL );
+     std::vector<float> hodoSmallX_values(HODOSMALLX_CHANNELS, -1.);
+     std::vector<float> hodoSmallY_values(HODOSMALLY_CHANNELS, -1.);
+     assignValues( hodoSmallX_values, *ADCvalues, HODOSMALLX_ADC_START_CHANNEL );
+     assignValues( hodoSmallY_values, *ADCvalues, HODOSMALLY_ADC_START_CHANNEL );
+
+     // hodo cluster reconstruction
+     int clusterMaxFibres = 4;
+     doHodoReconstruction( hodoX1_values    , nClusters_hodoX1    , nFibres_hodoX1    , pos_hodoX1    , 0.5, clusterMaxFibres );
+     doHodoReconstruction( hodoY1_values    , nClusters_hodoY1    , nFibres_hodoY1    , pos_hodoY1    , 0.5, clusterMaxFibres );
+     doHodoReconstruction( hodoX2_values    , nClusters_hodoX2    , nFibres_hodoX2    , pos_hodoX2    , 0.5, clusterMaxFibres );
+     doHodoReconstruction( hodoY2_values    , nClusters_hodoY2    , nFibres_hodoY2    , pos_hodoY2    , 0.5, clusterMaxFibres );
+     doHodoReconstruction( hodoSmallX_values, nClusters_hodoSmallX, nFibres_hodoSmallX, pos_hodoSmallX, 1.0, clusterMaxFibres );
+     doHodoReconstruction( hodoSmallY_values, nClusters_hodoSmallY, nFibres_hodoSmallY, pos_hodoSmallY, 1.0, clusterMaxFibres );
+
 
      s1 = ADCvalues->at(S1_ADC_START_CHANNEL);
      s3 = ADCvalues->at(S3_ADC_START_CHANNEL);
@@ -202,5 +250,67 @@ void assignValues( std::vector<float> &target, std::vector<float> source, unsign
 
   for( unsigned i=0; i<target.size(); ++i ) 
     target[i] = source[startPos+i];
+
+}
+
+
+
+std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreWidth, int nClusterMax ) {
+
+  std::vector<HodoCluster*> clusters;
+
+  HodoCluster* currentCluster = new HodoCluster( hodo.size(), fibreWidth );
+
+  for( unsigned i=0; i<hodo.size(); ++i ) {
+
+    if( hodo[i] > 0.) { // hit
+
+      if( currentCluster->getSize() < nClusterMax ) {
+
+        currentCluster->addFibre( i );
+
+      } else {
+
+        clusters.push_back( currentCluster ); // store old one
+        currentCluster = new HodoCluster( hodo.size(), fibreWidth );   // create a new one
+        currentCluster->addFibre( i );        // get that fibre!
+
+      }
+
+    } else { // as soon as you find a hole
+      
+      if( currentCluster->getSize() > 0 ) {
+     
+        clusters.push_back( currentCluster ); // store old one
+        currentCluster = new HodoCluster( hodo.size(), fibreWidth );   // create a new one
+
+      }
+
+    }
+
+
+  } // for fibres
+
+
+  if( currentCluster->getSize()>0 )
+    clusters.push_back( currentCluster ); // store last cluster
+
+
+  return clusters;
+
+}
+
+
+
+
+void doHodoReconstruction( std::vector<float> values, int &nClusters, int *nFibres, float *pos, float fibreWidth, int clusterMaxFibres ) {
+
+  std::vector<HodoCluster*> clusters = getHodoClusters( values, fibreWidth, clusterMaxFibres );
+
+  nClusters = clusters.size();
+  for( unsigned i=0; i<clusters.size(); ++i ) {
+    nFibres[i] = clusters[i]->getSize();
+    pos[i] = clusters[i]->getPosition();
+  }
 
 }
