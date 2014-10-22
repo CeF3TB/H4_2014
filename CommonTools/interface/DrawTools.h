@@ -13,8 +13,7 @@ class DrawTools {
 
   static TStyle* setStyle();
 
-  static TPaveText* getLabelTop( const std::string& text );
-  static TPaveText* getLabelTop( int beamEnergy=491 );
+  static TPaveText* getLabelTop( const std::string& text="H4 Test Beam 2014" );
   static TPaveText* getLabelRun( const std::string& runName, bool top=true );
 
 
