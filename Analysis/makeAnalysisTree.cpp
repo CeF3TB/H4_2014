@@ -10,6 +10,10 @@
 
 
 
+void assignValues( std::vector<float> &target, std::vector<float> source, unsigned int startPos );
+
+
+
 int main( int argc, char* argv[] ) {
 
 
@@ -112,15 +116,11 @@ int main( int argc, char* argv[] ) {
    float s6;
    outTree->Branch( "s6", &s6, "s6/F" );
 
-   int cef3_chan(CEF3_CHANNELS);
-   outTree->Branch( "cef3_chan", &cef3_chan, "cef3_chan/I" );
-   float cef3[CEF3_CHANNELS];
-   outTree->Branch( "cef3", cef3, "cef3[cef3_chan]/F" );
+   std::vector<float> cef3( CEF3_CHANNELS, -1. );
+   outTree->Branch( "cef3", &cef3 );
 
-   int bgo_chan(BGO_CHANNELS);
-   outTree->Branch( "bgo_chan", &bgo_chan, "bgo_chan/I" );
-   float bgo[BGO_CHANNELS];
-   outTree->Branch( "bgo", bgo, "bgo[bgo_chan]/F" );
+   std::vector<float> bgo( BGO_CHANNELS, -1. );
+   outTree->Branch( "bgo", &bgo );
 
    float xBeam;
    outTree->Branch( "xBeam", &xBeam, "xBeam/F");
@@ -128,32 +128,26 @@ int main( int argc, char* argv[] ) {
    outTree->Branch( "yBeam", &yBeam, "yBeam/F");
 
 
-   int hodoSmallX_chan(HODOSMALLX_CHANNELS);
-   outTree->Branch( "hodoSmallX_chan", &hodoSmallX_chan, "hodoSmallX_chan/I");
-   float hodoSmallX[HODOSMALLX_CHANNELS];
-   outTree->Branch( "hodoSmallX", hodoSmallX, "hodoSmallX[hodoSmallX_chan]/F" );
-   int hodoSmallY_chan(HODOSMALLY_CHANNELS);
-   outTree->Branch( "hodoSmallY_chan", &hodoSmallY_chan, "hodoSmallY_chan/I");
-   float hodoSmallY[HODOSMALLY_CHANNELS];
-   outTree->Branch( "hodoSmallY", hodoSmallY, "hodoSmallY[hodoSmallY_chan]/F" );
+   std::vector<float> hodoSmallX( HODOSMALLX_CHANNELS, -1. );
+   outTree->Branch( "hodoSmallX", &hodoSmallX );
+   std::vector<float> hodoSmallY( HODOSMALLY_CHANNELS, -1. );
+   outTree->Branch( "hodoSmallY", &hodoSmallY );
 
-   int hodoX1_chan(HODOX1_CHANNELS);
-   outTree->Branch( "hodoX1_chan", &hodoX1_chan, "hodoX1_chan/I");
-   float hodoX1[HODOX1_CHANNELS];
-   outTree->Branch( "hodoX1", hodoX1, "hodoX1[hodoX1_chan]/F" );
-   int hodoY1_chan(HODOY1_CHANNELS);
-   outTree->Branch( "hodoY1_chan", &hodoY1_chan, "hodoY1_chan/I");
-   float hodoY1[HODOY1_CHANNELS];
-   outTree->Branch( "hodoY1", hodoY1, "hodoY1[hodoY1_chan]/F" );
+   std::vector<float> hodoX1( HODOX1_CHANNELS, -1. );
+   outTree->Branch( "hodoX1", &hodoX1 );
+   std::vector<float> hodoY1( HODOY1_CHANNELS, -1. );
+   outTree->Branch( "hodoY1", &hodoY1 );
 
-   int hodoX2_chan(HODOX2_CHANNELS);
-   outTree->Branch( "hodoX2_chan", &hodoX2_chan, "hodoX2_chan/I");
-   float hodoX2[HODOX2_CHANNELS];
-   outTree->Branch( "hodoX2", hodoX2, "hodoX2[hodoX2_chan]/F" );
-   int hodoY2_chan(HODOY2_CHANNELS);
-   outTree->Branch( "hodoY2_chan", &hodoY2_chan, "hodoY2_chan/I");
-   float hodoY2[HODOY2_CHANNELS];
-   outTree->Branch( "hodoY2", hodoY2, "hodoY2[hodoY2_chan]/F" );
+   std::vector<float> hodoX2( HODOX2_CHANNELS, -1. );
+   outTree->Branch( "hodoX2", &hodoX2 );
+   std::vector<float> hodoY2( HODOY2_CHANNELS, -1. );
+   outTree->Branch( "hodoY2", &hodoY2 );
+
+
+   float wc_x;
+   outTree->Branch( "wc_x", &wc_x, "wc_x");
+   float wc_y;
+   outTree->Branch( "wc_y", &wc_y, "wc_y");
 
 
 
@@ -165,6 +159,27 @@ int main( int argc, char* argv[] ) {
      tree->GetEntry( iEntry );
 
      if( iEntry %  5000 == 0 ) std::cout << "Entry: " << iEntry << " / " << nentries << std::endl;
+
+     assignValues( cef3, *digi_max_amplitude, CEF3_START_CHANNEL );
+
+     assignValues( bgo, *ADCvalues, BGO_ADC_START_CHANNEL );
+
+     assignValues( hodoX1, *ADCvalues, HODOX1_ADC_START_CHANNEL );
+     assignValues( hodoY1, *ADCvalues, HODOY1_ADC_START_CHANNEL );
+
+     assignValues( hodoX2, *ADCvalues, HODOX2_ADC_START_CHANNEL );
+     assignValues( hodoY2, *ADCvalues, HODOY2_ADC_START_CHANNEL );
+
+     assignValues( hodoSmallX, *ADCvalues, HODOSMALLX_ADC_START_CHANNEL );
+     assignValues( hodoSmallY, *ADCvalues, HODOSMALLY_ADC_START_CHANNEL );
+
+     s1 = ADCvalues->at(S1_ADC_START_CHANNEL);
+     s3 = ADCvalues->at(S3_ADC_START_CHANNEL);
+     s4 = ADCvalues->at(S4_ADC_START_CHANNEL);
+     s6 = ADCvalues->at(S6_ADC_START_CHANNEL);
+
+     wc_x = ADCvalues->at(WC_X_ADC_START_CHANNEL);
+     wc_y = ADCvalues->at(WC_Y_ADC_START_CHANNEL);
 
      outTree->Fill();
 
@@ -181,3 +196,11 @@ int main( int argc, char* argv[] ) {
 
 }
   
+
+
+void assignValues( std::vector<float> &target, std::vector<float> source, unsigned int startPos ) {
+
+  for( unsigned i=0; i<target.size(); ++i ) 
+    target[i] = source[startPos+i];
+
+}
