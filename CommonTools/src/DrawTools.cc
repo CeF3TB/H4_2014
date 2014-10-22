@@ -2,11 +2,6 @@
 
 
 
-TPaveText* DrawTools::getLabelTop( int beamEnergy ) {
-
-  return getLabelTop(Form("%d MeV Electron Beam", beamEnergy));
-
-}
 
 
 TPaveText* DrawTools::getLabelTop( const std::string& text ) {
