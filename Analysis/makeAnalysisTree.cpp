@@ -198,7 +198,7 @@ int main( int argc, char* argv[] ) {
 
      tree->GetEntry( iEntry );
 
-     if( iEntry %  5000 == 0 ) std::cout << "Entry: " << iEntry << " / " << nentries << std::endl;
+     if( iEntry %  10000 == 0 ) std::cout << "Entry: " << iEntry << " / " << nentries << std::endl;
 
      assignValues( cef3, *digi_max_amplitude, CEF3_START_CHANNEL );
 
