@@ -10,13 +10,15 @@
 #include "TLegend.h"
 
 
-
+#include "TApplication.h"
 
 
 void drawSingleVariable( const std::string& outputdir, TTree* tree, const std::string& savename, const std::string& treeVar, const std::string& selection, int nbins, float xMin, float xMax, std::string axisName="" );
 
 
 int main( int argc, char* argv[] ) {
+
+  TApplication* a = new TApplication("a", 0, 0);
 
 
   DrawTools::setStyle();
