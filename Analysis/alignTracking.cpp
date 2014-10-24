@@ -22,8 +22,8 @@ float fitAndDraw( const std::string& outputdir, TH1F* h1 );
 
 int main() {
 
-  // this is the dir in which the constants will be saved:
-  std::string constDirName = "AlignmentConstants";
+  // this is the dir in which the offsets will be saved:
+  std::string constDirName = "Alignment";
   system(Form("mkdir -p %s", constDirName.c_str()));
 
 
@@ -255,7 +255,7 @@ int main() {
   std::cout << "offset_hodoX2: " <<  offset_hodoX2 << std::endl;
 
   
-  std::string ofsName = constDirName + "/constants_new.txt";
+  std::string ofsName = constDirName + "/offsets_new.txt";
   ofstream ofs(ofsName.c_str());
   ofs << "wc_y "   << -offset_wc_y << std::endl;
   ofs << "wc_x "   << -offset_wc_x << std::endl;
@@ -265,7 +265,7 @@ int main() {
   ofs << "hodoX2 " << -offset_hodoX2 << std::endl;
   ofs.close();
 
-  std::cout << "-> Saved constants in: " << ofsName << std::endl;
+  std::cout << "-> Saved offsets in: " << ofsName << std::endl;
 
   return 0;
 
