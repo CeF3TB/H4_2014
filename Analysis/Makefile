@@ -12,18 +12,22 @@ EXTRALIBS := -L$(ROOTSYS)/lib  -lHtml -lMathCore -lGenVector -lMinuit -lTMVA
 
 
 
-all: makeAnalysisTree
+all: makeAnalysisTree calibrateCeF3 drawEnergyScan
 
 
 
 
-makeAnalysisTree: makeAnalysisTree.cpp RunHelper.o HodoCluster.o
-	$(CC) -Wall $(INCLUDES) -o makeAnalysisTree makeAnalysisTree.cpp RunHelper.o HodoCluster.o $(ROOTFLAG) $(EXTRALIBS)
+makeAnalysisTree: makeAnalysisTree.cpp RunHelper.o HodoCluster.o CalibrationUtility.o EnergyCalibration.o
+	$(CC) -Wall $(INCLUDES) -o makeAnalysisTree makeAnalysisTree.cpp RunHelper.o HodoCluster.o CalibrationUtility.o EnergyCalibration.o $(ROOTFLAG) $(EXTRALIBS)
 
 drawPositioningPlots: drawPositioningPlots.cpp DrawTools.o
 	$(CC) -Wall $(INCLUDES) -o drawPositioningPlots drawPositioningPlots.cpp DrawTools.o $(ROOTFLAG) $(EXTRALIBS)
 
+calibrateCeF3: calibrateCeF3.cpp DrawTools.o
+	$(CC) -Wall $(INCLUDES) -o calibrateCeF3 calibrateCeF3.cpp DrawTools.o $(ROOTFLAG) $(EXTRALIBS)
 
+drawEnergyScan: drawEnergyScan.cpp DrawTools.o
+	$(CC) -Wall $(INCLUDES) -o drawEnergyScan drawEnergyScan.cpp DrawTools.o $(ROOTFLAG) $(EXTRALIBS)
 
 
 

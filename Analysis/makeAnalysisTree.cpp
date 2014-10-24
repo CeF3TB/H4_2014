@@ -6,6 +6,8 @@
 
 #include "channelInfo.h"
 #include "interface/HodoCluster.h"
+#include "interface/CalibrationUtility.h"
+#include "interface/EnergyCalibration.h"
 #include "CommonTools/interface/RunHelper.h"
 
 #include "TApplication.h"
@@ -33,7 +35,7 @@ int main( int argc, char* argv[] ) {
    }
 
    std::string runName = "";
-   std::string tag = "V00";
+   std::string tag = "V01";
 
    if( argc>1 ) {
 
@@ -63,6 +65,11 @@ int main( int argc, char* argv[] ) {
    TTree* tree = (TTree*)file->Get("outputTree");
 
 
+  //set the tag for calibration
+  CalibrationUtility calibUtil(tag);
+  EnergyCalibration cef3Calib(calibUtil.getCeF3FileName());
+  EnergyCalibration bgoCalib(calibUtil.getBGOFileName());
+
 
 
    // Declaration of leaf types
@@ -71,7 +78,7 @@ int main( int argc, char* argv[] ) {
    UInt_t          evtNumber;
 
    std::vector<float>   *ADCvalues;
-   //   std::vector<float>   *digi_max_amplitude;
+   std::vector<float>   *digi_max_amplitude;
    std::vector<float>   *digi_charge_integrated;
    std::vector<float>   *digi_pedestal;
    std::vector<float>   *digi_pedestal_rms;
@@ -84,7 +91,7 @@ int main( int argc, char* argv[] ) {
    TBranch        *b_spillNumber;   //!
    TBranch        *b_evtNumber;   //!
    TBranch        *b_ADCvalues;   //!
-   //   TBranch        *b_digi_max_amplitude;   //!
+   TBranch        *b_digi_max_amplitude;   //!
    TBranch        *b_digi_charge_integrated;   //!
    TBranch        *b_digi_pedestal;   //!
    TBranch        *b_digi_pedestal_rms;   //!
@@ -94,7 +101,7 @@ int main( int argc, char* argv[] ) {
 
    // Set object pointer
    ADCvalues = 0;
-   //   digi_max_amplitude = 0;
+   digi_max_amplitude = 0;
    digi_charge_integrated = 0;
    digi_pedestal = 0;
    digi_pedestal_rms = 0;
@@ -108,7 +115,7 @@ int main( int argc, char* argv[] ) {
    tree->SetBranchAddress("spillNumber", &spillNumber, &b_spillNumber);
    tree->SetBranchAddress("evtNumber", &evtNumber, &b_evtNumber);
    tree->SetBranchAddress("ADCvalues", &ADCvalues, &b_ADCvalues);
-   //   tree->SetBranchAddress("digi_max_amplitude", &digi_max_amplitude, &b_digi_max_amplitude); 
+   tree->SetBranchAddress("digi_max_amplitude", &digi_max_amplitude, &b_digi_max_amplitude); 
    tree->SetBranchAddress("digi_charge_integrated", &digi_charge_integrated, &b_digi_charge_integrated);
    tree->SetBranchAddress("digi_pedestal", &digi_pedestal, &b_digi_pedestal);
    tree->SetBranchAddress("digi_pedestal_rms", &digi_pedestal_rms, &b_digi_pedestal_rms);
@@ -145,6 +152,13 @@ int main( int argc, char* argv[] ) {
 
    std::vector<float> bgo( BGO_CHANNELS, -1. );
    outTree->Branch( "bgo", &bgo );
+
+
+   std::vector<float> cef3_corr( CEF3_CHANNELS, -1. );
+   outTree->Branch( "cef3_corr", &cef3_corr );
+
+   std::vector<float> bgo_corr( BGO_CHANNELS, -1. );
+   outTree->Branch( "bgo_corr", &bgo_corr );
 
    float xBeam;
    outTree->Branch( "xBeam", &xBeam, "xBeam/F");
@@ -210,9 +224,16 @@ int main( int argc, char* argv[] ) {
      if( iEntry %  10000 == 0 ) std::cout << "Entry: " << iEntry << " / " << nentries << std::endl;
 
      //     assignValues( cef3, *digi_max_amplitude, CEF3_START_CHANNEL );
-     assignValues( cef3, *digi_charge_integrated, CEF3_START_CHANNEL );
+     assignValues( cef3, *digi_charge_integrated, CEF3_START_CHANNEL );  
 
      assignValues( bgo, *ADCvalues, BGO_ADC_START_CHANNEL );
+
+     assignValues( cef3_corr, *digi_charge_integrated, CEF3_START_CHANNEL );  
+
+     assignValues( bgo_corr, *ADCvalues, BGO_ADC_START_CHANNEL );
+
+     bgoCalib.applyCalibration(bgo_corr);
+     cef3Calib.applyCalibration(cef3_corr);
 
      std::vector<float> hodoX1_values(HODOX1_CHANNELS, -1.);
      std::vector<float> hodoY1_values(HODOY1_CHANNELS, -1.);
@@ -271,6 +292,8 @@ void assignValues( std::vector<float> &target, std::vector<float> source, unsign
 
 
 }
+
+
 
 
 
