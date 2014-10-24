@@ -75,7 +75,6 @@ int main( int argc, char* argv[] ) {
   ofstream ofsU(ofsNameU.c_str());
 
 
-  int nentries = tree->GetEntries();
 
   std::vector<float> cef3_calibration;
   std::vector<float> cef3_calib_uncert;
