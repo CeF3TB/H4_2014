@@ -17,8 +17,8 @@ all: makeAnalysisTree calibrateCeF3 drawEnergyScan
 
 
 
-makeAnalysisTree: makeAnalysisTree.cpp RunHelper.o HodoCluster.o CalibrationUtility.o EnergyCalibration.o
-	$(CC) -Wall $(INCLUDES) -o makeAnalysisTree makeAnalysisTree.cpp RunHelper.o HodoCluster.o CalibrationUtility.o EnergyCalibration.o $(ROOTFLAG) $(EXTRALIBS)
+makeAnalysisTree: makeAnalysisTree.cpp RunHelper.o HodoCluster.o TagHelper.o EnergyCalibration.o AlignmentOfficer.o
+	$(CC) -Wall $(INCLUDES) -o makeAnalysisTree makeAnalysisTree.cpp RunHelper.o HodoCluster.o TagHelper.o EnergyCalibration.o AlignmentOfficer.o $(ROOTFLAG) $(EXTRALIBS)
 
 drawPositioningPlots: drawPositioningPlots.cpp DrawTools.o
 	$(CC) -Wall $(INCLUDES) -o drawPositioningPlots drawPositioningPlots.cpp DrawTools.o $(ROOTFLAG) $(EXTRALIBS)
@@ -47,11 +47,14 @@ DrawTools.o: ../CommonTools/src/DrawTools.cc
 RunHelper.o: ../CommonTools/src/RunHelper.cc
 	$(CC) $(CFLAGS) -c ../CommonTools/src/RunHelper.cc $(ROOTFLAG) $(EXTRALIBS)
 
-CalibrationUtility.o: src/CalibrationUtility.cc
-	$(CC) $(CFLAGS) -c src/CalibrationUtility.cc $(ROOTFLAG) $(EXTRALIBS)
+TagHelper.o: src/TagHelper.cc
+	$(CC) $(CFLAGS) -c src/TagHelper.cc $(ROOTFLAG) $(EXTRALIBS)
 
 EnergyCalibration.o: src/EnergyCalibration.cc
 	$(CC) $(CFLAGS) -c src/EnergyCalibration.cc $(ROOTFLAG) $(EXTRALIBS)
+
+AlignmentOfficer.o: src/AlignmentOfficer.cc
+	$(CC) $(CFLAGS) -c src/AlignmentOfficer.cc $(ROOTFLAG) $(EXTRALIBS)
 
 FitTools.o: src/FitTools.cc
 	$(CC) $(CFLAGS) -c src/FitTools.cc $(ROOTFLAG) $(EXTRALIBS)
