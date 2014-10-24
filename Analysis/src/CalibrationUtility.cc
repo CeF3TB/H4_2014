@@ -29,16 +29,19 @@ void CalibrationUtility::setTag( const std::string& tag ) {
 
     tag_cef3_ ="V0";
     tag_bgo_ ="V0";
+    tag_align_ ="V0";
 
   }else if( tag=="V01" ) {
 
     tag_cef3_ ="V1";
     tag_bgo_ ="V0";
+    tag_align_ ="V1";
 
   }else if( tag=="dev" ) {
 
     tag_cef3_ ="dev";
-    tag_bgo_ ="V1";
+    tag_bgo_ ="V0";
+    tag_align_ ="V0";
 
   } else {
     std::cout << "[CalibrationUtility] :: Tag " << tag << " does not exist. Exiting" << std::endl;
@@ -63,6 +66,15 @@ std::string CalibrationUtility::getCeF3FileName() const {
 std::string CalibrationUtility::getBGOFileName() const {
 
   std::string fileName = "BGOCalibration/constants_" + tag_bgo_ + ".txt";
+
+  return fileName;
+
+}
+
+
+std::string CalibrationUtility::getAlignmentFileName() const {
+
+  std::string fileName = "Alignment/offsets_" + tag_align_ + ".txt";
 
   return fileName;
 
