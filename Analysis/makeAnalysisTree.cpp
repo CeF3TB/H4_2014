@@ -18,14 +18,23 @@ std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreW
 
 
 
+struct AlignmentOffsets {
+
+  float wc_x;
+  float wc_y;
+  float hodoX1;
+  float hodoY1;
+  float hodoX2;
+  float hodoY2;
+
+};
 
 
 
 
 int main( int argc, char* argv[] ) {
 
-  TApplication* a = new TApplication("a", 0, 0);
-
+   TApplication* a = new TApplication("a", 0, 0);
 
    if( argc<2 ) {
      std::cout << "ERROR. You need to specify the name of the run you want to process." << std::endl;  
@@ -71,7 +80,7 @@ int main( int argc, char* argv[] ) {
    UInt_t          evtNumber;
 
    std::vector<float>   *ADCvalues;
-   //   std::vector<float>   *digi_max_amplitude;
+   std::vector<float>   *digi_max_amplitude;
    std::vector<float>   *digi_charge_integrated;
    std::vector<float>   *digi_pedestal;
    std::vector<float>   *digi_pedestal_rms;
@@ -84,7 +93,7 @@ int main( int argc, char* argv[] ) {
    TBranch        *b_spillNumber;   //!
    TBranch        *b_evtNumber;   //!
    TBranch        *b_ADCvalues;   //!
-   //   TBranch        *b_digi_max_amplitude;   //!
+   TBranch        *b_digi_max_amplitude;   //!
    TBranch        *b_digi_charge_integrated;   //!
    TBranch        *b_digi_pedestal;   //!
    TBranch        *b_digi_pedestal_rms;   //!
@@ -94,7 +103,7 @@ int main( int argc, char* argv[] ) {
 
    // Set object pointer
    ADCvalues = 0;
-   //   digi_max_amplitude = 0;
+   digi_max_amplitude = 0;
    digi_charge_integrated = 0;
    digi_pedestal = 0;
    digi_pedestal_rms = 0;
@@ -108,7 +117,7 @@ int main( int argc, char* argv[] ) {
    tree->SetBranchAddress("spillNumber", &spillNumber, &b_spillNumber);
    tree->SetBranchAddress("evtNumber", &evtNumber, &b_evtNumber);
    tree->SetBranchAddress("ADCvalues", &ADCvalues, &b_ADCvalues);
-   //   tree->SetBranchAddress("digi_max_amplitude", &digi_max_amplitude, &b_digi_max_amplitude); 
+   tree->SetBranchAddress("digi_max_amplitude", &digi_max_amplitude, &b_digi_max_amplitude); 
    tree->SetBranchAddress("digi_charge_integrated", &digi_charge_integrated, &b_digi_charge_integrated);
    tree->SetBranchAddress("digi_pedestal", &digi_pedestal, &b_digi_pedestal);
    tree->SetBranchAddress("digi_pedestal_rms", &digi_pedestal_rms, &b_digi_pedestal_rms);
@@ -194,9 +203,13 @@ int main( int argc, char* argv[] ) {
 
 
    float wc_x;
-   outTree->Branch( "wc_x", &wc_x, "wc_x");
+   outTree->Branch( "wc_x", &wc_x, "wc_x/F");
    float wc_y;
-   outTree->Branch( "wc_y", &wc_y, "wc_y");
+   outTree->Branch( "wc_y", &wc_y, "wc_y/F");
+
+
+
+   AlignmentOffsets ao = getAlignmentOffsets(tag);
 
 
 
@@ -226,8 +239,8 @@ int main( int argc, char* argv[] ) {
 
      std::vector<float> hodoSmallX_values(HODOSMALLX_CHANNELS, -1.);
      std::vector<float> hodoSmallY_values(HODOSMALLY_CHANNELS, -1.);
-     assignValues( hodoSmallX_values, *ADCvalues, HODOSMALLX_ADC_START_CHANNEL );
-     assignValues( hodoSmallY_values, *ADCvalues, HODOSMALLY_ADC_START_CHANNEL );
+     assignValues( hodoSmallX_values, *digi_max_amplitude, HODOSMALLX_ADC_START_CHANNEL );
+     assignValues( hodoSmallY_values, *digi_max_amplitude, HODOSMALLY_ADC_START_CHANNEL );
 
      // hodo cluster reconstruction
      int clusterMaxFibres = 4;
@@ -235,8 +248,8 @@ int main( int argc, char* argv[] ) {
      doHodoReconstruction( hodoY1_values    , nClusters_hodoY1    , nFibres_hodoY1    , pos_hodoY1    , 0.5, clusterMaxFibres );
      doHodoReconstruction( hodoX2_values    , nClusters_hodoX2    , nFibres_hodoX2    , pos_hodoX2    , 0.5, clusterMaxFibres );
      doHodoReconstruction( hodoY2_values    , nClusters_hodoY2    , nFibres_hodoY2    , pos_hodoY2    , 0.5, clusterMaxFibres );
-     doHodoReconstruction( hodoSmallX_values, nClusters_hodoSmallX, nFibres_hodoSmallX, pos_hodoSmallX, 1.0, clusterMaxFibres );
-     doHodoReconstruction( hodoSmallY_values, nClusters_hodoSmallY, nFibres_hodoSmallY, pos_hodoSmallY, 1.0, clusterMaxFibres );
+     doHodoReconstruction( hodoSmallX_values, nClusters_hodoSmallX, nFibres_hodoSmallX, pos_hodoSmallX, 1.0, 1 );
+     doHodoReconstruction( hodoSmallY_values, nClusters_hodoSmallY, nFibres_hodoSmallY, pos_hodoSmallY, 1.0, 1 );
 
 
      s1 = ADCvalues->at(S1_ADC_START_CHANNEL);
@@ -246,6 +259,7 @@ int main( int argc, char* argv[] ) {
 
      wc_x = ADCvalues->at(WC_X_ADC_START_CHANNEL);
      wc_y = ADCvalues->at(WC_Y_ADC_START_CHANNEL);
+     if( runNumber>=170 ) wc_y = -wc_y; // temporary fix
 
      outTree->Fill();
 
