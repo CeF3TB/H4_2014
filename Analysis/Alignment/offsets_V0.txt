@@ -1,0 +1,6 @@
+wc_y 0.
+wc_x 0.
+hodoY1 0.
+hodoX1 0.
+hodoY2 0.
+hodoX2 0.
