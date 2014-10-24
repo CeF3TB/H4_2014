@@ -6,6 +6,8 @@
 
 #include "channelInfo.h"
 #include "interface/HodoCluster.h"
+#include "interface/CalibrationUtility.h"
+#include "interface/EnergyCalibration.h"
 #include "CommonTools/interface/RunHelper.h"
 
 #include "TApplication.h"
@@ -42,7 +44,7 @@ int main( int argc, char* argv[] ) {
    }
 
    std::string runName = "";
-   std::string tag = "V00";
+   std::string tag = "V01";
 
    if( argc>1 ) {
 
@@ -71,6 +73,11 @@ int main( int argc, char* argv[] ) {
    }
    TTree* tree = (TTree*)file->Get("outputTree");
 
+
+  //set the tag for calibration
+  CalibrationUtility calibUtil(tag);
+  EnergyCalibration cef3Calib(calibUtil.getCeF3FileName());
+  EnergyCalibration bgoCalib(calibUtil.getBGOFileName());
 
 
 
@@ -155,6 +162,13 @@ int main( int argc, char* argv[] ) {
    std::vector<float> bgo( BGO_CHANNELS, -1. );
    outTree->Branch( "bgo", &bgo );
 
+
+   std::vector<float> cef3_corr( CEF3_CHANNELS, -1. );
+   outTree->Branch( "cef3_corr", &cef3_corr );
+
+   std::vector<float> bgo_corr( BGO_CHANNELS, -1. );
+   outTree->Branch( "bgo_corr", &bgo_corr );
+
    float xBeam;
    outTree->Branch( "xBeam", &xBeam, "xBeam/F");
    float yBeam;
@@ -223,9 +237,16 @@ int main( int argc, char* argv[] ) {
      if( iEntry %  10000 == 0 ) std::cout << "Entry: " << iEntry << " / " << nentries << std::endl;
 
      //     assignValues( cef3, *digi_max_amplitude, CEF3_START_CHANNEL );
-     assignValues( cef3, *digi_charge_integrated, CEF3_START_CHANNEL );
+     assignValues( cef3, *digi_charge_integrated, CEF3_START_CHANNEL );  
 
      assignValues( bgo, *ADCvalues, BGO_ADC_START_CHANNEL );
+
+     assignValues( cef3_corr, *digi_charge_integrated, CEF3_START_CHANNEL );  
+
+     assignValues( bgo_corr, *ADCvalues, BGO_ADC_START_CHANNEL );
+
+     bgoCalib.applyCalibration(bgo_corr);
+     cef3Calib.applyCalibration(cef3_corr);
 
      std::vector<float> hodoX1_values(HODOX1_CHANNELS, -1.);
      std::vector<float> hodoY1_values(HODOY1_CHANNELS, -1.);
@@ -285,6 +306,8 @@ void assignValues( std::vector<float> &target, std::vector<float> source, unsign
 
 
 }
+
+
 
 
 
