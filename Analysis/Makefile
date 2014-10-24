@@ -23,6 +23,12 @@ makeAnalysisTree: makeAnalysisTree.cpp RunHelper.o HodoCluster.o
 drawPositioningPlots: drawPositioningPlots.cpp DrawTools.o
 	$(CC) -Wall $(INCLUDES) -o drawPositioningPlots drawPositioningPlots.cpp DrawTools.o $(ROOTFLAG) $(EXTRALIBS)
 
+positionAnalysis: positionAnalysis.cpp 
+	$(CC) -Wall $(INCLUDES) -o positionAnalysis positionAnalysis.cpp $(ROOTFLAG) $(EXTRALIBS)
+
+alignTracking: alignTracking.cpp  HodoCluster.o
+	$(CC) -Wall $(INCLUDES) -o alignTracking alignTracking.cpp HodoCluster.o $(ROOTFLAG) $(EXTRALIBS)
+
 
 
 
