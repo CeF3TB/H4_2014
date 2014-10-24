@@ -6,8 +6,10 @@
 
 #include "channelInfo.h"
 #include "interface/HodoCluster.h"
-#include "interface/CalibrationUtility.h"
+#include "interface/TagHelper.h"
 #include "interface/EnergyCalibration.h"
+#include "interface/AlignmentOfficer.h"
+
 #include "CommonTools/interface/RunHelper.h"
 
 #include "TApplication.h"
@@ -17,19 +19,9 @@ void assignValues( std::vector<float> &target, std::vector<float> source, unsign
 
 void doHodoReconstruction( std::vector<float> values, int &nClusters, int *nFibres, float *pos, float fibreWidth, int clusterMaxFibres );
 std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreWidth, int nClusterMax );
+void copyArray( int n, float *source, float *target );
 
 
-
-struct AlignmentOffsets {
-
-  float wc_x;
-  float wc_y;
-  float hodoX1;
-  float hodoY1;
-  float hodoX2;
-  float hodoY2;
-
-};
 
 
 
@@ -74,10 +66,11 @@ int main( int argc, char* argv[] ) {
    TTree* tree = (TTree*)file->Get("outputTree");
 
 
-  //set the tag for calibration
-  CalibrationUtility calibUtil(tag);
-  EnergyCalibration cef3Calib(calibUtil.getCeF3FileName());
-  EnergyCalibration bgoCalib(calibUtil.getBGOFileName());
+   //set the tag for calibration
+   TagHelper tagHelper(tag);
+   EnergyCalibration cef3Calib(tagHelper.getCeF3FileName());
+   EnergyCalibration bgoCalib(tagHelper.getBGOFileName());
+   AlignmentOfficer alignOfficer(tagHelper.getAlignmentFileName());
 
 
 
@@ -182,12 +175,17 @@ int main( int argc, char* argv[] ) {
    outTree->Branch( "nFibres_hodoX1", nFibres_hodoX1, "nFibres_hodoX1[nClusters_hodoX1]/I" );
    float pos_hodoX1[HODOX1_CHANNELS];
    outTree->Branch( "pos_hodoX1", pos_hodoX1, "pos_hodoX1[nClusters_hodoX1]/F" );
+   float pos_corr_hodoX1[HODOX1_CHANNELS];
+   outTree->Branch( "pos_corr_hodoX1", pos_corr_hodoX1, "pos_corr_hodoX1[nClusters_hodoX1]/F" );
+
    int nClusters_hodoY1;
    outTree->Branch( "nClusters_hodoY1", &nClusters_hodoY1, "nClusters_hodoY1/I" );
    int nFibres_hodoY1[HODOY1_CHANNELS];
    outTree->Branch( "nFibres_hodoY1", nFibres_hodoY1, "nFibres_hodoY1[nClusters_hodoY1]/I" );
    float pos_hodoY1[HODOY1_CHANNELS];
    outTree->Branch( "pos_hodoY1", pos_hodoY1, "pos_hodoY1[nClusters_hodoY1]/F" );
+   float pos_corr_hodoY1[HODOY1_CHANNELS];
+   outTree->Branch( "pos_corr_hodoY1", pos_corr_hodoY1, "pos_corr_hodoY1[nClusters_hodoY1]/F" );
 
    int nClusters_hodoX2;
    outTree->Branch( "nClusters_hodoX2", &nClusters_hodoX2, "nClusters_hodoX2/I" );
@@ -195,12 +193,17 @@ int main( int argc, char* argv[] ) {
    outTree->Branch( "nFibres_hodoX2", nFibres_hodoX2, "nFibres_hodoX2[nClusters_hodoX2]/I" );
    float pos_hodoX2[HODOX2_CHANNELS];
    outTree->Branch( "pos_hodoX2", pos_hodoX2, "pos_hodoX2[nClusters_hodoX2]/F" );
+   float pos_corr_hodoX2[HODOX2_CHANNELS];
+   outTree->Branch( "pos_corr_hodoX2", pos_corr_hodoX2, "pos_corr_hodoX2[nClusters_hodoX2]/F" );
+
    int nClusters_hodoY2;
    outTree->Branch( "nClusters_hodoY2", &nClusters_hodoY2, "nClusters_hodoY2/I" );
    int nFibres_hodoY2[HODOY2_CHANNELS];
    outTree->Branch( "nFibres_hodoY2", nFibres_hodoY2, "nFibres_hodoY2[nClusters_hodoY2]/I" );
    float pos_hodoY2[HODOY2_CHANNELS];
    outTree->Branch( "pos_hodoY2", pos_hodoY2, "pos_hodoY2[nClusters_hodoY2]/F" );
+   float pos_corr_hodoY2[HODOY2_CHANNELS];
+   outTree->Branch( "pos_corr_hodoY2", pos_corr_hodoY2, "pos_corr_hodoY2[nClusters_hodoY2]/F" );
 
    int nClusters_hodoSmallX;
    outTree->Branch( "nClusters_hodoSmallX", &nClusters_hodoSmallX, "nClusters_hodoSmallX/I" );
@@ -208,22 +211,30 @@ int main( int argc, char* argv[] ) {
    outTree->Branch( "nFibres_hodoSmallX", nFibres_hodoSmallX, "nFibres_hodoSmallX[nClusters_hodoSmallX]/I" );
    float pos_hodoSmallX[HODOSMALLX_CHANNELS];
    outTree->Branch( "pos_hodoSmallX", pos_hodoSmallX, "pos_hodoSmallX[nClusters_hodoSmallX]/F" );
+   float pos_corr_hodoSmallX[HODOSMALLX_CHANNELS];
+   outTree->Branch( "pos_corr_hodoSmallX", pos_corr_hodoSmallX, "pos_corr_hodoSmallX[nClusters_hodoSmallX]/F" );
+
    int nClusters_hodoSmallY;
    outTree->Branch( "nClusters_hodoSmallY", &nClusters_hodoSmallY, "nClusters_hodoSmallY/I" );
    int nFibres_hodoSmallY[HODOSMALLY_CHANNELS];
    outTree->Branch( "nFibres_hodoSmallY", nFibres_hodoSmallY, "nFibres_hodoSmallY[nClusters_hodoSmallY]/I" );
    float pos_hodoSmallY[HODOSMALLY_CHANNELS];
    outTree->Branch( "pos_hodoSmallY", pos_hodoSmallY, "pos_hodoSmallY[nClusters_hodoSmallY]/F" );
+   float pos_corr_hodoSmallY[HODOSMALLY_CHANNELS];
+   outTree->Branch( "pos_corr_hodoSmallY", pos_corr_hodoSmallY, "pos_corr_hodoSmallY[nClusters_hodoSmallY]/F" );
 
 
    float wc_x;
    outTree->Branch( "wc_x", &wc_x, "wc_x/F");
    float wc_y;
    outTree->Branch( "wc_y", &wc_y, "wc_y/F");
+   float wc_x_corr;
+   outTree->Branch( "wc_x_corr", &wc_x_corr, "wc_x_corr/F");
+   float wc_y_corr;
+   outTree->Branch( "wc_y_corr", &wc_y_corr, "wc_y_corr/F");
 
 
 
-   //AlignmentOffsets ao = getAlignmentOffsets(tag);
 
 
 
@@ -238,13 +249,10 @@ int main( int argc, char* argv[] ) {
 
      //     assignValues( cef3, *digi_max_amplitude, CEF3_START_CHANNEL );
      assignValues( cef3, *digi_charge_integrated, CEF3_START_CHANNEL );  
-
      assignValues( bgo, *ADCvalues, BGO_ADC_START_CHANNEL );
 
      assignValues( cef3_corr, *digi_charge_integrated, CEF3_START_CHANNEL );  
-
      assignValues( bgo_corr, *ADCvalues, BGO_ADC_START_CHANNEL );
-
      bgoCalib.applyCalibration(bgo_corr);
      cef3Calib.applyCalibration(cef3_corr);
 
@@ -253,10 +261,12 @@ int main( int argc, char* argv[] ) {
      assignValues( hodoX1_values, *ADCvalues, HODOX1_ADC_START_CHANNEL );
      assignValues( hodoY1_values, *ADCvalues, HODOY1_ADC_START_CHANNEL );
 
+
      std::vector<float> hodoX2_values(HODOX2_CHANNELS, -1.);
      std::vector<float> hodoY2_values(HODOY2_CHANNELS, -1.);
      assignValues( hodoX2_values, *ADCvalues, HODOX2_ADC_START_CHANNEL );
      assignValues( hodoY2_values, *ADCvalues, HODOY2_ADC_START_CHANNEL );
+
 
      std::vector<float> hodoSmallX_values(HODOSMALLX_CHANNELS, -1.);
      std::vector<float> hodoSmallY_values(HODOSMALLY_CHANNELS, -1.);
@@ -272,6 +282,15 @@ int main( int argc, char* argv[] ) {
      doHodoReconstruction( hodoSmallX_values, nClusters_hodoSmallX, nFibres_hodoSmallX, pos_hodoSmallX, 1.0, 1 );
      doHodoReconstruction( hodoSmallY_values, nClusters_hodoSmallY, nFibres_hodoSmallY, pos_hodoSmallY, 1.0, 1 );
 
+     copyArray( nClusters_hodoX1, pos_hodoX1, pos_corr_hodoX1 );
+     copyArray( nClusters_hodoY1, pos_hodoY1, pos_corr_hodoY1 );
+     copyArray( nClusters_hodoX2, pos_hodoX2, pos_corr_hodoX2 );
+     copyArray( nClusters_hodoY2, pos_hodoY2, pos_corr_hodoY2 );
+
+     alignOfficer.fix("hodoX1", nClusters_hodoX1, pos_corr_hodoX1);
+     alignOfficer.fix("hodoY1", nClusters_hodoY1, pos_corr_hodoY1);
+     alignOfficer.fix("hodoX2", nClusters_hodoX2, pos_corr_hodoX2);
+     alignOfficer.fix("hodoY2", nClusters_hodoY2, pos_corr_hodoY2);
 
      s1 = ADCvalues->at(S1_ADC_START_CHANNEL);
      s3 = ADCvalues->at(S3_ADC_START_CHANNEL);
@@ -280,6 +299,10 @@ int main( int argc, char* argv[] ) {
 
      wc_x = ADCvalues->at(WC_X_ADC_START_CHANNEL);
      wc_y = ADCvalues->at(WC_Y_ADC_START_CHANNEL);
+
+     wc_x_corr = wc_x_corr + alignOfficer.getOffset("wc_x");
+     wc_y_corr = wc_y_corr + alignOfficer.getOffset("wc_y");
+
      if( runNumber>=170 ) wc_y = -wc_y; // temporary fix
 
      outTree->Fill();
@@ -368,5 +391,13 @@ void doHodoReconstruction( std::vector<float> values, int &nClusters, int *nFibr
     nFibres[i] = clusters[i]->getSize();
     pos[i] = clusters[i]->getPosition();
   }
+
+}
+
+
+void copyArray( int n, float *source, float *target ) {
+
+  for( unsigned i=0; i<n; ++i ) 
+    target[i] = source[i];
 
 }
