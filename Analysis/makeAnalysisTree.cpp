@@ -300,10 +300,10 @@ int main( int argc, char* argv[] ) {
      wc_x = ADCvalues->at(WC_X_ADC_START_CHANNEL);
      wc_y = ADCvalues->at(WC_Y_ADC_START_CHANNEL);
 
-     wc_x_corr = wc_x_corr + alignOfficer.getOffset("wc_x");
-     wc_y_corr = wc_y_corr + alignOfficer.getOffset("wc_y");
+     if( runNumber>=170 ) wc_y = -wc_y;
 
-     if( runNumber>=170 ) wc_y = -wc_y; // temporary fix
+     wc_x_corr = wc_x + alignOfficer.getOffset("wc_x");
+     wc_y_corr = wc_y + alignOfficer.getOffset("wc_y");
 
      outTree->Fill();
 
