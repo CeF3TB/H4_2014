@@ -12,7 +12,7 @@ EXTRALIBS := -L$(ROOTSYS)/lib  -lHtml -lMathCore -lGenVector -lMinuit -lTMVA
 
 
 
-all: makeAnalysisTree calibrateCeF3 drawEnergyScan
+all: makeAnalysisTree calibrateCeF3 drawEnergyScan alignTracking drawPositioningPlots
 
 
 
