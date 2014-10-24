@@ -223,7 +223,7 @@ int main( int argc, char* argv[] ) {
 
 
 
-   AlignmentOffsets ao = getAlignmentOffsets(tag);
+   //AlignmentOffsets ao = getAlignmentOffsets(tag);
 
 
 
