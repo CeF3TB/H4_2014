@@ -26,7 +26,7 @@ int main( int argc, char* argv[] ) {
   }
 
   std::string runName = "";
-  std::string tag = "V00";
+  std::string tag = "V01";
 
   if( argc>1 ) {
 
@@ -56,9 +56,11 @@ int main( int argc, char* argv[] ) {
   TTree* tree = (TTree*)file->Get("recoTree");
 
 
-  std::string outputdir = "PositionPlots_" + tag + "/" + runName + "/";
+  std::string outputdir = "PositionPlots_" + tag + "/" + runName;
   system( Form("mkdir -p %s", outputdir.c_str()) );
 
+
+  // uncorrected:
 
   drawSingleVariable( outputdir, tree, "wc_x", "wc_x", "", 50, -20., 20., "X( WC ) [mm]"  );
   drawSingleVariable( outputdir, tree, "wc_y", "wc_y", "", 50, -20., 20., "Y( WC ) [mm]"  );
@@ -74,6 +76,41 @@ int main( int argc, char* argv[] ) {
 
   drawSingleVariable( outputdir, tree, "hodoX1_vs_hodoX2", "pos_hodoX1[0] - pos_hodoX2[0]", "nClusters_hodoX1==1 && nClusters_hodoX2==1", 50, -20., 20., "X( HodoX1 - HodoX2 ) [mm]"  );
   drawSingleVariable( outputdir, tree, "hodoY1_vs_hodoY2", "pos_hodoY1[0] - pos_hodoY2[0]", "nClusters_hodoY1==1 && nClusters_hodoY2==1", 50, -20., 20., "Y( HodoY1 - HodoY2 ) [mm]"  );
+
+  // comparison to hodoSmall is the real check of alignment:
+  drawSingleVariable( outputdir, tree, "hodoX1_vs_hodoSmallX", "pos_hodoX1[0] - pos_hodoSmallX[0]", "nClusters_hodoX1==1 && nClusters_hodoSmallX==1", 50, -20., 20., "X( HodoX1 - HodoSmallX ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoX2_vs_hodoSmallX", "pos_hodoX2[0] - pos_hodoSmallX[0]", "nClusters_hodoX2==1 && nClusters_hodoSmallX==1", 50, -20., 20., "X( HodoX2 - HodoSmallX ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY1_vs_hodoSmallY", "pos_hodoY1[0] - pos_hodoSmallY[0]", "nClusters_hodoY1==1 && nClusters_hodoSmallY==1", 50, -20., 20., "Y( HodoY1 - HodoSmallY ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY2_vs_hodoSmallY", "pos_hodoY2[0] - pos_hodoSmallY[0]", "nClusters_hodoY2==1 && nClusters_hodoSmallY==1", 50, -20., 20., "Y( HodoY2 - HodoSmallY ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoSmallX", "wc_x - pos_hodoSmallX[0]", "nClusters_hodoSmallX==1", 50, -20., 20., "X( WC - HodoSmallX ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoSmallY", "wc_y - pos_hodoSmallY[0]", "nClusters_hodoSmallY==1", 50, -20., 20., "Y( WC - HodoSmallY ) [mm]"  );
+
+
+
+  // corrected:
+
+  drawSingleVariable( outputdir, tree, "wc_x_corr", "wc_x_corr", "", 50, -20., 20., "X( WC ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_y_corr", "wc_y_corr", "", 50, -20., 20., "Y( WC ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoX1_corr", "pos_corr_hodoX1[0]", "nClusters_hodoX1==1", 50, -20., 20., "X( hodoX1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY1_corr", "pos_corr_hodoY1[0]", "nClusters_hodoY1==1", 50, -20., 20., "Y( hodoY1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoX2_corr", "pos_corr_hodoX2[0]", "nClusters_hodoX2==1", 50, -20., 20., "X( hodoX2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY2_corr", "pos_corr_hodoY2[0]", "nClusters_hodoY2==1", 50, -20., 20., "Y( hodoY2 ) [mm]"  );
+
+  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX1_corr", "wc_x_corr - pos_corr_hodoX1[0]", "nClusters_hodoX1==1", 50, -20., 20., "X( WC - HodoX1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY1_corr", "wc_y_corr - pos_corr_hodoY1[0]", "nClusters_hodoY1==1", 50, -20., 20., "Y( WC - HodoY1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX2_corr", "wc_x_corr - pos_corr_hodoX2[0]", "nClusters_hodoX2==1", 50, -20., 20., "X( WC - HodoX2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY2_corr", "wc_y_corr - pos_corr_hodoY2[0]", "nClusters_hodoY2==1", 50, -20., 20., "Y( WC - HodoY2 ) [mm]"  );
+
+  drawSingleVariable( outputdir, tree, "hodoX1_vs_hodoX2_corr", "pos_corr_hodoX1[0] - pos_corr_hodoX2[0]", "nClusters_hodoX1==1 && nClusters_hodoX2==1", 50, -20., 20., "X( HodoX1 - HodoX2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY1_vs_hodoY2_corr", "pos_corr_hodoY1[0] - pos_corr_hodoY2[0]", "nClusters_hodoY1==1 && nClusters_hodoY2==1", 50, -20., 20., "Y( HodoY1 - HodoY2 ) [mm]"  );
+
+  // comparison to hodoSmall is the real check of alignment:
+  drawSingleVariable( outputdir, tree, "hodoX1_vs_hodoSmallX_corr", "pos_corr_hodoX1[0] - pos_hodoSmallX[0]", "nClusters_hodoX1==1 && nClusters_hodoSmallX==1", 50, -20., 20., "X( HodoX1 - HodoSmallX ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoX2_vs_hodoSmallX_corr", "pos_corr_hodoX2[0] - pos_hodoSmallX[0]", "nClusters_hodoX2==1 && nClusters_hodoSmallX==1", 50, -20., 20., "X( HodoX2 - HodoSmallX ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY1_vs_hodoSmallY_corr", "pos_corr_hodoY1[0] - pos_hodoSmallY[0]", "nClusters_hodoY1==1 && nClusters_hodoSmallY==1", 50, -20., 20., "Y( HodoY1 - HodoSmallY ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY2_vs_hodoSmallY_corr", "pos_corr_hodoY2[0] - pos_hodoSmallY[0]", "nClusters_hodoY2==1 && nClusters_hodoSmallY==1", 50, -20., 20., "Y( HodoY2 - HodoSmallY ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoSmallX_corr", "wc_x_corr - pos_hodoSmallX[0]", "nClusters_hodoSmallX==1", 50, -20., 20., "X( WC - HodoSmallX ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoSmallY_corr", "wc_y_corr - pos_hodoSmallY[0]", "nClusters_hodoSmallY==1", 50, -20., 20., "Y( WC - HodoSmallY ) [mm]"  );
 
 
 
