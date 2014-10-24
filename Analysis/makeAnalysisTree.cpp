@@ -69,8 +69,10 @@ int main( int argc, char* argv[] ) {
    UInt_t          runNumber;
    UInt_t          spillNumber;
    UInt_t          evtNumber;
+
    std::vector<float>   *ADCvalues;
-   std::vector<float>   *digi_max_amplitude;
+   //   std::vector<float>   *digi_max_amplitude;
+   std::vector<float>   *digi_charge_integrated;
    std::vector<float>   *digi_pedestal;
    std::vector<float>   *digi_pedestal_rms;
    std::vector<float>   *digi_time_at_frac30;
@@ -82,7 +84,8 @@ int main( int argc, char* argv[] ) {
    TBranch        *b_spillNumber;   //!
    TBranch        *b_evtNumber;   //!
    TBranch        *b_ADCvalues;   //!
-   TBranch        *b_digi_max_amplitude;   //!
+   //   TBranch        *b_digi_max_amplitude;   //!
+   TBranch        *b_digi_charge_integrated;   //!
    TBranch        *b_digi_pedestal;   //!
    TBranch        *b_digi_pedestal_rms;   //!
    TBranch        *b_digi_time_at_frac30;   //!
@@ -91,24 +94,27 @@ int main( int argc, char* argv[] ) {
 
    // Set object pointer
    ADCvalues = 0;
-   digi_max_amplitude = 0;
+   //   digi_max_amplitude = 0;
+   digi_charge_integrated = 0;
    digi_pedestal = 0;
    digi_pedestal_rms = 0;
    digi_time_at_frac30 = 0;
    digi_time_at_frac50 = 0;
    digi_time_at_max = 0;
 
+
+
    tree->SetBranchAddress("runNumber", &runNumber, &b_runNumber);
    tree->SetBranchAddress("spillNumber", &spillNumber, &b_spillNumber);
    tree->SetBranchAddress("evtNumber", &evtNumber, &b_evtNumber);
    tree->SetBranchAddress("ADCvalues", &ADCvalues, &b_ADCvalues);
-   tree->SetBranchAddress("digi_max_amplitude", &digi_max_amplitude, &b_digi_max_amplitude);
+   //   tree->SetBranchAddress("digi_max_amplitude", &digi_max_amplitude, &b_digi_max_amplitude); 
+   tree->SetBranchAddress("digi_charge_integrated", &digi_charge_integrated, &b_digi_charge_integrated);
    tree->SetBranchAddress("digi_pedestal", &digi_pedestal, &b_digi_pedestal);
    tree->SetBranchAddress("digi_pedestal_rms", &digi_pedestal_rms, &b_digi_pedestal_rms);
    tree->SetBranchAddress("digi_time_at_frac30", &digi_time_at_frac30, &b_digi_time_at_frac30);
    tree->SetBranchAddress("digi_time_at_frac50", &digi_time_at_frac50, &b_digi_time_at_frac50);
    tree->SetBranchAddress("digi_time_at_max", &digi_time_at_max, &b_digi_time_at_max);
-
 
 
 
@@ -203,7 +209,8 @@ int main( int argc, char* argv[] ) {
 
      if( iEntry %  10000 == 0 ) std::cout << "Entry: " << iEntry << " / " << nentries << std::endl;
 
-     assignValues( cef3, *digi_max_amplitude, CEF3_START_CHANNEL );
+     //     assignValues( cef3, *digi_max_amplitude, CEF3_START_CHANNEL );
+     assignValues( cef3, *digi_charge_integrated, CEF3_START_CHANNEL );
 
      assignValues( bgo, *ADCvalues, BGO_ADC_START_CHANNEL );
 
@@ -261,6 +268,7 @@ void assignValues( std::vector<float> &target, std::vector<float> source, unsign
 
   for( unsigned i=0; i<target.size(); ++i ) 
     target[i] = source[startPos+i];
+
 
 }
 
