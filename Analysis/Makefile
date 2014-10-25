@@ -26,8 +26,8 @@ drawPositioningPlots: drawPositioningPlots.cpp DrawTools.o
 positionAnalysis: positionAnalysis.cpp 
 	$(CC) -Wall $(INCLUDES) -o positionAnalysis positionAnalysis.cpp $(ROOTFLAG) $(EXTRALIBS)
 
-alignTracking: alignTracking.cpp  HodoCluster.o
-	$(CC) -Wall $(INCLUDES) -o alignTracking alignTracking.cpp HodoCluster.o $(ROOTFLAG) $(EXTRALIBS)
+alignTracking: alignTracking.cpp  HodoCluster.o AlignmentOfficer.o TagHelper.o
+	$(CC) -Wall $(INCLUDES) -o alignTracking alignTracking.cpp HodoCluster.o AlignmentOfficer.o TagHelper.o $(ROOTFLAG) $(EXTRALIBS)
 
 calibrateCeF3: calibrateCeF3.cpp DrawTools.o
 	$(CC) -Wall $(INCLUDES) -o calibrateCeF3 calibrateCeF3.cpp DrawTools.o $(ROOTFLAG) $(EXTRALIBS)
