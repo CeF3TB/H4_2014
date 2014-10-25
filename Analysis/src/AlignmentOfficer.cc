@@ -1,6 +1,7 @@
 #include "../interface/AlignmentOfficer.h"
 
 #include <fstream>
+#include <iostream>
 
 
 
@@ -29,6 +30,8 @@ void AlignmentOfficer::setOffsetsFile( const std::string& fileName ) {
     offsets_[name] = offset;
 
   }
+
+  std::cout << "-> Loaded alignment offsets from file: " << fileName << std::endl;
 
 }
 

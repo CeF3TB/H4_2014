@@ -34,6 +34,8 @@ void EnergyCalibration::setCalibrationFile( const std::string& fileName ) {
 
   calibConstants_.pop_back(); // remove last additional line
 
+  std::cout << "-> Loaded calibration coefficients from file: " << fileName << std::endl;
+
 }
 
 
