@@ -8,6 +8,8 @@
 #include "TCanvas.h"
 
 #include "HodoCluster.h"
+#include "AlignmentOfficer.h"
+#include "TagHelper.h"
 #include "channelInfo.h"
 
 
@@ -20,11 +22,25 @@ std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreW
 float fitAndDraw( const std::string& outputdir, TH1F* h1 );
 
 
-int main() {
+int main( int argc, char* argv[] ) {
+
+
+  std::string tag="";
+  if( argc<2 ) {
+    std::cout << "USAGE: ./alignTracking [trackingTag]" << std::endl;
+    exit(11);
+  } else {
+    std::string tag_str(argv[1]);
+    tag = tag_str;
+  }
+  
 
   // this is the dir in which the offsets will be saved:
   std::string constDirName = "Alignment";
   system(Form("mkdir -p %s", constDirName.c_str()));
+
+  std::string constFileName = constDirName+"/offsets_"+tag+".txt";
+  AlignmentOfficer alignOfficer(constFileName);
 
 
   TFile* file = TFile::Open("data/run_273.root");
@@ -151,10 +167,18 @@ int main() {
      doHodoReconstruction( hodoX2_values    , nClusters_hodoX2    , nFibres_hodoX2    , pos_hodoX2    , 0.5, clusterMaxFibres );
      doHodoReconstruction( hodoY2_values    , nClusters_hodoY2    , nFibres_hodoY2    , pos_hodoY2    , 0.5, clusterMaxFibres );
 
+     alignOfficer.fix("hodoX1", nClusters_hodoX1, pos_hodoX1);
+     alignOfficer.fix("hodoY1", nClusters_hodoY1, pos_hodoY1);
+     alignOfficer.fix("hodoX2", nClusters_hodoX2, pos_hodoX2);
+     alignOfficer.fix("hodoY2", nClusters_hodoY2, pos_hodoY2);
+
 
      wc_x = ADCvalues->at(WC_X_ADC_START_CHANNEL);
      wc_y = ADCvalues->at(WC_Y_ADC_START_CHANNEL);
      if( runNumber>=170 ) wc_y = -wc_y; // temporary fix
+
+     wc_x += alignOfficer.getOffset("wc_x");
+     wc_y += alignOfficer.getOffset("wc_y");
 
      float hodoSmallY_low = digi_max_amplitude->at(6);
      float hodoSmallY_hi  = digi_max_amplitude->at(7);
@@ -224,7 +248,7 @@ int main() {
   } // for entries
 
 
-  std::string outputdir = "AlignmentPlots";
+  std::string outputdir = "AlignmentPlots_"+tag;
   system( Form("mkdir -p %s", outputdir.c_str()));
 
   float offset_wc_y_low = fitAndDraw( outputdir, h1_wc_y_low );
@@ -288,7 +312,7 @@ float fitAndDraw( const std::string& outputdir, TH1F* h1 ) {
 
     float m = f1->GetParameter(1);
     float s = f1->GetParameter(2);
-    float nSigmas = 1.5;
+    float nSigmas = 1.7;
     f1->SetRange( m-nSigmas*s, m+nSigmas*s );
     if( i==3 ) 
       h1->Fit(f1, "RQ");
