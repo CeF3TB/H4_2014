@@ -45,9 +45,9 @@ void TagHelper::setTag( const std::string& tag ) {
 
   }else if( tag=="dev" ) {
 
-    tag_cef3_ ="dev";
+    tag_cef3_ ="V1";
     tag_bgo_ ="V0";
-    tag_align_ ="V0";
+    tag_align_ ="dev";
 
   } else {
     std::cout << "[TagHelper] :: Tag " << tag << " does not exist. Exiting" << std::endl;
