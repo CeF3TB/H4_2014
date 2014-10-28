@@ -6,7 +6,10 @@
 #include "TH1F.h"
 #include "TF1.h"
 #include "TCanvas.h"
+#include "TLine.h"
+#include "TH2D.h"
 
+#include "DrawTools.h"
 #include "HodoCluster.h"
 #include "AlignmentOfficer.h"
 #include "TagHelper.h"
@@ -22,12 +25,22 @@ std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreW
 float fitAndDraw( const std::string& outputdir, TH1F* h1 );
 
 
+
+
+
+
+
+
+
 int main( int argc, char* argv[] ) {
 
 
-  std::string tag="";
+  DrawTools::setStyle();
+
+
+  std::string tag="V0";
   if( argc<2 ) {
-    std::cout << "USAGE: ./alignTracking [trackingTag]" << std::endl;
+    std::cout << "USAGE: ./alignTracking [startTag]" << std::endl;
     exit(11);
   } else {
     std::string tag_str(argv[1]);
@@ -116,7 +129,7 @@ int main( int argc, char* argv[] ) {
   float wc_y;
 
 
-  int nBins = 50;
+  int nBins = 80;
   float xMin = -20.;
   float xMax =  20.;
 
@@ -182,6 +195,8 @@ int main( int argc, char* argv[] ) {
 
      float hodoSmallY_low = digi_max_amplitude->at(6);
      float hodoSmallY_hi  = digi_max_amplitude->at(7);
+     //float hodoSmallX_low = digi_max_amplitude->at(5);
+     //float hodoSmallX_hi  = digi_max_amplitude->at(4);
      float hodoSmallX_low = digi_max_amplitude->at(4);
      float hodoSmallX_hi  = digi_max_amplitude->at(5);
 
@@ -264,8 +279,8 @@ int main( int argc, char* argv[] ) {
   float offset_hodoX2_low = fitAndDraw( outputdir, h1_hodoX2_low );
   float offset_hodoX2_hi  = fitAndDraw( outputdir, h1_hodoX2_hi );
 
-  float offset_wc_y  = 0.5*(offset_wc_y_low+offset_wc_y_hi);
-  float offset_wc_x  = 0.5*(offset_wc_x_low+offset_wc_x_hi);
+  float offset_wc_y   = 0.5*(offset_wc_y_low  +offset_wc_y_hi);
+  float offset_wc_x   = 0.5*(offset_wc_x_low  +offset_wc_x_hi);
   float offset_hodoY1 = 0.5*(offset_hodoY1_low+offset_hodoY1_hi);
   float offset_hodoX1 = 0.5*(offset_hodoX1_low+offset_hodoX1_hi);
   float offset_hodoY2 = 0.5*(offset_hodoY2_low+offset_hodoY2_hi);
@@ -298,39 +313,124 @@ int main( int argc, char* argv[] ) {
 
 float fitAndDraw( const std::string& outputdir, TH1F* h1 ) {
 
+
+  float returnConst=0.;
+
   TCanvas* c1 = new TCanvas("c1", "", 600, 600);
   c1->cd();
 
-  float maxPos = h1->GetBinCenter(h1->GetMaximumBin());
+  float xMin = h1->GetXaxis()->GetXmin();
+  float xMax = h1->GetXaxis()->GetXmax();
+  float yMax = 1.1*h1->GetMaximum();
 
-  TF1* f1 = new TF1(Form("f1_%s", h1->GetName()), "gaus", -10., 10.);
+
+  TH2D* axes = new TH2D( "axes", "", 10, xMin, xMax, 10, 0., yMax );
+  axes->SetXTitle(h1->GetName());
+  axes->SetYTitle("Events");
+  axes->Draw();
+
+  h1->SetFillColor(29);
+  h1->Draw("same");
+
+  int opt=2;
+
+  if( opt==1 ) { // gaussian fit
+
+    float maxPos = h1->GetBinCenter(h1->GetMaximumBin());
+
+    TF1* f1 = new TF1(Form("f1_%s", h1->GetName()), "gaus", -10., 10.);
+    
+    f1->SetParameter( 1, maxPos );
+    h1->Fit(f1, "QRN");
+
+    for( unsigned i=0; i<4; ++i ) {
+
+      float m = f1->GetParameter(1);
+      float s = f1->GetParameter(2);
+      float nSigmas = 1.2;
+      f1->SetRange( m-nSigmas*s, m+nSigmas*s );
+      if( i==3 ) 
+        h1->Fit(f1, "RQ");
+      else
+        h1->Fit(f1, "RNQ");
+
+    }
+
+    f1->SetLineColor(kRed);
+    returnConst = f1->GetParameter(1);
+
+  } else if( opt==2 ) { // average of high bins
+
+    float maximum = h1->GetMaximum();
+    float thresh = 0.25*maximum;
+
+    float total=0.;
+    float denom = 0.;
+    
+    int nBins = h1->GetNbinsX();
+    TH1F* h1_usedBins = new TH1F( Form("usedBins_%s", h1->GetName()), "", nBins, xMin, xMax );
+
+    for( unsigned ibin=1; ibin<nBins; ++ibin ) {
+
+      if( h1->GetBinContent(ibin)<thresh ) continue;
+
+      h1_usedBins->SetBinContent( ibin, h1->GetBinContent(ibin) );
   
-  f1->SetParameter( 1, maxPos );
-  h1->Fit(f1, "QRN");
+      // average:
+      total += h1->GetBinCenter(ibin)*h1->GetBinContent(ibin);
+      denom += h1->GetBinContent(ibin);
 
-  for( unsigned i=0; i<4; ++i ) {
+      //// weighted average:
+      //total += h1->GetBinCenter(ibin)*h1->GetBinContent(ibin);
+      //denom += h1->GetBinContent(ibin);
 
-    float m = f1->GetParameter(1);
-    float s = f1->GetParameter(2);
-    float nSigmas = 1.7;
-    f1->SetRange( m-nSigmas*s, m+nSigmas*s );
-    if( i==3 ) 
-      h1->Fit(f1, "RQ");
-    else
-      h1->Fit(f1, "RNQ");
+    }
+
+    TLine* lineThresh = new TLine( xMin, thresh, xMax, thresh );
+    lineThresh->SetLineStyle(2);
+    lineThresh->Draw("same");
+
+    returnConst = total/denom;
+    h1_usedBins->SetFillColor(kOrange);
+    h1_usedBins->Draw("same");
+
+
+  } else if( opt==3 ) { // maximum
+
+    float maxBinCenter = h1->GetBinCenter(h1->GetMaximumBin());
+
+    returnConst = maxBinCenter;
 
   }
 
-  f1->SetLineColor(kRed);
 
-  h1->Draw();
+  TLine* lineOffset = new TLine( returnConst, 0., returnConst, yMax );
+  lineOffset->SetLineColor(kRed);
+  lineOffset->SetLineWidth(3);
+  lineOffset->Draw("same");
+
+  TPaveText* offsetText = new TPaveText( 0.6, 0.7, 0.9, 0.9, "brNDC");
+  offsetText->SetFillColor(0);
+  offsetText->SetTextSize(0.035);
+  if( returnConst>0. )
+    offsetText->AddText( Form("offset = +%.1f mm", returnConst) );
+  else
+    offsetText->AddText( Form("offset = %.1f mm", returnConst) );
+  offsetText->Draw("same");
+  
+  
+  gPad->RedrawAxis();
+
+  TPaveText* labelTop = DrawTools::getLabelTop();
+  labelTop->Draw("same");
 
   c1->SaveAs(Form("%s/%s.eps", outputdir.c_str(), h1->GetName()));
   c1->SaveAs(Form("%s/%s.png", outputdir.c_str(), h1->GetName()));
 
   delete c1;
+  delete axes;
 
-  return f1->GetParameter(1);
+  return returnConst;
 
 }
 
