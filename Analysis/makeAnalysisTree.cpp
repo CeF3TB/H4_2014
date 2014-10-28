@@ -17,8 +17,8 @@
 
 void assignValues( std::vector<float> &target, std::vector<float> source, unsigned int startPos );
 
-void doHodoReconstruction( std::vector<float> values, int &nClusters, int *nFibres, float *pos, float fibreWidth, int clusterMaxFibres );
-std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreWidth, int nClusterMax );
+void doHodoReconstruction( std::vector<float> values, int &nClusters, int *nFibres, float *pos, float fibreWidth, int clusterMaxFibres, float Cut );
+std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreWidth, int nClusterMax, float Cut );
 void copyArray( int n, float *source, float *target );
 
 
@@ -287,12 +287,12 @@ int main( int argc, char* argv[] ) {
 
      // hodo cluster reconstruction
      int clusterMaxFibres = 4;
-     doHodoReconstruction( hodoX1_values    , nClusters_hodoX1    , nFibres_hodoX1    , pos_hodoX1    , 0.5, clusterMaxFibres );
-     doHodoReconstruction( hodoY1_values    , nClusters_hodoY1    , nFibres_hodoY1    , pos_hodoY1    , 0.5, clusterMaxFibres );
-     doHodoReconstruction( hodoX2_values    , nClusters_hodoX2    , nFibres_hodoX2    , pos_hodoX2    , 0.5, clusterMaxFibres );
-     doHodoReconstruction( hodoY2_values    , nClusters_hodoY2    , nFibres_hodoY2    , pos_hodoY2    , 0.5, clusterMaxFibres );
-     doHodoReconstruction( hodoSmallX_values, nClusters_hodoSmallX, nFibres_hodoSmallX, pos_hodoSmallX, 1.0, 1 );
-     doHodoReconstruction( hodoSmallY_values, nClusters_hodoSmallY, nFibres_hodoSmallY, pos_hodoSmallY, 1.0, 1 );
+     doHodoReconstruction( hodoX1_values    , nClusters_hodoX1    , nFibres_hodoX1    , pos_hodoX1    , 0.5, clusterMaxFibres, 0. );
+     doHodoReconstruction( hodoY1_values    , nClusters_hodoY1    , nFibres_hodoY1    , pos_hodoY1    , 0.5, clusterMaxFibres, 0. );
+     doHodoReconstruction( hodoX2_values    , nClusters_hodoX2    , nFibres_hodoX2    , pos_hodoX2    , 0.5, clusterMaxFibres , 0.);
+     doHodoReconstruction( hodoY2_values    , nClusters_hodoY2    , nFibres_hodoY2    , pos_hodoY2    , 0.5, clusterMaxFibres, 0. );
+     doHodoReconstruction( hodoSmallX_values, nClusters_hodoSmallX, nFibres_hodoSmallX, pos_hodoSmallX, 1.0, 1 , 60.);
+     doHodoReconstruction( hodoSmallY_values, nClusters_hodoSmallY, nFibres_hodoSmallY, pos_hodoSmallY, 1.0, 1, 60. );
 
      copyArray( nClusters_hodoX1, pos_hodoX1, pos_corr_hodoX1 );
      copyArray( nClusters_hodoY1, pos_hodoY1, pos_corr_hodoY1 );
@@ -345,7 +345,7 @@ void assignValues( std::vector<float> &target, std::vector<float> source, unsign
 
 
 
-std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreWidth, int nClusterMax ) {
+std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreWidth, int nClusterMax, float Cut ) {
 
   std::vector<HodoCluster*> clusters;
 
@@ -353,7 +353,7 @@ std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreW
 
   for( unsigned i=0; i<hodo.size(); ++i ) {
 
-    if( hodo[i] > 0.) { // hit
+    if( hodo[i] > Cut) { // hit
 
       if( currentCluster->getSize() < nClusterMax ) {
 
@@ -393,9 +393,9 @@ std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreW
 
 
 
-void doHodoReconstruction( std::vector<float> values, int &nClusters, int *nFibres, float *pos, float fibreWidth, int clusterMaxFibres ) {
+void doHodoReconstruction( std::vector<float> values, int &nClusters, int *nFibres, float *pos, float fibreWidth, int clusterMaxFibres, float Cut ) {
 
-  std::vector<HodoCluster*> clusters = getHodoClusters( values, fibreWidth, clusterMaxFibres );
+  std::vector<HodoCluster*> clusters = getHodoClusters( values, fibreWidth, clusterMaxFibres, Cut );
 
   nClusters = clusters.size();
   for( unsigned i=0; i<clusters.size(); ++i ) {
