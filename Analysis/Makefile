@@ -12,7 +12,7 @@ EXTRALIBS := -L$(ROOTSYS)/lib  -lHtml -lMathCore -lGenVector -lMinuit -lTMVA
 
 
 
-all: makeAnalysisTree calibrateCeF3 drawEnergyScan
+all: makeAnalysisTree calibrateCeF3 drawEnergyScan drawCeF3Intercalibration drawAngularStudies drawHVEnergyScan
 
 
 
@@ -35,6 +35,14 @@ calibrateCeF3: calibrateCeF3.cpp DrawTools.o
 drawEnergyScan: drawEnergyScan.cpp DrawTools.o
 	$(CC) -Wall $(INCLUDES) -o drawEnergyScan drawEnergyScan.cpp DrawTools.o $(ROOTFLAG) $(EXTRALIBS)
 
+drawHVEnergyScan: drawHVEnergyScan.cpp DrawTools.o
+	$(CC) -Wall $(INCLUDES) -o drawHVEnergyScan drawHVEnergyScan.cpp DrawTools.o $(ROOTFLAG) $(EXTRALIBS)
+
+drawCeF3Intercalibration: drawCeF3Intercalibration.cpp DrawTools.o
+	$(CC) -Wall $(INCLUDES) -o drawCeF3Intercalibration drawCeF3Intercalibration.cpp DrawTools.o $(ROOTFLAG) $(EXTRALIBS)
+
+drawAngularStudies: drawAngularStudies.cpp DrawTools.o
+	$(CC) -Wall $(INCLUDES) -o drawAngularStudies drawAngularStudies.cpp DrawTools.o $(ROOTFLAG) $(EXTRALIBS)
 
 
 

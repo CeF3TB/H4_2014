@@ -134,13 +134,14 @@ int main( int argc, char* argv[] ) {
 TF1* fitSingleElectronPeak( const std::string& outputdir, int i, TTree* tree ) {
 
   std::string histoName(Form("h1_%d", i));
-  TH1D* h1 = new TH1D(histoName.c_str(), "", 1000, 0., 390000.);
+  TH1D* h1 = new TH1D(histoName.c_str(), "", 1000, 0., 390.);
+  //  TH1D* h1 = new TH1D(histoName.c_str(), "", 1000, 0., 390000.);
   //tree->Project( histoName.c_str(), Form("cef3_corr[%d]", i), "");
   tree->Project( histoName.c_str(), Form("cef3_corr[%d]", i));
 
   //tree->Project( histoName.c_str(), Form("cef3_corr[%d]", i), "(isSingleEle_scintFront==1 && nHodoClustersX==1 && nHodoClustersY==1 )");
 
-  TF1* f1 = new TF1( Form("gaus_%d", i), "gaus", 5000., 390000.);
+  TF1* f1 = new TF1( Form("gaus_%d", i), "gaus", 5., 390000.);
   //  TF1* f1 = new TF1( Form("gaus_%d", i), "gaus", 400., 1200.);
     f1->SetParameter(0, 300000.);
     f1->SetParameter(1, 250000.);
@@ -158,13 +159,14 @@ TF1* fitSingleElectronPeak( const std::string& outputdir, int i, TTree* tree ) {
 TF1* checkTotalResolution( const std::string& outputdir, TTree* tree ) {
 
   std::string histoName("h1_tot");
-  TH1D* h1 = new TH1D(histoName.c_str(), "", 2000, 200000.,1500000.);
+  // TH1D* h1 = new TH1D(histoName.c_str(), "", 2000, 200000.,1500000.);
+  TH1D* h1 = new TH1D(histoName.c_str(), "", 2000, 0.,430.);
   tree->Project( histoName.c_str(), "cef3_corr[0]+cef3_corr[1]+cef3_corr[2]+cef3_corr[3]", "");
 
   // tree->Project( histoName.c_str(), "cef3_corr[0]+cef3_corr[1]+cef3_corr[2]+cef3_corr[3]", "(scintFront>500. && scintFront<2000. && nHodoClustersX==1 && nHodoClustersY==1)");
 
-  //  TF1* f1 = new TF1("gaus_tot", "gaus", 1600., 4800.);
-  TF1* f1 = new TF1("gaus_tot", "gaus", 200000.,1500000. );
+  TF1* f1 = new TF1("gaus_tot", "gaus", 0., 380.);
+  // TF1* f1 = new TF1("gaus_tot", "gaus", 200000.,1500000. );
   // f1->SetParameter(0, 3000000.);
   //f1->SetParameter(1, 3000000.);
   //f1->SetParameter(2, 60000.);

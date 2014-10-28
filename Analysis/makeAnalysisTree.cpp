@@ -167,6 +167,14 @@ int main( int argc, char* argv[] ) {
    float yBeam;
    outTree->Branch( "yBeam", &yBeam, "yBeam/F");
 
+   float beamEnergy;
+   outTree->Branch( "beamEnergy", &beamEnergy, "xbeamEnergy/F");
+
+   float angle;
+   outTree->Branch("angle", &angle, "angle/F");
+
+   float voltage;
+   outTree->Branch( "voltage", &voltage, "voltage/F");
 
 
    int nClusters_hodoX1;
@@ -247,14 +255,18 @@ int main( int argc, char* argv[] ) {
 
      if( iEntry %  10000 == 0 ) std::cout << "Entry: " << iEntry << " / " << nentries << std::endl;
 
-     //     assignValues( cef3, *digi_max_amplitude, CEF3_START_CHANNEL );
-     assignValues( cef3, *digi_charge_integrated, CEF3_START_CHANNEL );  
+     assignValues( cef3, *digi_max_amplitude, CEF3_START_CHANNEL );
+     // assignValues( cef3, *digi_charge_integrated, CEF3_START_CHANNEL );  
      assignValues( bgo, *ADCvalues, BGO_ADC_START_CHANNEL );
 
-     assignValues( cef3_corr, *digi_charge_integrated, CEF3_START_CHANNEL );  
+     //"Intercalibrated" values
+     assignValues( cef3_corr, *digi_max_amplitude, CEF3_START_CHANNEL );  
+     //  assignValues( cef3_corr, *digi_charge_integrated, CEF3_START_CHANNEL );  
      assignValues( bgo_corr, *ADCvalues, BGO_ADC_START_CHANNEL );
      bgoCalib.applyCalibration(bgo_corr);
      cef3Calib.applyCalibration(cef3_corr);
+
+
 
      std::vector<float> hodoX1_values(HODOX1_CHANNELS, -1.);
      std::vector<float> hodoY1_values(HODOY1_CHANNELS, -1.);
@@ -329,7 +341,6 @@ void assignValues( std::vector<float> &target, std::vector<float> source, unsign
 
 
 }
-
 
 
 
