@@ -26,7 +26,7 @@ int main( int argc, char* argv[] ) {
   }
 
   std::string runName = "";
-  std::string tag = "V00";
+  std::string tag = "V01";
 
   if( argc>1 ) {
 
@@ -56,9 +56,11 @@ int main( int argc, char* argv[] ) {
   TTree* tree = (TTree*)file->Get("recoTree");
 
 
-  std::string outputdir = "PositionPlots_" + tag + "/" + runName + "/";
+  std::string outputdir = "PositionPlots_" + tag + "/" + runName;
   system( Form("mkdir -p %s", outputdir.c_str()) );
 
+
+  // uncorrected:
 
   drawSingleVariable( outputdir, tree, "wc_x", "wc_x", "", 50, -20., 20., "X( WC ) [mm]"  );
   drawSingleVariable( outputdir, tree, "wc_y", "wc_y", "", 50, -20., 20., "Y( WC ) [mm]"  );
@@ -67,13 +69,33 @@ int main( int argc, char* argv[] ) {
   drawSingleVariable( outputdir, tree, "hodoX2", "pos_hodoX2[0]", "nClusters_hodoX2==1", 50, -20., 20., "X( hodoX2 ) [mm]"  );
   drawSingleVariable( outputdir, tree, "hodoY2", "pos_hodoY2[0]", "nClusters_hodoY2==1", 50, -20., 20., "Y( hodoY2 ) [mm]"  );
 
-  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX1", "wc_x - pos_hodoX1[0]", "nClusters_hodoX1==1", 50, -20., 20., "X( WC - HodoX1 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY1", "wc_y - pos_hodoY1[0]", "nClusters_hodoY1==1", 50, -20., 20., "Y( WC - HodoY1 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX2", "wc_x - pos_hodoX2[0]", "nClusters_hodoX2==1", 50, -20., 20., "X( WC - HodoX2 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY2", "wc_y - pos_hodoY2[0]", "nClusters_hodoY2==1", 50, -20., 20., "Y( WC - HodoY2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX1", "wc_x - pos_hodoX1[0]", "nClusters_hodoX1==1", 50, -10., 10., "X( WC - HodoX1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY1", "wc_y - pos_hodoY1[0]", "nClusters_hodoY1==1", 50, -10., 10., "Y( WC - HodoY1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX2", "wc_x - pos_hodoX2[0]", "nClusters_hodoX2==1", 50, -10., 10., "X( WC - HodoX2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY2", "wc_y - pos_hodoY2[0]", "nClusters_hodoY2==1", 50, -10., 10., "Y( WC - HodoY2 ) [mm]"  );
 
-  drawSingleVariable( outputdir, tree, "hodoX1_vs_hodoX2", "pos_hodoX1[0] - pos_hodoX2[0]", "nClusters_hodoX1==1 && nClusters_hodoX2==1", 50, -20., 20., "X( HodoX1 - HodoX2 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "hodoY1_vs_hodoY2", "pos_hodoY1[0] - pos_hodoY2[0]", "nClusters_hodoY1==1 && nClusters_hodoY2==1", 50, -20., 20., "Y( HodoY1 - HodoY2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoX1_vs_hodoX2", "pos_hodoX1[0] - pos_hodoX2[0]", "nClusters_hodoX1==1 && nClusters_hodoX2==1", 50, -10., 10., "X( HodoX1 - HodoX2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY1_vs_hodoY2", "pos_hodoY1[0] - pos_hodoY2[0]", "nClusters_hodoY1==1 && nClusters_hodoY2==1", 50, -10., 10., "Y( HodoY1 - HodoY2 ) [mm]"  );
+
+
+
+  // corrected:
+
+  drawSingleVariable( outputdir, tree, "wc_x_corr", "wc_x_corr", "", 50, -20., 20., "X( WC ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_y_corr", "wc_y_corr", "", 50, -20., 20., "Y( WC ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoX1_corr", "pos_corr_hodoX1[0]", "nClusters_hodoX1==1", 50, -20., 20., "X( hodoX1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY1_corr", "pos_corr_hodoY1[0]", "nClusters_hodoY1==1", 50, -20., 20., "Y( hodoY1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoX2_corr", "pos_corr_hodoX2[0]", "nClusters_hodoX2==1", 50, -20., 20., "X( hodoX2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY2_corr", "pos_corr_hodoY2[0]", "nClusters_hodoY2==1", 50, -20., 20., "Y( hodoY2 ) [mm]"  );
+
+  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX1_corr", "wc_x_corr - pos_corr_hodoX1[0]", "nClusters_hodoX1==1", 50, -10., 10., "X( WC - HodoX1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY1_corr", "wc_y_corr - pos_corr_hodoY1[0]", "nClusters_hodoY1==1", 50, -10., 10., "Y( WC - HodoY1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX2_corr", "wc_x_corr - pos_corr_hodoX2[0]", "nClusters_hodoX2==1", 50, -10., 10., "X( WC - HodoX2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY2_corr", "wc_y_corr - pos_corr_hodoY2[0]", "nClusters_hodoY2==1", 50, -10., 10., "Y( WC - HodoY2 ) [mm]"  );
+
+  drawSingleVariable( outputdir, tree, "hodoX1_vs_hodoX2_corr", "pos_corr_hodoX1[0] - pos_corr_hodoX2[0]", "nClusters_hodoX1==1 && nClusters_hodoX2==1", 50, -10., 10., "X( HodoX1 - HodoX2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY1_vs_hodoY2_corr", "pos_corr_hodoY1[0] - pos_corr_hodoY2[0]", "nClusters_hodoY1==1 && nClusters_hodoY2==1", 50, -10., 10., "Y( HodoY1 - HodoY2 ) [mm]"  );
+
 
 
 
@@ -94,7 +116,7 @@ void drawSingleVariable( const std::string& outputdir, TTree* tree, const std::s
   TH1F* h1 = new TH1F( savename.c_str(), "", nbins, xMin, xMax );
   tree->Project( savename.c_str(), treeVar.c_str(), selection.c_str() );
 
-  float yMax = 1.2*h1->GetMaximum();
+  float yMax = 1.1*h1->GetMaximum();
 
   TH2D* h2_axes = new TH2D( "axes", "", nbins, xMin, xMax, 10, 0., yMax );
   h2_axes->SetXTitle( axisName.c_str() );
@@ -107,6 +129,9 @@ void drawSingleVariable( const std::string& outputdir, TTree* tree, const std::s
 
   TPaveText* labelTop = DrawTools::getLabelTop();
   labelTop->Draw("same");
+
+  TLine* lineOne = new TLine( 0., 0., 0., yMax );
+  lineOne->Draw("same");
 
   gPad->RedrawAxis();
 

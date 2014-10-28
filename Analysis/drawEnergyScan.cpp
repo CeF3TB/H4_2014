@@ -153,6 +153,7 @@ int main( int argc, char* argv[] ) {
   TF1* energyfuncC = fitSingleElectronPeak( outputdir, runs[0], treeMean );
 
   float energyC= beamEnergy[0];
+
   float adcEnergyC = energyfuncC->GetParameter(1);
 
   //for the simulated Cef3:
