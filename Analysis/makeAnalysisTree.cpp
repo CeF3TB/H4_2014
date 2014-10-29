@@ -291,13 +291,15 @@ int main( int argc, char* argv[] ) {
      doHodoReconstruction( hodoY1_values    , nClusters_hodoY1    , nFibres_hodoY1    , pos_hodoY1    , 0.5, clusterMaxFibres, 0. );
      doHodoReconstruction( hodoX2_values    , nClusters_hodoX2    , nFibres_hodoX2    , pos_hodoX2    , 0.5, clusterMaxFibres , 0.);
      doHodoReconstruction( hodoY2_values    , nClusters_hodoY2    , nFibres_hodoY2    , pos_hodoY2    , 0.5, clusterMaxFibres, 0. );
-     doHodoReconstruction( hodoSmallX_values, nClusters_hodoSmallX, nFibres_hodoSmallX, pos_hodoSmallX, 1.0, 1 , 60.);
-     doHodoReconstruction( hodoSmallY_values, nClusters_hodoSmallY, nFibres_hodoSmallY, pos_hodoSmallY, 1.0, 1, 60. );
+     doHodoReconstruction( hodoSmallX_values, nClusters_hodoSmallX, nFibres_hodoSmallX, pos_hodoSmallX, 1.0, 1, 60.);
+     doHodoReconstruction( hodoSmallY_values, nClusters_hodoSmallY, nFibres_hodoSmallY, pos_hodoSmallY, 1.0, 1, 60.);
 
      copyArray( nClusters_hodoX1, pos_hodoX1, pos_corr_hodoX1 );
      copyArray( nClusters_hodoY1, pos_hodoY1, pos_corr_hodoY1 );
      copyArray( nClusters_hodoX2, pos_hodoX2, pos_corr_hodoX2 );
      copyArray( nClusters_hodoY2, pos_hodoY2, pos_corr_hodoY2 );
+     copyArray( nClusters_hodoSmallX, pos_hodoSmallX, pos_corr_hodoSmallX );
+     copyArray( nClusters_hodoSmallY, pos_hodoSmallY, pos_corr_hodoSmallY );
 
      alignOfficer.fix("hodoX1", nClusters_hodoX1, pos_corr_hodoX1);
      alignOfficer.fix("hodoY1", nClusters_hodoY1, pos_corr_hodoY1);
