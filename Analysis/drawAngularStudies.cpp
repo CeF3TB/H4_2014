@@ -12,7 +12,6 @@
 #include "TLegend.h"
 #include "TF1.h"
 
-#include "TApplication.h"
 
 #include "DrawTools.h"
 
@@ -60,8 +59,6 @@ void doSingleFitMC( TH1D* h1, TF1* f1, const std::string& outputdir, const std::
 
 
 int main( int argc, char* argv[]) {
-
-  TApplication* a = new TApplication("a", 0, 0);
 
   std::string tag = "V00";
   if( argc>1 ) {

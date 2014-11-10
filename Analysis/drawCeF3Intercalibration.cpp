@@ -19,14 +19,12 @@
 
 #include "DrawTools.h"
 
-#include "TApplication.h"
 
 //This serves the purpose to see if the intercalibration was sort of successful,
 
 
 int main ( int argc, char* argv[] ) {
 
-  TApplication* a = new TApplication("a", 0, 0);
 
   std::string inputDir = "./analysisTrees";
   std::string runName = "259";
@@ -63,18 +61,18 @@ int main ( int argc, char* argv[] ) {
 
   TTree* tree = (TTree*)file->Get("recoTree");
 
-  TCanvas* canny = new TCanvas("canny", "CeF3 Intercalibration", 300,400);
+  TCanvas* canny = new TCanvas("canny", "CeF3 Intercalibration", 600,800);
 
   canny->cd();
 
   //  gPad->SetLogy();
 
-  int nBins = 100;
+  int nBins = 120;
   // float xMin = 180000.;
   //  float xMax = 501000.;
   //float xMax = 375000.;
 
-  float xMin = 18.;
+  float xMin = 30.;
   float xMax = 100.;
 
   TH1D* hu0 = new TH1D("hu0","",nBins,xMin,xMax);
@@ -103,7 +101,7 @@ int main ( int argc, char* argv[] ) {
   h3->SetLineColor(kMagenta-4);
   h3->SetLineWidth(2.);
 
-  TH2D* h2_axes = new TH2D( "axes", "", 10, xMin , xMax, 10, 0.,0.09 );
+  TH2D* h2_axes = new TH2D( "axes", "", 10, xMin , xMax, 10, 0.,0.065 );
   h2_axes->SetXTitle("CeF_{3} Response [ADC]");
   h2_axes->SetYTitle("");
   h2_axes->Draw("");

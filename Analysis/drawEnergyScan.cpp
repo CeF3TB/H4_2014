@@ -17,7 +17,6 @@
 
 #include "DrawTools.h"
 
-#include "TApplication.h"
 
 struct ResoStruct {
 
@@ -39,8 +38,6 @@ TF1* fitSingleElectronPeak( const std::string& outputdir, const std::string& nam
 
 
 int main( int argc, char* argv[] ) {
-
-  TApplication* a = new TApplication("a",0,0);
 
   std::string tag="V01";
   if( argc>1 ) {

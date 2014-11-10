@@ -17,7 +17,6 @@
 
 #include "DrawTools.h"
 
-#include "TApplication.h"
 
 
 void doSingleFit( TH1D* h1, TF1* f1, const std::string& outputdir, const std::string& name );
@@ -32,7 +31,6 @@ bool checkIntercal = true;
 
 int main( int argc, char* argv[] ) {
 
-  TApplication* a = new TApplication("a", 0, 0);
 
   DrawTools::setStyle();
 
@@ -130,21 +128,30 @@ int main( int argc, char* argv[] ) {
 
 
 
+
+
+
 TF1* fitSingleElectronPeak( const std::string& outputdir, int i, TTree* tree ) {
 
+    gStyle->SetOptFit(1);
   std::string histoName(Form("h1_%d", i));
-  TH1D* h1 = new TH1D(histoName.c_str(), "", 1000, 0., 390.);
+  TH1D* h1 = new TH1D(histoName.c_str(), "", 120, 40., 100.);
   //  TH1D* h1 = new TH1D(histoName.c_str(), "", 1000, 0., 390000.);
   //tree->Project( histoName.c_str(), Form("cef3_corr[%d]", i), "");
-  tree->Project( histoName.c_str(), Form("cef3_corr[%d]", i));
+  // tree->Project( histoName.c_str(), Form("cef3_corr[%d]", i), "nClusters_hodoSmallX==1 && nClusters_hodoSmallY==1 && pos_corr_hodoSmallX<5 && pos_corr_hodoSmallX>-5 && pos_corr_hodoSmallY<5 && pos_corr_hodoSmallY>-5");
+  // tree->Project( histoName.c_str(), Form("cef3[%d]", i),  "nClusters_hodoSmallX==1 && nClusters_hodoSmallY==1 && pos_corr_hodoSmallX<5 && pos_corr_hodoSmallX>-5 && pos_corr_hodoSmallY<5 && pos_corr_hodoSmallY>-5");
+  tree->Project( histoName.c_str(), Form("cef3[%d]", i),  "nClusters_hodoSmallX>0 && nClusters_hodoSmallY==1 &&nFibres_hodoSmallX>0 && nFibres_hodoSmallY>0");
 
   //tree->Project( histoName.c_str(), Form("cef3_corr[%d]", i), "(isSingleEle_scintFront==1 && nHodoClustersX==1 && nHodoClustersY==1 )");
 
-  TF1* f1 = new TF1( Form("gaus_%d", i), "gaus", 5., 390000.);
+  TF1* f1 = new TF1( Form("gaus_%d", i), "gaus", 5., 300.);
   //  TF1* f1 = new TF1( Form("gaus_%d", i), "gaus", 400., 1200.);
     f1->SetParameter(0, 300000.);
     f1->SetParameter(1, 250000.);
     f1->SetParameter(2, 15000.);
+
+
+  f1->SetLineColor(kRed);
 
   doSingleFit( h1, f1, outputdir, Form("%d", i) );
 
@@ -159,12 +166,12 @@ TF1* checkTotalResolution( const std::string& outputdir, TTree* tree ) {
 
   std::string histoName("h1_tot");
   // TH1D* h1 = new TH1D(histoName.c_str(), "", 2000, 200000.,1500000.);
-  TH1D* h1 = new TH1D(histoName.c_str(), "", 2000, 0.,430.);
-  tree->Project( histoName.c_str(), "cef3_corr[0]+cef3_corr[1]+cef3_corr[2]+cef3_corr[3]", "");
+  TH1D* h1 = new TH1D(histoName.c_str(), "", 200, 0.,300.);
+  tree->Project( histoName.c_str(), "cef3[0]+cef3[1]+cef3[2]+cef3[3]", "nClusters_hodoX1==1 && nClusters_hodoY1==1 && pos_corr_hodoX1<2 && pos_corr_hodoX1>-2 && pos_corr_hodoY1<2 && pos_corr_hodoY1>-2");
+  //  tree->Project( histoName.c_str(), "cef3_corr[0]+cef3_corr[1]+cef3_corr[2]+cef3_corr[3]", "nClusters_hodoX==1 && nClusters_hodoY==1 && pos_corr_hodoX1<5 && pos_corr_hodoX1>-5 && pos_corr_hodoY1<5 && pos_corr_hodoY1>-5");
 
-  // tree->Project( histoName.c_str(), "cef3_corr[0]+cef3_corr[1]+cef3_corr[2]+cef3_corr[3]", "(scintFront>500. && scintFront<2000. && nHodoClustersX==1 && nHodoClustersY==1)");
 
-  TF1* f1 = new TF1("gaus_tot", "gaus", 0., 380.);
+  TF1* f1 = new TF1("gaus_tot", "gaus", 100., 300.);
   // TF1* f1 = new TF1("gaus_tot", "gaus", 200000.,1500000. );
   // f1->SetParameter(0, 3000000.);
   //f1->SetParameter(1, 3000000.);
@@ -194,15 +201,15 @@ void doSingleFit( TH1D* h1, TF1* f1, const std::string& outputdir, const std::st
 
   h1->Fit( f1, "RQN" );
 
-  int niter = 4.;
-  float nSigma =1.5 ;
+  int niter = 10.;
+  float nSigma =1.0 ;
 
-  for( unsigned iter=0; iter<niter; iter++ ) {
+  for( int iter=0; iter<niter; iter++ ) {
 
     float mean  = f1->GetParameter(1);
     float sigma = f1->GetParameter(2);
     float fitMin = mean - nSigma*sigma;
-    float fitMax = mean + nSigma*sigma;
+    float fitMax = mean + nSigma*sigma*2.5;
     f1->SetRange( fitMin, fitMax );
     if( iter==(niter-1) )
       h1->Fit( f1, "RQN" );
@@ -211,7 +218,7 @@ void doSingleFit( TH1D* h1, TF1* f1, const std::string& outputdir, const std::st
   }
 
 
-  TCanvas* c1 = new TCanvas("c1", "", 600, 600);
+  TCanvas* c1 = new TCanvas("c1", "", 800, 800);
   c1->cd();
 
   h1->Draw();

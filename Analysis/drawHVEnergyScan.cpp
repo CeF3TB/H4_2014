@@ -17,7 +17,6 @@
 
 #include "DrawTools.h"
 
-#include "TApplication.h"
 
 struct ResoStruct {
 
@@ -40,7 +39,6 @@ TF1* fitSingleElectronPeak( const std::string& outputdir, const std::string& nam
 
 int main( int argc, char* argv[] ) {
 
-  TApplication* a = new TApplication("a",0,0);
 
   std::string tag="V01";
   if( argc>1 ) {
@@ -152,6 +150,8 @@ int main( int argc, char* argv[] ) {
 
   simulation.push_back("Simulation10");
   beamEnergySimulation.push_back(10000.);
+  simulation.push_back("Simulation15");
+  beamEnergySimulation.push_back(15000.);
   simulation.push_back("Simulation20");
   beamEnergySimulation.push_back(20000.);
 
@@ -160,7 +160,7 @@ int main( int argc, char* argv[] ) {
   simulation.push_back("Simulation200");
   beamEnergySimulation.push_back(200000.);
   
-  TFile* energyfileS = TFile::Open("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/newnewH4/Reco_Simulation50.root" );
+  TFile* energyfileS = TFile::Open("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/H4new/Reco_Simulation50.root" );
   TTree* energytreeS = (TTree*)energyfileS->Get("recoTree");
   
   ResoStruct energyrsS = getResponseResolutionMC( outputdir, energytreeS,simulation[0],beamEnergySimulation[0]);
@@ -292,7 +292,7 @@ int main( int argc, char* argv[] ) {
  for( unsigned i=0; i<simulation.size(); ++i ) {
 
     ///////////////// (1x1) Shashlik ("real setup") //////////////////////////////
-    TFile* fileS = TFile::Open(Form("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/newnewH4/Reco_%s.root", simulation[i].c_str()));
+    TFile* fileS = TFile::Open(Form("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/H4new/Reco_%s.root", simulation[i].c_str()));
 
     TTree* treeS = (TTree*)fileS->Get("recoTree");
 
@@ -429,6 +429,7 @@ leg0->SetTextSize(0.038);
  gr_reso_vs_energy->Draw("p same");
  
  TF1 *fun= new TF1("fun",  "sqrt([0]*[0]/x+[1]*[1]+ [2]*[2]/(x*x))",0.9, xMax/1000.+5.);
+ fun->SetParameter(1,1.);
  gr_reso_vs_energy->Fit(fun,"RN");
  fun->SetLineWidth(1.);
  fun->SetLineColor(46);
@@ -453,7 +454,10 @@ leg0->SetTextSize(0.038);
  gr_reso_vs_energy600->SetMarkerColor(41);
  gr_reso_vs_energy600->Draw("p same");
 
- TF1 *fun6= new TF1("fun",  "sqrt([0]*[0]/x+[1]*[1])",1, xMax/1000.+5.);
+ TF1 *fun6= new TF1("fun",  "sqrt([0]*[0]/x+[1]*[1]+ [2]*[2]/(x*x))",1, xMax/1000.+5.);
+ fun6->SetParameter(1, 1.);
+
+ fun6->SetParameter(0, 12.);
  gr_reso_vs_energy600->Fit(fun6,"RN");
  fun6->SetLineWidth(1.);
  fun6->SetLineColor(41);
@@ -464,7 +468,7 @@ leg0->SetTextSize(0.038);
  gr_reso_vs_energy_simul->SetMarkerStyle(20);
  gr_reso_vs_energy_simul->SetMarkerSize(1.6);
  gr_reso_vs_energy_simul->SetMarkerColor(kBlack);
- // gr_reso_vs_energy_simul->Draw("p same");
+ gr_reso_vs_energy_simul->Draw("p same");
  
  TF1 *fun1= new TF1("fun1",  "sqrt([0]*[0]/x+[1]*[1]+ [2]*[2]/(x*x))",0.005, xMax/1000.+5.);
  // TF1 *fun1= new TF1("fun1",  "sqrt([0]*[0]/x+[1]*[1]+[2]*[2]/(x*x))",0.02, xMax/1000.);
@@ -483,14 +487,14 @@ leg0->SetTextSize(0.038);
  leg4->AddEntry(gr_reso_vs_energy,"Data 950 V","p");
  leg4->AddEntry(fun,Form("S = %.2f\n #pm %.2f\n %s / #sqrt{E [GeV]}",fun->GetParameter(0), (fun->GetParError(0)),"%" ),"L");
  leg4->AddEntry( (TObject*)0,Form("C =   %.2f\n #pm %.2f\n %s",(fun->GetParameter(1)), (fun->GetParError(1)),"%" ),"");
- leg4->AddEntry( (TObject*)0,Form("N =   %.2f\n #pm %.2f\n %s / E [GeV]",(fun1->GetParameter(2)), (fun1->GetParError(2)),"%" ),"");
+ leg4->AddEntry( (TObject*)0,Form("N = %.2f\n #pm %.2f\n %s / E [GeV]",(fun1->GetParameter(2)), (fun1->GetParError(2)),"%" ),"");
  leg4->AddEntry( (TObject*)0, Form("#chi^{2} / NDF = %.2f\n / %d",fun->GetChisquare(), fun->GetNDF() ), "");
 
 
  leg4->AddEntry(gr_reso_vs_energy700,"Data 700 HV","p");
  leg4->AddEntry(fun7,Form("S = %.2f\n #pm %.2f\n %s / #sqrt{E [GeV]}",fun7->GetParameter(0), (fun7->GetParError(0)),"%" ),"L");
  leg4->AddEntry( (TObject*)0,Form("C =   %.2f\n #pm %.2f\n %s",(fun7->GetParameter(1)), (fun7->GetParError(1)),"%" ),"");
- leg4->AddEntry( (TObject*)0,Form("N =   %.2f\n #pm %.2f\n %s / E [GeV]",(fun7->GetParameter(2)), (fun7->GetParError(2)),"%" ),"");
+ leg4->AddEntry( (TObject*)0,Form("N =  %.2f\n #pm %.2f\n %s / E [GeV]",(fun7->GetParameter(2)), (fun7->GetParError(2)),"%" ),"");
  leg4->AddEntry( (TObject*)0, Form("#chi^{2} / NDF = %.2f\n / %d",fun7->GetChisquare(), fun7->GetNDF() ), "");
 
 
@@ -499,7 +503,7 @@ leg0->SetTextSize(0.038);
  leg4->AddEntry(gr_reso_vs_energy600,"Data 600 HV","p");
  leg4->AddEntry(fun6,Form("S = %.2f\n #pm %.2f\n %s / #sqrt{E [GeV]}",fun6->GetParameter(0), (fun6->GetParError(0)),"%" ),"L");
  leg4->AddEntry( (TObject*)0,Form("C =   %.2f\n #pm %.2f\n %s",(fun6->GetParameter(1)), (fun6->GetParError(1)),"%" ),"");
- leg4->AddEntry( (TObject*)0,Form("N =   %.2f\n #pm %.2f\n %s / E [GeV]",(fun6->GetParameter(2)), (fun6->GetParError(2)),"%" ),"");
+ leg4->AddEntry( (TObject*)0,Form("N = %.2f\n #pm %.2f\n %s / E [GeV]",(fun6->GetParameter(2)), (fun6->GetParError(2)),"%" ),"");
  leg4->AddEntry( (TObject*)0, Form("#chi^{2} / NDF = %.2f\n / %d",fun6->GetChisquare(), fun6->GetNDF() ), "");
 
 
@@ -614,11 +618,11 @@ ResoStruct getResponseResolutionMC( const std::string& outputdir, TTree* tree, c
 
   gStyle->SetOptFit(1);
 
-  TH1D* h1 = new TH1D( name.c_str(), "", 500, energySim/3.-10, energySim/2.3+100 );
+  TH1D* h1 = new TH1D( name.c_str(), "", 500, energySim/4.-10, energySim/2.5 +100 );
   tree->Project( name.c_str(),"cef3_corr[0]+cef3_corr[1]+cef3_corr[2]+cef3_corr[3]" );
 
 
- TF1* f1 = new TF1( Form("f1_%s", name.c_str()), "gaus",  energySim/6.-100, energySim/2.+10 );
+ TF1* f1 = new TF1( Form("f1_%s", name.c_str()), "gaus",  energySim/4.-10, energySim/2.5+10 );
 
  doSingleFit( h1, f1, outputdir, name );
   ResoStruct rs = getRespAndReso( f1, energySim );
