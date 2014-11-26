@@ -15,26 +15,45 @@
 #include "TLegend.h"
 #include "TGaxis.h"
 
+
+#include "RooRealVar.h"
+#include "RooDataSet.h"
+#include "RooGaussian.h"
+#include "RooDataHist.h"
+#include "RooCBShape.h"
+
+//#include "TAxis.h"
+#include "RooPlot.h"
+
+#include "RooGlobalFunc.h"
+
 #include "DrawTools.h"
+using namespace RooFit;
 
 
-struct ResoStruct {
 
-  float resp;
-  float resp_error;
 
-  float reso;
-  float reso_error;
+struct FitStruct {
+
+  double mean;
+  double mean_err;
+
+  double sigma;
+  double sigma_err;
+
+  double reso;
+  double reso_err;
 
 };
 
-ResoStruct getResponseResolutionMC( const std::string& outputdir, TTree* tree, const std::string& name, float energySim );
-ResoStruct getRespAndReso( TF1* f1, float energySim );
-float getRatioError( float num, float denom, float numErr, float denomErr );
-ResoStruct addPhotoStatistics( ResoStruct rs );
 
-void doSingleFit( TH1D* h1, TF1* f1, const std::string& outputdir, const std::string& name );
-TF1* fitSingleElectronPeak( const std::string& outputdir, const std::string& name, TTree* tree, float HV );
+FitStruct getFitResults( const std::string& outputdir, TTree* tree, const std::string& name, float xMin, float xMax, std::string& cut, std::string& whatToProject );
+
+
+float getRatioError( float num, float denom, float numErr, float denomErr );
+
+
+FitStruct addPhotoStatistics( FitStruct rs );
 
 
 int main( int argc, char* argv[] ) {
@@ -53,6 +72,13 @@ int main( int argc, char* argv[] ) {
 
   DrawTools::setStyle();
   TGaxis::SetMaxDigits(3);
+
+
+    std::string whatToProjectSim = Form("cef3_corr[0]+cef3_corr[1]+cef3_corr[2]+cef3_corr[3]");
+    std::string whatToProject = Form("cef3_chaInt[0]+cef3_chaInt[1]+cef3_chaInt[2]+cef3_chaInt[3]");
+   std::string whatToProjectCorr1 = Form("cef3_chaInt_corr1[0]+cef3_chaInt_corr1[1]+cef3_chaInt_corr1[2]+cef3_chaInt_corr1[3]"); 
+   std::string whatToProjectCorr2 = Form("cef3_chaInt_corr2[0]+cef3_chaInt_corr2[1]+cef3_chaInt_corr2[2]+cef3_chaInt_corr2[3]");
+   std::string whatToProjectMaxAmpCorr2 = Form("cef3_maxAmp_corr2[0]+cef3_maxAmp_corr2[1]+cef3_maxAmp_corr2[2]+cef3_maxAmp_corr2[3]");
 
 
  
@@ -80,11 +106,12 @@ int main( int argc, char* argv[] ) {
 
   TFile* file950 = TFile::Open(Form("analysisTrees_%s/Reco_%s.root", tag.c_str(), runs950[0].c_str()));
   TTree* tree950 = (TTree*)file950->Get("recoTree");
- 
-  // for CeF3:
-  TF1* energyfunc950 = fitSingleElectronPeak( outputdir, runs950[0], tree950, 950 );
+  std::string cut = "";
+
+  FitStruct fs950 = getFitResults( outputdir, tree950,  "950HV" , 50000,  900000, cut, whatToProject );
+  float adcEnergyC950 = fs950.mean;
   float energyC950= beamEnergy950[0];
-  float adcEnergyC950 = energyfunc950->GetParameter(1);
+ 
 
   /////////DATA at 700 Volts ////////////
   std::vector<std::string> runs700; 
@@ -108,12 +135,11 @@ int main( int argc, char* argv[] ) {
   TFile* file700 = TFile::Open(Form("analysisTrees_%s/Reco_%s.root", tag.c_str(),runs700[0].c_str()));
   TTree* tree700 = (TTree*)file700->Get("recoTree");
 
-  TF1* energyfunc700 = fitSingleElectronPeak( outputdir, runs700[0], tree700, 700. );
-
+  FitStruct fs700 = getFitResults( outputdir, tree700,  "700HV" , 500,  50000000, cut, whatToProject );
+  float adcEnergyC700 = fs700.mean;
   float energyC700= beamEnergy700[0];
-  float adcEnergyC700 = energyfunc700->GetParameter(1);
-
  
+  ///////////////////// 600 V////////////////////////
   std::vector<std::string> runs600; 
   std::vector<float> beamEnergy600;
   runs600.push_back("497");
@@ -135,10 +161,10 @@ int main( int argc, char* argv[] ) {
   TFile* file600 = TFile::Open(Form("analysisTrees_%s/Reco_%s.root", tag.c_str(),runs600[0].c_str()));
   TTree* tree600 = (TTree*)file600->Get("recoTree");
 
-  TF1* energyfunc600 = fitSingleElectronPeak( outputdir, runs600[0], tree600, 600 );
-
+  FitStruct fs600 = getFitResults( outputdir, tree600,  "600HV" , 500,  50000, cut, whatToProject );
+  float adcEnergyC600 = fs600.mean;
   float energyC600= beamEnergy600[0];
-  float adcEnergyC600 = energyfunc600->GetParameter(1);
+ 
 
 
 
@@ -160,12 +186,19 @@ int main( int argc, char* argv[] ) {
   simulation.push_back("Simulation200");
   beamEnergySimulation.push_back(200000.);
   
-  TFile* energyfileS = TFile::Open("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/H4new/Reco_Simulation50.root" );
+  TFile* energyfileS = TFile::Open("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/H4UseThis/Reco_Simulation50.root" );
   TTree* energytreeS = (TTree*)energyfileS->Get("recoTree");
   
-  ResoStruct energyrsS = getResponseResolutionMC( outputdir, energytreeS,simulation[0],beamEnergySimulation[0]);
   
-  float energyS = energyrsS.resp;
+  std::string SimCut = "";
+  FitStruct fsSim= getFitResults( outputdir, energytreeS , simulation[0] ,  5000. ,  20000., SimCut , whatToProjectSim );
+  float energyS = fsSim.mean;
+
+
+  //  ResoStruct energyrsS = getResponseResolutionMC( outputdir, energytreeS,simulation[0],beamEnergySimulation[0]);
+  
+  //float energyS = energyrsS.resp;
+
 
 
 
@@ -193,22 +226,21 @@ int main( int argc, char* argv[] ) {
 
   for( unsigned i=0; i<runs950.size(); ++i ) {
     
-    TFile* file = TFile::Open(Form("analysisTrees_%s/Reco_%s.root", tag.c_str(),  runs950[i].c_str()));
+    TFile* file = TFile::Open(Form("analysisTrees_%s/Reco_%s.root", tag.c_str(),  runs950[i].c_str() ));
     TTree* tree = (TTree*)file->Get("recoTree");
+
+    //    TF1* thisFunc = fitSingleElectronPeak( outputdir, runs950[i], tree, 950. );
     
-    TF1* thisFunc = fitSingleElectronPeak( outputdir, runs950[i], tree, 950. );
-    
+    FitStruct fs  = getFitResults( outputdir, tree ,  runs950[i].c_str() , 100, 19000000   , cut, whatToProject );
+
     float energy = beamEnergy950[i];
     float energyErr = 0.005*energy;
  
-    float mean = thisFunc->GetParameter(1);
-    float meanErr = thisFunc->GetParError(1);
+    float mean = fs.mean;
+    float meanErr = fs.mean_err;
 
-    float rms = thisFunc->GetParameter(2);
-    float rmsErr = thisFunc->GetParError(2);
-
-    float reso = 100.* rms/mean ;
-    float resoErr = 100* getRatioError( rms, mean, rmsErr, meanErr);
+    float reso = fs.reso;
+    float resoErr = fs.reso_err;
 
     std::cout << "mean at "<< energy << " = " << mean << std::endl;
     gr_resp_vs_energy->SetPoint( i, energy/1000., mean /adcEnergyC950 * adcEnergyC600 );
@@ -228,19 +260,19 @@ int main( int argc, char* argv[] ) {
     TFile* file = TFile::Open(Form("analysisTrees_%s/Reco_%s.root", tag.c_str(),  runs700[i].c_str()));
     TTree* tree = (TTree*)file->Get("recoTree");
     
-    TF1* thisFunc = fitSingleElectronPeak( outputdir, runs700[i], tree , 700.);
-    
+    //  TF1* thisFunc = fitSingleElectronPeak( outputdir, runs700[i], tree , 700.);
+  
+    FitStruct fs  = getFitResults( outputdir, tree ,  runs700[i].c_str() , 100, 19000000   , cut, whatToProject );
+
     float energy = beamEnergy700[i];
     float energyErr = 0.005*energy;
  
-    float mean = thisFunc->GetParameter(1);
-    float meanErr = thisFunc->GetParError(1);
+    float mean = fs.mean;
+    float meanErr = fs.mean_err;
 
-    float rms = thisFunc->GetParameter(2);
-    float rmsErr = thisFunc->GetParError(2);
+    float reso = fs.reso;
+    float resoErr = fs.reso_err;
 
-    float reso = 100.* rms/mean ;
-    float resoErr = 100* getRatioError( rms, mean, rmsErr, meanErr);
 
     gr_resp_vs_energy700->SetPoint( i, energy/1000., mean /adcEnergyC700 * adcEnergyC600 );
     gr_resp_vs_energy700->SetPointError( i, energyErr/1000., meanErr);
@@ -261,19 +293,16 @@ int main( int argc, char* argv[] ) {
     TFile* file = TFile::Open(Form("analysisTrees_%s/Reco_%s.root", tag.c_str(),  runs600[i].c_str()));
     TTree* tree = (TTree*)file->Get("recoTree");
     
-    TF1* thisFunc = fitSingleElectronPeak( outputdir, runs600[i], tree , 600.);
-    
+    FitStruct fs  = getFitResults( outputdir, tree ,  runs600[i].c_str() , 100, 19000000   , cut, whatToProject );
+
     float energy = beamEnergy600[i];
     float energyErr = 0.005*energy;
  
-    float mean = thisFunc->GetParameter(1);
-    float meanErr = thisFunc->GetParError(1);
+    float mean = fs.mean;
+    float meanErr = fs.mean_err;
 
-    float rms = thisFunc->GetParameter(2);
-    float rmsErr = thisFunc->GetParError(2);
-
-    float reso = 100.* rms/mean ;
-    float resoErr = 100* getRatioError( rms, mean, rmsErr, meanErr);
+    float reso = fs.reso;
+    float resoErr = fs.reso_err;
 
     gr_resp_vs_energy600->SetPoint( i, energy/1000., mean );
     gr_resp_vs_energy600->SetPointError( i, energyErr/1000., meanErr);
@@ -292,27 +321,33 @@ int main( int argc, char* argv[] ) {
  for( unsigned i=0; i<simulation.size(); ++i ) {
 
     ///////////////// (1x1) Shashlik ("real setup") //////////////////////////////
-    TFile* fileS = TFile::Open(Form("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/H4new/Reco_%s.root", simulation[i].c_str()));
+    TFile* fileS = TFile::Open(Form("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/H4UseThis/Reco_%s.root", simulation[i].c_str()));
 
     TTree* treeS = (TTree*)fileS->Get("recoTree");
 
-    ResoStruct rs = getResponseResolutionMC( outputdir, treeS, simulation[i], beamEnergySimulation[i] );
-    ResoStruct rs_ps = addPhotoStatistics( rs );
+    FitStruct fsSim= getFitResults( outputdir, treeS , simulation[i] , beamEnergySimulation[i]/10. ,  beamEnergySimulation[i], SimCut , whatToProjectSim );
+    float energySim = fsSim.mean;
 
-    gr_resp_vs_energy_simul->SetPoint( i, beamEnergySimulation[i]/1000., rs.resp* adcEnergyC600/energyS );
-    gr_resp_vs_energy_simul->SetPointError( i,0, rs.resp_error * adcEnergyC600/energyS);
+
+   FitStruct fsSim_ps = addPhotoStatistics( fsSim );
+
+    // ResoStruct rs = getResponseResolutionMC( outputdir, treeS, simulation[i], beamEnergySimulation[i] );
+    //ResoStruct rs_ps = addPhotoStatistics( rs );
+
+    gr_resp_vs_energy_simul->SetPoint( i, beamEnergySimulation[i]/1000., energySim* adcEnergyC600/energyS );
+    gr_resp_vs_energy_simul->SetPointError( i,0, fsSim.mean_err * adcEnergyC600/energyS);
  
-    gr_reso_vs_energy_simul->SetPoint( i, beamEnergySimulation[i]/1000., rs_ps.reso );
-    gr_reso_vs_energy_simul->SetPointError( i,0,  rs_ps.reso_error );
+    gr_reso_vs_energy_simul->SetPoint( i, beamEnergySimulation[i]/1000., fsSim_ps.reso );
+    gr_reso_vs_energy_simul->SetPointError( i,0,  fsSim_ps.reso_err );
     
     
-    std::cout << "reso = " << rs_ps.reso << std::endl;
+    std::cout << "reso = " << fsSim_ps.reso << std::endl;
 
-    yMax = rs.resp* adcEnergyC600/energyS + 20.;
+    yMax = fsSim.mean* adcEnergyC600/energyS + 20.;
 
 
-    gr_dev_simul->SetPoint(i, beamEnergySimulation[i] /1000. , rs.resp / beamEnergySimulation[i] / ( energyS / energyC600 ) );
-    gr_dev_simul->SetPointError(i, 0, rs.resp_error / beamEnergySimulation[i] / ( energyS / energyC600) );
+    gr_dev_simul->SetPoint(i, beamEnergySimulation[i] /1000. , fsSim.mean / beamEnergySimulation[i] / ( energyS / energyC600 ) );
+    gr_dev_simul->SetPointError(i, 0, fsSim.mean_err / beamEnergySimulation[i] / ( energyS / energyC600) );
 
   }
 
@@ -406,7 +441,8 @@ leg0->SetTextSize(0.038);
   label_top2->Draw("same");
 
   c1->SaveAs( Form( "%s/resp_vs_energy.pdf", outputdir.c_str() ) );
-  
+  c1->SaveAs( Form( "%s/resp_vs_energy.png", outputdir.c_str() ) );
+    
   c1->Clear();
 
 
@@ -481,31 +517,27 @@ leg0->SetTextSize(0.038);
 
 
 
- TLegend* leg4 = new TLegend(0.3, 0.9-0.06*10 +0.1, 0.78, 0.9);
+ TLegend* leg4 = new TLegend(0.5, 0.9-0.06*4 +0.1, 0.9, 0.9);
+ // TLegend* leg4 = new TLegend(0.3, 0.9-0.06*10 +0.1, 0.78, 0.9);
  leg4->SetTextSize(0.038);
 
  leg4->AddEntry(gr_reso_vs_energy,"Data 950 V","p");
- leg4->AddEntry(fun,Form("S = %.2f\n #pm %.2f\n %s / #sqrt{E [GeV]}",fun->GetParameter(0), (fun->GetParError(0)),"%" ),"L");
- leg4->AddEntry( (TObject*)0,Form("C =   %.2f\n #pm %.2f\n %s",(fun->GetParameter(1)), (fun->GetParError(1)),"%" ),"");
- leg4->AddEntry( (TObject*)0,Form("N = %.2f\n #pm %.2f\n %s / E [GeV]",(fun1->GetParameter(2)), (fun1->GetParError(2)),"%" ),"");
- leg4->AddEntry( (TObject*)0, Form("#chi^{2} / NDF = %.2f\n / %d",fun->GetChisquare(), fun->GetNDF() ), "");
-
-
+// leg4->AddEntry(fun,Form("S = %.2f\n #pm %.2f\n %s / #sqrt{E [GeV]}",fun->GetParameter(0), (fun->GetParError(0)),"%" ),"L");
+// leg4->AddEntry( (TObject*)0,Form("C =   %.2f\n #pm %.2f\n %s",(fun->GetParameter(1)), (fun->GetParError(1)),"%" ),"");
+// leg4->AddEntry( (TObject*)0,Form("N = %.2f\n #pm %.2f\n %s / E [GeV]",(fun1->GetParameter(2)), (fun1->GetParError(2)),"%" ),"");
+// leg4->AddEntry( (TObject*)0, Form("#chi^{2} / NDF = %.2f\n / %d",fun->GetChisquare(), fun->GetNDF() ), "");
+//
  leg4->AddEntry(gr_reso_vs_energy700,"Data 700 HV","p");
- leg4->AddEntry(fun7,Form("S = %.2f\n #pm %.2f\n %s / #sqrt{E [GeV]}",fun7->GetParameter(0), (fun7->GetParError(0)),"%" ),"L");
- leg4->AddEntry( (TObject*)0,Form("C =   %.2f\n #pm %.2f\n %s",(fun7->GetParameter(1)), (fun7->GetParError(1)),"%" ),"");
- leg4->AddEntry( (TObject*)0,Form("N =  %.2f\n #pm %.2f\n %s / E [GeV]",(fun7->GetParameter(2)), (fun7->GetParError(2)),"%" ),"");
- leg4->AddEntry( (TObject*)0, Form("#chi^{2} / NDF = %.2f\n / %d",fun7->GetChisquare(), fun7->GetNDF() ), "");
-
-
-
-
+ // leg4->AddEntry(fun7,Form("S = %.2f\n #pm %.2f\n %s / #sqrt{E [GeV]}",fun7->GetParameter(0), (fun7->GetParError(0)),"%" ),"L");
+// leg4->AddEntry( (TObject*)0,Form("C =   %.2f\n #pm %.2f\n %s",(fun7->GetParameter(1)), (fun7->GetParError(1)),"%" ),"");
+// leg4->AddEntry( (TObject*)0,Form("N =  %.2f\n #pm %.2f\n %s / E [GeV]",(fun7->GetParameter(2)), (fun7->GetParError(2)),"%" ),"");
+// leg4->AddEntry( (TObject*)0, Form("#chi^{2} / NDF = %.2f\n / %d",fun7->GetChisquare(), fun7->GetNDF() ), "");
+//
  leg4->AddEntry(gr_reso_vs_energy600,"Data 600 HV","p");
- leg4->AddEntry(fun6,Form("S = %.2f\n #pm %.2f\n %s / #sqrt{E [GeV]}",fun6->GetParameter(0), (fun6->GetParError(0)),"%" ),"L");
- leg4->AddEntry( (TObject*)0,Form("C =   %.2f\n #pm %.2f\n %s",(fun6->GetParameter(1)), (fun6->GetParError(1)),"%" ),"");
- leg4->AddEntry( (TObject*)0,Form("N = %.2f\n #pm %.2f\n %s / E [GeV]",(fun6->GetParameter(2)), (fun6->GetParError(2)),"%" ),"");
- leg4->AddEntry( (TObject*)0, Form("#chi^{2} / NDF = %.2f\n / %d",fun6->GetChisquare(), fun6->GetNDF() ), "");
-
+// leg4->AddEntry(fun6,Form("S = %.2f\n #pm %.2f\n %s / #sqrt{E [GeV]}",fun6->GetParameter(0), (fun6->GetParError(0)),"%" ),"L");
+// leg4->AddEntry( (TObject*)0,Form("C =   %.2f\n #pm %.2f\n %s",(fun6->GetParameter(1)), (fun6->GetParError(1)),"%" ),"");
+// leg4->AddEntry( (TObject*)0,Form("N = %.2f\n #pm %.2f\n %s / E [GeV]",(fun6->GetParameter(2)), (fun6->GetParError(2)),"%" ),"");
+// leg4->AddEntry( (TObject*)0, Form("#chi^{2} / NDF = %.2f\n / %d",fun6->GetChisquare(), fun6->GetNDF() ), "");
 
 
  leg4->AddEntry(fun1,"MC (1x1)","L");
@@ -529,6 +561,7 @@ leg0->SetTextSize(0.038);
 
  
  c1->SaveAs( Form( "%s/resolution.pdf", outputdir.c_str() ) );
+ c1->SaveAs( Form( "%s/resolution.png", outputdir.c_str() ) );
 
 
 
@@ -543,13 +576,9 @@ leg0->SetTextSize(0.038);
 
   c1->Clear();
 
-
-
-
-
   //////////////////DEVIATION////////////////////////////
 
-  TH2D* h2_axes3 = new TH2D( "axes", "", 10, 0., xMax/1000.+1, 10, 0., 1.4 );
+  TH2D* h2_axes3 = new TH2D( "axes", "", 10, 0., xMax/1000.+1, 10, 0., 1.6 );
   h2_axes3->SetXTitle("Beam Energy [GeV]");
   h2_axes3->SetYTitle("CeF_{3} Response / Beam Energy ");
   h2_axes3->Draw("");
@@ -590,6 +619,7 @@ leg0->SetTextSize(0.038);
   label_top2->Draw("same");
 
   c1->SaveAs( Form( "%s/deviation.pdf", outputdir.c_str() ) );
+  c1->SaveAs( Form( "%s/deviation.png", outputdir.c_str() ) );
 
 
 
@@ -614,51 +644,6 @@ leg0->SetTextSize(0.038);
 
 
 
-ResoStruct getResponseResolutionMC( const std::string& outputdir, TTree* tree, const std::string& name, float energySim ) {
-
-  gStyle->SetOptFit(1);
-
-  TH1D* h1 = new TH1D( name.c_str(), "", 500, energySim/4.-10, energySim/2.5 +100 );
-  tree->Project( name.c_str(),"cef3_corr[0]+cef3_corr[1]+cef3_corr[2]+cef3_corr[3]" );
-
-
- TF1* f1 = new TF1( Form("f1_%s", name.c_str()), "gaus",  energySim/4.-10, energySim/2.5+10 );
-
- doSingleFit( h1, f1, outputdir, name );
-  ResoStruct rs = getRespAndReso( f1, energySim );
-
-
-
-  return rs;
-
-}
-
-
-
-ResoStruct getRespAndReso( TF1* f1, float energySim) {
-
-  // float energy = energySim;
-  float energyErrS = 0;
-
-  float meanS = f1->GetParameter(1);
-  float meanErrS = f1->GetParError(1);
-
-  float rmsS = f1->GetParameter(2);
-  float rmsErrS = f1->GetParError(2);
-
-  // float resoS = 100.* rmsS/energySim; //in percent
-  float resoS = 100.* rmsS/meanS; //in percent
-  float resoErrS = 100.* getRatioError( rmsS, meanS, meanErrS, rmsErrS );
-
-  ResoStruct rs;
-  rs.resp = meanS;
-  rs.resp_error = meanErrS;
-  rs.reso = resoS;
-  rs.reso_error = resoErrS;
-
-  return rs;
-
-}
 
 
 float getRatioError( float num, float denom, float numErr, float denomErr ) {
@@ -668,13 +653,130 @@ float getRatioError( float num, float denom, float numErr, float denomErr ) {
 }
 
 
-ResoStruct addPhotoStatistics( ResoStruct rs ) {
+FitStruct getFitResults( const std::string& outputdir, TTree* tree, const std::string& name, float xMin, float xMax, std::string& cut, std::string& whatToProject ) {
+
+  DrawTools::setStyle();
+
+  std::string histoName(Form("h1_%s", name.c_str() ));
+  std::string histoName2(Form("h2_%s", name.c_str() ));
+  TH1D* h1;
+  TF1* f1;
+  
+  gStyle->SetOptFit(1);
+  
+  h1 = new TH1D(histoName.c_str(), "", 5000, xMin, xMax);
+  tree->Project( histoName.c_str(), whatToProject.c_str(), cut.c_str() );
+  f1 = new TF1( Form("gaus_%s", name.c_str()), "gaus", xMin, xMax);
+  
+  h1->Fit( f1, "RQN" );
+  
+  f1->SetLineColor(kRed);
+
+  
+  double peakpos = f1->GetParameter(1);
+  double sigma = f1->GetParameter(2);
+  double fitmin;
+  double fitmax;
+  
+  if( (peakpos-8*sigma) < 400 ){ 
+    fitmin = 500;
+  } else{ 
+    fitmin = peakpos-8*sigma;
+  }
+
+  if(((peakpos>0) && (sigma > 2*peakpos)) ) { 
+    fitmax = peakpos*2;
+  } else{ 
+    fitmax = peakpos+8*sigma;
+  }
+
+  if (sigma < 10) sigma = 10;
+
+
+
+  TH1D* h2 = new TH1D("h2", "", 200, fitmin,fitmax);
+  tree->Project( "h2", whatToProject.c_str(), cut.c_str() );
+
+  RooRealVar x("x","ADC Channels", fitmin, fitmax);
+  RooDataHist data("data","dataset with x",x,Import(*h2) );
+  
+  RooPlot* frame;
+  RooPlot* xframe = x.frame();   
+  
+  frame = x.frame("Title");
+  data.plotOn(frame);  //this will show histogram data points on canvas
+  //  data.statOn(frame);  //this will display hist stat on canvas
+  
+  RooRealVar meanr("meanr","Mean",peakpos,peakpos-sigma, peakpos+sigma);
+  RooRealVar width("width","#sigma",sigma, 100.0, 10.*sigma);
+  RooRealVar A("A","Dist",1., 0.0, 5.0);
+  RooRealVar N("N","Deg",3, 0.0, 15);
+
+  meanr.setRange(1000. , 90000000.);
+  width.setRange(100, 100000);
+  
+  RooCBShape fit_fct("fit_fct","fit_fct",x,meanr,width,A,N); int ndf = 4;
+
+  fit_fct.fitTo(data);
+  
+  fit_fct.plotOn(frame,LineColor(4));//this will show fit overlay on canvas
+  // fit_fct.paramOn(frame); //this will display the fit parameters on canvas
+
+    
+  double mean = meanr.getVal();
+  double meanErr = meanr.getError();
+
+  double rms = width.getVal();
+  double rmsErr = width.getError();
+
+  double reso = 100.* rms/mean; //in percent
+  double resoErr = 100.* getRatioError( rms, mean, meanErr, rmsErr );
+
+  
+  TCanvas* cans = new TCanvas("cans", "un canvas", 600,600);
+  cans->cd();
+  frame->Draw(); 
+
+  TLegend* lego = new TLegend(0.65, 0.7, 0.9, 0.92);  
+  lego->SetTextSize(0.038);
+  lego->AddEntry(  (TObject*)0 ,Form("#mu = %.0f #pm %.0f", meanr.getVal(), meanr.getError() ), "");
+  lego->AddEntry(  (TObject*)0 ,Form("#sigma = %.0f #pm %.0f ", width.getVal(), width.getError() ), "");
+  lego->AddEntry(  (TObject*)0 ,Form("#chi^{2} = %.2f / %d ", frame->chiSquare(ndf) , ndf ), "");
+  //lego->AddEntry(  (TObject*)0 ,Form("#sigma/#mu = %.2f #pm  %.2f ", reso , resoErr ), "");
+  lego->SetFillColor(0);
+  lego->Draw("same");
+
+  cans->SaveAs( Form( "%s/CBFit_%s.png", outputdir.c_str(), name.c_str() ) );
+  
+
+
+  FitStruct fs;
+  fs.mean = mean;
+  fs.mean_err = meanErr;
+  fs.sigma = rms;
+  fs.sigma_err = rmsErr;
+  fs.reso = reso;
+  fs.reso_err = resoErr;
+
+
+  delete h1;
+  delete f1;
+  delete h2;
+  delete cans;
+
+  return fs;
+}
+
+
+
+
+FitStruct addPhotoStatistics( FitStruct rs ) {
 
   // MC response is already in MeV, 0.49 is the number of p.e. per MeV
   // RM = 90% of energy, so assume 90% of energy (0.9*491) is deposited in central channel
   //   float nADC = rs.resp/169.445*3224.36;
   //  float nADC = rs.resp/173.097*3235.76;
-  float  nADC = rs.resp/171.6*3236;
+  float  nADC = rs.mean/171.6*3236;
   //  float  nADC = rs.resp/169.445*3224.36;
    float nPhotoElectrons = nADC/27.3;
   //float nADC = rs.resp/185.*3200.;
@@ -686,112 +788,8 @@ ResoStruct addPhotoStatistics( ResoStruct rs ) {
   float resoSmeared =  sqrt( rs.reso*rs.reso + poissonError*poissonError );
 
   rs.reso = resoSmeared;
-  rs.reso_error = rs.reso_error * resoSmeared / resoUnsmeared; 
+  rs.reso_err = rs.reso_err * resoSmeared / resoUnsmeared; 
 
   return rs;
 
 } 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-TF1* fitSingleElectronPeak( const std::string& outputdir, const std::string& name, TTree* tree, float HV ) {
-
-  std::string histoName(Form("h1_%s", name.c_str() ));
-  TH1D* h1;
-  TF1* f1;
-
-  if(HV == 950. ){
-
-    h1 = new TH1D(histoName.c_str(), "", 500, 1000, 7000 );
-  tree->Project( histoName.c_str(), "cef3_corr[0]+cef3_corr[1]+cef3_corr[2]+cef3_corr[3]");
-  f1 = new TF1( Form("gaus_%s", name.c_str()), "gaus", 1000., 7000);
- 
-  } else  if(HV == 700. ){
-
-    h1 = new TH1D(histoName.c_str(), "", 3500,50, 1700 );
-  tree->Project( histoName.c_str(), "cef3_corr[0]+cef3_corr[1]+cef3_corr[2]+cef3_corr[3]");
-  f1 = new TF1( Form("gaus_%s", name.c_str()), "gaus", 50., 1700);
-     f1->SetParameter(0, 10.);
-  }else{
-
-    h1 = new TH1D(histoName.c_str(), "", 500, 0, 600 );
-  tree->Project( histoName.c_str(), "cef3_corr[0]+cef3_corr[1]+cef3_corr[2]+cef3_corr[3]");
-  f1 = new TF1( Form("gaus_%s", name.c_str()), "gaus", 0., 600);
- 
-  }
-
-  // std::string histoName(Form("h1_%s", name.c_str() ));
-  // TH1D* h1 = new TH1D(histoName.c_str(), "", 5100, 0., 10000 );
-  //  TH1D* h1 = new TH1D(histoName.c_str(), "", 500, 0.,180000.);
-
- //  TF1* f1 = new TF1( Form("gaus_%s", name.c_str()), "gaus", 500., 1800000.);
-  //  TF1* f1 = new TF1( Form("gaus_%d", i), "gaus", 400., 1200.);
-  //     f1->SetParameter(0, 60.);
-   f1->SetParameter(1, 1000.);
-   f1->SetParameter(2, 100.);
-
-   f1->SetLineColor(kRed);
-
-    doSingleFit( h1, f1, outputdir, name );
-
-  return f1;
-
-}
-
-
-
-
-
-
-
-void doSingleFit( TH1D* h1, TF1* f1, const std::string& outputdir, const std::string& name ) {
-
-  h1->Fit( f1, "RQN" );
-
-  int niter = 4.;
-  float nSigma =1.5 ;
-
-  for( unsigned iter=0; iter<niter; iter++ ) {
-
-    float mean  = f1->GetParameter(1);
-    float sigma = f1->GetParameter(2);
-    float fitMin = mean - nSigma*sigma*0.8;
-    float fitMax = mean + nSigma*sigma;
-    f1->SetRange( fitMin, fitMax );
-    if( iter==(niter-1) )
-      h1->Fit( f1, "RQN" );
-    else
-      h1->Fit( f1, "RQ+" );
-  }
-
-
-  TCanvas* c1 = new TCanvas("c1", "", 600, 600);
-  c1->cd();
-
-  h1->Draw();
-
-    c1->SaveAs( Form("%s/fit_%s.png", outputdir.c_str(), name.c_str()) );
-  delete c1;
-
-}

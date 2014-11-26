@@ -8,6 +8,7 @@
 #include "TCanvas.h"
 #include "TLine.h"
 #include "TH2D.h"
+#include "TGaxis.h"
 
 #include "DrawTools.h"
 #include "HodoCluster.h"
@@ -19,8 +20,14 @@
 
 void assignValues( std::vector<float> &target, std::vector<float> source, unsigned int startPos );
 
-void doHodoReconstruction( std::vector<float> values, int &nClusters, int *nFibres, float *pos, float fibreWidth, int clusterMaxFibres );
-std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreWidth, int nClusterMax );
+
+void doHodoReconstruction( std::vector<float> values, int &nClusters, int *nFibres, float *pos, float fibreWidth, int clusterMaxFibres, float Cut  );
+std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreWidth, int nClusterMax, float Cut  );
+
+void assignValuesBool( std::vector<bool> &target, std::vector<bool> source, unsigned int startPos );
+void doHodoReconstructionBool( std::vector<bool> values, int &nClusters, int *nFibres, float *pos, float fibreWidth, int clusterMaxFibres, float Cut );
+std::vector<HodoCluster*> getHodoClustersBool( std::vector<bool> hodo, float fibreWidth, int nClusterMax, float Cut );
+
 
 float fitAndDraw( const std::string& outputdir, TH1F* h1 );
 
@@ -36,7 +43,7 @@ int main( int argc, char* argv[] ) {
 
 
   DrawTools::setStyle();
-
+  TGaxis::SetMaxDigits(3);
 
   std::string tag="V0";
   if( argc<2 ) {
@@ -55,60 +62,132 @@ int main( int argc, char* argv[] ) {
   std::string constFileName = constDirName+"/offsets_"+tag+".txt";
   AlignmentOfficer alignOfficer(constFileName);
 
-
+  //  TFile* file = TFile::Open("data/run_central.root");
+  //  TFile* file = TFile::Open("data/run_corr2.root");
+  //  TFile* file = TFile::Open("data/run_481.root");
+  //  TFile* file = TFile::Open("data/run_487.root");
   TFile* file = TFile::Open("data/run_273.root");
   TTree* tree = (TTree*)file->Get("outputTree");
 
 
   // Declaration of leaf types
-  UInt_t          runNumber;
-  UInt_t          spillNumber;
-  UInt_t          evtNumber;
-
-  std::vector<float>   *ADCvalues;
-  std::vector<float>   *digi_max_amplitude;
-  std::vector<float>   *digi_charge_integrated;
-  std::vector<float>   *digi_pedestal;
-  std::vector<float>   *digi_pedestal_rms;
-  std::vector<float>   *digi_time_at_frac30;
-  std::vector<float>   *digi_time_at_frac50;
-  std::vector<float>   *digi_time_at_max;
+   UInt_t          runNumber;
+   UInt_t          spillNumber;
+   UInt_t          evtNumber;
+   std::vector<float>   *BGOvalues;
+   std::vector<float>   *SCINTvalues;
+   std::vector<float>   *TDCreco;
+   std::vector<float>   *digi_charge_integrated;
+   std::vector<float>   *digi_max_amplitude;
+   std::vector<float>   *digi_pedestal;
+   std::vector<float>   *digi_pedestal_rms;
+   std::vector<float>   *digi_time_at_frac30;
+   std::vector<float>   *digi_time_at_frac50;
+   std::vector<float>   *digi_time_at_max;
+   std::vector<bool>    *HODOX1;
+   std::vector<bool>    *HODOX2;
+   std::vector<bool>    *HODOY1;
+   std::vector<bool>    *HODOY2;
+   Float_t         TableX;
+   Float_t         TableY;
+   Float_t         CeF3HV;
+   Float_t         BGOHV;
+   Float_t         BeamEnergy;
+   Float_t         BeamTilt;
+   Int_t           IsPhysics;
+   std::vector<float>   *digi_charge_integrated_sub;
+   std::vector<float>   *digi_max_amplitude_sub;
+   std::vector<float>   *digi_pedestal_sub;
+   std::vector<float>   *digi_pedestal_rms_sub;
+   std::vector<float>   *digi_charge_integrated_corr2;
+   std::vector<float>   *digi_max_amplitude_corr2;
 
   // List of branches
-  TBranch        *b_runNumber;   //!
-  TBranch        *b_spillNumber;   //!
-  TBranch        *b_evtNumber;   //!
-  TBranch        *b_ADCvalues;   //!
-  TBranch        *b_digi_max_amplitude;   //!
-  TBranch        *b_digi_charge_integrated;   //!
-  TBranch        *b_digi_pedestal;   //!
-  TBranch        *b_digi_pedestal_rms;   //!
-  TBranch        *b_digi_time_at_frac30;   //!
-  TBranch        *b_digi_time_at_frac50;   //!
-  TBranch        *b_digi_time_at_max;   //!
+   TBranch        *b_runNumber;   //!
+   TBranch        *b_spillNumber;   //!
+   TBranch        *b_evtNumber;   //!
+   TBranch        *b_BGOvalues;   //!
+   TBranch        *b_SCINTvalues;   //!
+   TBranch        *b_TDCreco;   //!
+   TBranch        *b_digi_charge_integrated;   //!
+   TBranch        *b_digi_max_amplitude;   //!
+   TBranch        *b_digi_pedestal;   //!
+   TBranch        *b_digi_pedestal_rms;   //!
+   TBranch        *b_digi_time_at_frac30;   //!
+   TBranch        *b_digi_time_at_frac50;   //!
+   TBranch        *b_digi_time_at_max;   //!
+   TBranch        *b_HODOX1;   //!
+   TBranch        *b_HODOX2;   //!
+   TBranch        *b_HODOY1;   //!
+   TBranch        *b_HODOY2;   //!
+   TBranch        *b_TableX;   //!
+   TBranch        *b_TableY;   //!
+   TBranch        *b_CeF3HV;   //!
+   TBranch        *b_BGOHV;   //!
+   TBranch        *b_BeamEnergy;   //!
+   TBranch        *b_BeamTilt;   //!
+   TBranch        *b_IsPhysics;   //!
+   TBranch        *b_digi_charge_integrated_sub;   //!
+   TBranch        *b_digi_max_amplitude_sub;   //!
+   TBranch        *b_digi_pedestal_sub;   //!
+   TBranch        *b_digi_pedestal_rms_sub;   //!
+   TBranch        *b_digi_charge_integrated_corr2;   //!
+   TBranch        *b_digi_max_amplitude_corr2;   //!
 
   // Set object pointer
-  ADCvalues = 0;
-  digi_max_amplitude = 0;
-  digi_charge_integrated = 0;
-  digi_pedestal = 0;
-  digi_pedestal_rms = 0;
-  digi_time_at_frac30 = 0;
-  digi_time_at_frac50 = 0;
-  digi_time_at_max = 0;
+   BGOvalues = 0;
+   SCINTvalues = 0;
+   TDCreco = 0;
+   digi_charge_integrated = 0;
+   digi_max_amplitude = 0;
+   digi_pedestal = 0;
+   digi_pedestal_rms = 0;
+   digi_time_at_frac30 = 0;
+   digi_time_at_frac50 = 0;
+   digi_time_at_max = 0;
+   HODOX1 = 0;
+   HODOX2 = 0;
+   HODOY1 = 0;
+   HODOY2 = 0;
+   digi_charge_integrated_sub = 0;
+   digi_max_amplitude_sub = 0;
+   digi_pedestal_sub = 0;
+   digi_pedestal_rms_sub = 0;
+   digi_charge_integrated_corr2 = 0;
+   digi_max_amplitude_corr2 = 0;
 
 
-  tree->SetBranchAddress("runNumber", &runNumber, &b_runNumber);
-  tree->SetBranchAddress("spillNumber", &spillNumber, &b_spillNumber);
-  tree->SetBranchAddress("evtNumber", &evtNumber, &b_evtNumber);
-  tree->SetBranchAddress("ADCvalues", &ADCvalues, &b_ADCvalues);
-  tree->SetBranchAddress("digi_max_amplitude", &digi_max_amplitude, &b_digi_max_amplitude); 
-  tree->SetBranchAddress("digi_charge_integrated", &digi_charge_integrated, &b_digi_charge_integrated);
-  tree->SetBranchAddress("digi_pedestal", &digi_pedestal, &b_digi_pedestal);
-  tree->SetBranchAddress("digi_pedestal_rms", &digi_pedestal_rms, &b_digi_pedestal_rms);
-  tree->SetBranchAddress("digi_time_at_frac30", &digi_time_at_frac30, &b_digi_time_at_frac30);
-  tree->SetBranchAddress("digi_time_at_frac50", &digi_time_at_frac50, &b_digi_time_at_frac50);
-  tree->SetBranchAddress("digi_time_at_max", &digi_time_at_max, &b_digi_time_at_max);
+   //Set Branch Adresses and branch pointers 
+   tree->SetBranchAddress("runNumber", &runNumber, &b_runNumber);
+   tree->SetBranchAddress("spillNumber", &spillNumber, &b_spillNumber);
+   tree->SetBranchAddress("evtNumber", &evtNumber, &b_evtNumber);
+   tree->SetBranchAddress("BGOvalues", &BGOvalues, &b_BGOvalues);
+   tree->SetBranchAddress("SCINTvalues", &SCINTvalues, &b_SCINTvalues);
+   tree->SetBranchAddress("TDCreco", &TDCreco, &b_TDCreco);
+   tree->SetBranchAddress("digi_charge_integrated", &digi_charge_integrated, &b_digi_charge_integrated);
+   tree->SetBranchAddress("digi_max_amplitude", &digi_max_amplitude, &b_digi_max_amplitude);
+   tree->SetBranchAddress("digi_pedestal", &digi_pedestal, &b_digi_pedestal);
+   tree->SetBranchAddress("digi_pedestal_rms", &digi_pedestal_rms, &b_digi_pedestal_rms);
+   tree->SetBranchAddress("digi_time_at_frac30", &digi_time_at_frac30, &b_digi_time_at_frac30);
+   tree->SetBranchAddress("digi_time_at_frac50", &digi_time_at_frac50, &b_digi_time_at_frac50);
+   tree->SetBranchAddress("digi_time_at_max", &digi_time_at_max, &b_digi_time_at_max);
+   tree->SetBranchAddress("HODOX1", &HODOX1, &b_HODOX1);
+   tree->SetBranchAddress("HODOX2", &HODOX2, &b_HODOX2);
+   tree->SetBranchAddress("HODOY1", &HODOY1, &b_HODOY1);
+   tree->SetBranchAddress("HODOY2", &HODOY2, &b_HODOY2);
+   tree->SetBranchAddress("TableX", &TableX, &b_TableX);
+   tree->SetBranchAddress("TableY", &TableY, &b_TableY);
+   tree->SetBranchAddress("CeF3HV", &CeF3HV, &b_CeF3HV);
+   tree->SetBranchAddress("BGOHV", &BGOHV, &b_BGOHV);
+   tree->SetBranchAddress("BeamEnergy", &BeamEnergy, &b_BeamEnergy);
+   tree->SetBranchAddress("BeamTilt", &BeamTilt, &b_BeamTilt);
+   tree->SetBranchAddress("IsPhysics", &IsPhysics, &b_IsPhysics);
+   tree->SetBranchAddress("digi_charge_integrated_sub", &digi_charge_integrated_sub, &b_digi_charge_integrated_sub);
+   tree->SetBranchAddress("digi_max_amplitude_sub", &digi_max_amplitude_sub, &b_digi_max_amplitude_sub);
+   tree->SetBranchAddress("digi_pedestal_sub", &digi_pedestal_sub, &b_digi_pedestal_sub);
+   tree->SetBranchAddress("digi_pedestal_rms_sub", &digi_pedestal_rms_sub, &b_digi_pedestal_rms_sub);
+   tree->SetBranchAddress("digi_charge_integrated_corr2", &digi_charge_integrated_corr2, &b_digi_charge_integrated_corr2);
+   tree->SetBranchAddress("digi_max_amplitude_corr2", &digi_max_amplitude_corr2, &b_digi_max_amplitude_corr2);
 
 
   int nClusters_hodoX1;
@@ -129,14 +208,17 @@ int main( int argc, char* argv[] ) {
   float wc_y;
 
 
+  //int nBins = 80*2*2*2*2;
   int nBins = 80;
+  //  int nBinsWC = 40*5;
+  int nBinsWC = 80;
   float xMin = -20.;
   float xMax =  20.;
 
-  TH1F* h1_wc_y_low = new TH1F("wc_y_low", "", nBins, xMin, xMax);
-  TH1F* h1_wc_y_hi  = new TH1F("wc_y_hi" , "", nBins, xMin, xMax);
-  TH1F* h1_wc_x_low = new TH1F("wc_x_low", "", nBins, xMin, xMax);
-  TH1F* h1_wc_x_hi  = new TH1F("wc_x_hi" , "", nBins, xMin, xMax);
+  TH1F* h1_wc_y_low = new TH1F("wc_y_low", "", nBinsWC, xMin, xMax);
+  TH1F* h1_wc_y_hi  = new TH1F("wc_y_hi" , "", nBinsWC, xMin, xMax);
+  TH1F* h1_wc_x_low = new TH1F("wc_x_low", "", nBinsWC, xMin, xMax);
+  TH1F* h1_wc_x_hi  = new TH1F("wc_x_hi" , "", nBinsWC, xMin, xMax);
 
   TH1F* h1_hodoY1_low = new TH1F("hodoY1_low", "", nBins, xMin, xMax);
   TH1F* h1_hodoY1_hi  = new TH1F("hodoY1_hi" , "", nBins, xMin, xMax);
@@ -157,16 +239,17 @@ int main( int argc, char* argv[] ) {
 
      if( iEntry %  10000 == 0 ) std::cout << "Entry: " << iEntry << " / " << nentries << std::endl;
 
+     std::vector<bool> hodoX1_values(HODOX1_CHANNELS, -1.);
+     std::vector<bool> hodoY1_values(HODOY1_CHANNELS, -1.);
+     assignValuesBool( hodoX1_values, *HODOX1, 0. );
+     assignValuesBool( hodoY1_values, *HODOY1, 0. );
 
-     std::vector<float> hodoX1_values(HODOX1_CHANNELS, -1.);
-     std::vector<float> hodoY1_values(HODOY1_CHANNELS, -1.);
-     assignValues( hodoX1_values, *ADCvalues, HODOX1_ADC_START_CHANNEL );
-     assignValues( hodoY1_values, *ADCvalues, HODOY1_ADC_START_CHANNEL );
 
-     std::vector<float> hodoX2_values(HODOX2_CHANNELS, -1.);
-     std::vector<float> hodoY2_values(HODOY2_CHANNELS, -1.);
-     assignValues( hodoX2_values, *ADCvalues, HODOX2_ADC_START_CHANNEL );
-     assignValues( hodoY2_values, *ADCvalues, HODOY2_ADC_START_CHANNEL );
+     std::vector<bool> hodoX2_values(HODOX2_CHANNELS, -1.);
+     std::vector<bool> hodoY2_values(HODOY2_CHANNELS, -1.);
+     assignValuesBool( hodoX2_values, *HODOX2, 0 );
+     assignValuesBool( hodoY2_values, *HODOY2, 0 );
+
 
      std::vector<float> hodoSmallX_values(HODOSMALLX_CHANNELS, -1.);
      std::vector<float> hodoSmallY_values(HODOSMALLY_CHANNELS, -1.);
@@ -175,19 +258,18 @@ int main( int argc, char* argv[] ) {
 
      // hodo cluster reconstruction
      int clusterMaxFibres = 4;
-     doHodoReconstruction( hodoX1_values    , nClusters_hodoX1    , nFibres_hodoX1    , pos_hodoX1    , 0.5, clusterMaxFibres );
-     doHodoReconstruction( hodoY1_values    , nClusters_hodoY1    , nFibres_hodoY1    , pos_hodoY1    , 0.5, clusterMaxFibres );
-     doHodoReconstruction( hodoX2_values    , nClusters_hodoX2    , nFibres_hodoX2    , pos_hodoX2    , 0.5, clusterMaxFibres );
-     doHodoReconstruction( hodoY2_values    , nClusters_hodoY2    , nFibres_hodoY2    , pos_hodoY2    , 0.5, clusterMaxFibres );
+     doHodoReconstructionBool( hodoX1_values    , nClusters_hodoX1    , nFibres_hodoX1    , pos_hodoX1    , 0.5, clusterMaxFibres, 0.  );
+     doHodoReconstructionBool( hodoY1_values    , nClusters_hodoY1    , nFibres_hodoY1    , pos_hodoY1    , 0.5, clusterMaxFibres, 0.  );
+     doHodoReconstructionBool( hodoX2_values    , nClusters_hodoX2    , nFibres_hodoX2    , pos_hodoX2    , 0.5, clusterMaxFibres, 0.  );
+     doHodoReconstructionBool( hodoY2_values    , nClusters_hodoY2    , nFibres_hodoY2    , pos_hodoY2    , 0.5, clusterMaxFibres, 0.  );
 
      alignOfficer.fix("hodoX1", nClusters_hodoX1, pos_hodoX1);
      alignOfficer.fix("hodoY1", nClusters_hodoY1, pos_hodoY1);
      alignOfficer.fix("hodoX2", nClusters_hodoX2, pos_hodoX2);
      alignOfficer.fix("hodoY2", nClusters_hodoY2, pos_hodoY2);
 
-
-     wc_x = ADCvalues->at(WC_X_ADC_START_CHANNEL);
-     wc_y = ADCvalues->at(WC_Y_ADC_START_CHANNEL);
+     wc_x = TDCreco->at(0);
+     wc_y = TDCreco->at(1);
      if( runNumber>=170 ) wc_y = -wc_y; // temporary fix
 
      wc_x += alignOfficer.getOffset("wc_x");
@@ -342,7 +424,7 @@ float fitAndDraw( const std::string& outputdir, TH1F* h1 ) {
     
     f1->SetParameter( 1, maxPos );
     h1->Fit(f1, "QRN");
-
+    
     for( unsigned i=0; i<4; ++i ) {
 
       float m = f1->GetParameter(1);
@@ -355,6 +437,7 @@ float fitAndDraw( const std::string& outputdir, TH1F* h1 ) {
         h1->Fit(f1, "RNQ");
 
     }
+
 
     f1->SetLineColor(kRed);
     returnConst = f1->GetParameter(1);
@@ -447,7 +530,7 @@ void assignValues( std::vector<float> &target, std::vector<float> source, unsign
 
 
 
-std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreWidth, int nClusterMax ) {
+std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreWidth, int nClusterMax, float Cut ) {
 
   std::vector<HodoCluster*> clusters;
 
@@ -455,7 +538,7 @@ std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreW
 
   for( unsigned i=0; i<hodo.size(); ++i ) {
 
-    if( hodo[i] > 0.) { // hit
+    if( hodo[i] > Cut) { // hit
 
       if( currentCluster->getSize() < nClusterMax ) {
 
@@ -495,9 +578,88 @@ std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreW
 
 
 
-void doHodoReconstruction( std::vector<float> values, int &nClusters, int *nFibres, float *pos, float fibreWidth, int clusterMaxFibres ) {
+void doHodoReconstruction( std::vector<float> values, int &nClusters, int *nFibres, float *pos, float fibreWidth, int clusterMaxFibres, float Cut ) {
 
-  std::vector<HodoCluster*> clusters = getHodoClusters( values, fibreWidth, clusterMaxFibres );
+  std::vector<HodoCluster*> clusters = getHodoClusters( values, fibreWidth, clusterMaxFibres, Cut );
+
+  nClusters = clusters.size();
+  for( unsigned i=0; i<clusters.size(); ++i ) {
+    nFibres[i] = clusters[i]->getSize();
+    pos[i] = clusters[i]->getPosition();
+  }
+
+}
+
+
+
+
+
+void assignValuesBool( std::vector<bool> &target, std::vector<bool> source, unsigned int startPos ) {
+
+  for( unsigned i=0; i<target.size(); ++i ) 
+    target[i] = source[startPos+i];
+
+}
+
+
+
+
+
+
+
+
+std::vector<HodoCluster*> getHodoClustersBool( std::vector<bool> hodo, float fibreWidth, int nClusterMax, float Cut ) {
+
+  std::vector<HodoCluster*> clusters;
+
+  HodoCluster* currentCluster = new HodoCluster( hodo.size(), fibreWidth );
+
+  for( unsigned i=0; i<hodo.size(); ++i ) {
+
+    if( hodo[i] > Cut) { // hit
+
+      if( currentCluster->getSize() < nClusterMax ) {
+
+        currentCluster->addFibre( i );
+
+      } else {
+
+        clusters.push_back( currentCluster ); // store old one
+        currentCluster = new HodoCluster( hodo.size(), fibreWidth );   // create a new one
+        currentCluster->addFibre( i );        // get that fibre!
+
+      }
+
+    } else { // as soon as you find a hole
+      
+      if( currentCluster->getSize() > 0 ) {
+     
+        clusters.push_back( currentCluster ); // store old one
+        currentCluster = new HodoCluster( hodo.size(), fibreWidth );   // create a new one
+
+      }
+
+    }
+
+
+  } // for fibres
+
+
+  if( currentCluster->getSize()>0 )
+    clusters.push_back( currentCluster ); // store last cluster
+
+
+  return clusters;
+
+}
+
+
+
+
+
+void doHodoReconstructionBool( std::vector<bool> values, int &nClusters, int *nFibres, float *pos, float fibreWidth, int clusterMaxFibres, float Cut ) {
+
+  std::vector<HodoCluster*> clusters = getHodoClustersBool( values, fibreWidth, clusterMaxFibres, Cut );
 
   nClusters = clusters.size();
   for( unsigned i=0; i<clusters.size(); ++i ) {

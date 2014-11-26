@@ -12,7 +12,6 @@
 
 #include "CommonTools/interface/RunHelper.h"
 
-#include "TApplication.h"
 
 
 void assignValues( std::vector<float> &target, std::vector<float> source, unsigned int startPos );
@@ -27,8 +26,6 @@ void copyArray( int n, float *source, float *target );
 
 
 int main( int argc, char* argv[] ) {
-
-   TApplication* a = new TApplication("a", 0, 0);
 
    if( argc<2 ) {
      std::cout << "ERROR. You need to specify the name of the run you want to process." << std::endl;  

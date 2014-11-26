@@ -1,0 +1,27 @@
+Analysis/CeF3Calibration
+Analysis/CeF3IntercalPlots
+Analysis/BGOCalibration
+Analysis/AngularReso
+Analysis/data
+Analysis/HVEnergyScan
+
+
+## C/C++ ##
+*.o
+*.so
+*.d
+*.a
+## Python ##
+*.pyc
+## Vim ##
+~*
+## Emacs ##
+*~
+## Root/Binary ##
+*.root
+## Images/PDF ##
+*.pdf
+*.png
+*.eps
+
+.#*
