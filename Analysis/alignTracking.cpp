@@ -53,20 +53,25 @@ int main( int argc, char* argv[] ) {
     std::string tag_str(argv[1]);
     tag = tag_str;
   }
-  
-
-  // this is the dir in which the offsets will be saved:
+    // this is the dir in which the offsets will be saved:
   std::string constDirName = "Alignment";
   system(Form("mkdir -p %s", constDirName.c_str()));
+
 
   std::string constFileName = constDirName+"/offsets_"+tag+".txt";
   AlignmentOfficer alignOfficer(constFileName);
 
-  //  TFile* file = TFile::Open("data/run_central.root");
-  //  TFile* file = TFile::Open("data/run_corr2.root");
-  //  TFile* file = TFile::Open("data/run_481.root");
+
   //  TFile* file = TFile::Open("data/run_487.root");
-  TFile* file = TFile::Open("data/run_273.root");
+  // TFile* file = TFile::Open("data/run_428.root"); //200 GeV
+  //   TFile* file = TFile::Open("data/run_407.root"); //150 GeV
+  //  TFile* file = TFile::Open("data/run_418.root"); //100 GeV  
+//TFile* file = TFile::Open("data/run_398.root"); //50 GeV
+  // TFile* file = TFile::Open("data/run_455.root"); //20 GeV
+  TFile* file = TFile::Open("data/run_508.root"); //20 GeV seems to be better than run 455
+  //  TFile* file = TFile::Open("data/run_457.root"); //15 GeV
+  //TFile* file = TFile::Open("data/run_431.root"); //10 GeV
+  // TFile* file = TFile::Open("data/run_273.root");
   TTree* tree = (TTree*)file->Get("outputTree");
 
 
@@ -95,6 +100,7 @@ int main( int argc, char* argv[] ) {
    Float_t         BeamEnergy;
    Float_t         BeamTilt;
    Int_t           IsPhysics;
+   std::vector<int>     *nTdcHits;
    std::vector<float>   *digi_charge_integrated_sub;
    std::vector<float>   *digi_max_amplitude_sub;
    std::vector<float>   *digi_pedestal_sub;
@@ -127,6 +133,7 @@ int main( int argc, char* argv[] ) {
    TBranch        *b_BeamEnergy;   //!
    TBranch        *b_BeamTilt;   //!
    TBranch        *b_IsPhysics;   //!
+   TBranch        *b_nTdcHits;   //!
    TBranch        *b_digi_charge_integrated_sub;   //!
    TBranch        *b_digi_max_amplitude_sub;   //!
    TBranch        *b_digi_pedestal_sub;   //!
@@ -149,6 +156,7 @@ int main( int argc, char* argv[] ) {
    HODOX2 = 0;
    HODOY1 = 0;
    HODOY2 = 0;
+   nTdcHits = 0;
    digi_charge_integrated_sub = 0;
    digi_max_amplitude_sub = 0;
    digi_pedestal_sub = 0;
@@ -182,6 +190,7 @@ int main( int argc, char* argv[] ) {
    tree->SetBranchAddress("BeamEnergy", &BeamEnergy, &b_BeamEnergy);
    tree->SetBranchAddress("BeamTilt", &BeamTilt, &b_BeamTilt);
    tree->SetBranchAddress("IsPhysics", &IsPhysics, &b_IsPhysics);
+   tree->SetBranchAddress("nTdcHits", &nTdcHits, &b_nTdcHits);
    tree->SetBranchAddress("digi_charge_integrated_sub", &digi_charge_integrated_sub, &b_digi_charge_integrated_sub);
    tree->SetBranchAddress("digi_max_amplitude_sub", &digi_max_amplitude_sub, &b_digi_max_amplitude_sub);
    tree->SetBranchAddress("digi_pedestal_sub", &digi_pedestal_sub, &b_digi_pedestal_sub);
@@ -210,7 +219,7 @@ int main( int argc, char* argv[] ) {
 
   //int nBins = 80*2*2*2*2;
   int nBins = 80;
-  //  int nBinsWC = 40*5;
+  //   int nBinsWC = 40*5;
   int nBinsWC = 80;
   float xMin = -20.;
   float xMax =  20.;
@@ -282,6 +291,232 @@ int main( int argc, char* argv[] ) {
      float hodoSmallX_low = digi_max_amplitude->at(4);
      float hodoSmallX_hi  = digi_max_amplitude->at(5);
 
+     /* 
+     // y low
+     if( hodoSmallY_low>60. ) {
+       // if( (( nTdcHits->at(0)==1 && nTdcHits->at(1)==1 ) ||   (nTdcHits->at(0)==1 && nTdcHits->at(2)==1 ) ||  (nTdcHits->at(0)==1 && nTdcHits->at(3)==1) || ( nTdcHits->at(1)==1 && nTdcHits->at(2)==1 ) || ( nTdcHits->at(1)==1 && nTdcHits->at(3)==1 ) || ( nTdcHits->at(2)==1 && nTdcHits->at(3)==1 )) && (  nTdcHits->at(0)<5 && nTdcHits->at(1)<5 &&  nTdcHits->at(2)<5 && nTdcHits->at(3)<5 )  ){       h1_wc_y_low->Fill( wc_y );}
+       if( nTdcHits->at(0)==1 && nTdcHits->at(1)==1 && nTdcHits->at(2)==1 && nTdcHits->at(3)==1 ){       h1_wc_y_low->Fill( wc_y );}
+       int posOf2FibClustY1Low = 0;
+       int posOf2FibClustY2Low=0;
+
+	 int nrOf2FibreClustersY1Low = 0;
+	 for( int i=0; i<nClusters_hodoY1; ++i ) {
+	   if( nFibres_hodoY1[i]==2  )  {  
+	     ++nrOf2FibreClustersY1Low;
+	     posOf2FibClustY1Low= i ; } 
+	 }
+	 if(nrOf2FibreClustersY1Low==1|| nClusters_hodoY1==1  )
+	   h1_hodoY1_low->Fill( pos_hodoY1[ posOf2FibClustY1Low] );
+
+	  //And for Y2 LOW:
+     int nrOf2FibreClustersY2Low = 0;
+       for( int i=0; i<nClusters_hodoY2; ++i ) {
+         if( nFibres_hodoY2[i]==2  )  {  
+	   ++nrOf2FibreClustersY2Low;
+	   posOf2FibClustY2Low=i;  } 
+       }
+       if(nrOf2FibreClustersY2Low==1||nClusters_hodoY2==1)
+	 h1_hodoY2_low->Fill( pos_hodoY2[posOf2FibClustY2Low] );
+     }
+       
+ 
+    
+    // y hi
+     if( hodoSmallY_hi>60. ) {
+       if( nTdcHits->at(0)==1 && nTdcHits->at(1)==1 && nTdcHits->at(2)==1 && nTdcHits->at(3)==1 ){       h1_wc_y_hi->Fill( wc_y );}
+     int posOf2FibClustY1Hi = 0;
+    int   posOf2FibClustY2Hi=0;
+
+     int nrOf2FibreClustersY1Hi = 0;
+       for( int i=0; i<nClusters_hodoY1; ++i ) {
+         if( nFibres_hodoY1[i]==2  )  {  
+	   ++nrOf2FibreClustersY1Hi;
+	   posOf2FibClustY1Hi= i ;} 
+       }
+       if(nrOf2FibreClustersY1Hi==1 || nClusters_hodoY1==1)
+	 h1_hodoY1_hi->Fill( pos_hodoY1[ posOf2FibClustY1Hi] ); 
+	 
+	  //And for Y2 HI:
+     int nrOf2FibreClustersY2Hi = 0;
+       for( int i=0; i<nClusters_hodoY2; ++i ) {
+         if( nFibres_hodoY2[i]==2  )  {  
+	   ++nrOf2FibreClustersY2Hi;
+	   posOf2FibClustY2Hi=i;  } 
+       }
+       if(nrOf2FibreClustersY2Hi==1||nClusters_hodoY2==1)
+	 h1_hodoY2_hi->Fill( pos_hodoY2[posOf2FibClustY2Hi] );     
+     }
+     */
+
+  // y low
+     if( hodoSmallY_low>60. ) {
+
+     int posOf2FibClustY1Low = 0;
+    int   posOf2FibClustY2Low=0;
+
+     int nrOf2FibreClustersY1Low = 0;
+       for( int i=0; i<nClusters_hodoY1; ++i ) {
+         if( nFibres_hodoY1[i]==2  )  {  
+	   ++nrOf2FibreClustersY1Low;
+	   posOf2FibClustY1Low= i ;} 
+       }
+ 
+	  //And for Y2 LOW:
+     int nrOf2FibreClustersY2Low = 0;
+       for( int i=0; i<nClusters_hodoY2; ++i ) {
+         if( nFibres_hodoY2[i]==2  )  {  
+	   ++nrOf2FibreClustersY2Low;
+	   posOf2FibClustY2Low=i;  } 
+       }
+
+       if((nrOf2FibreClustersY2Low==1||nClusters_hodoY2==1)&& (nrOf2FibreClustersY1Low==1 || nClusters_hodoY1==1) && abs(wc_y) <200 && nTdcHits->at(2)>0 && nTdcHits->at(3)>0 &&  nTdcHits->at(2)<3 && nTdcHits->at(3)<3 && ( nTdcHits->at(2) + nTdcHits->at(3))<4){
+	 h1_wc_y_low->Fill( wc_y );
+	 h1_hodoY1_low->Fill( pos_hodoY1[posOf2FibClustY1Low] );
+	 h1_hodoY2_low->Fill( pos_hodoY2[posOf2FibClustY2Low] );     
+     }
+     }
+
+   // y hi
+     if( hodoSmallY_hi>60. ) {
+
+     int posOf2FibClustY1Hi = 0;
+    int   posOf2FibClustY2Hi=0;
+
+     int nrOf2FibreClustersY1Hi = 0;
+       for( int i=0; i<nClusters_hodoY1; ++i ) {
+         if( nFibres_hodoY1[i]==2  )  {  
+	   ++nrOf2FibreClustersY1Hi;
+	   posOf2FibClustY1Hi= i ;} 
+       }
+ 
+	  //And for Y2 HI:
+     int nrOf2FibreClustersY2Hi = 0;
+       for( int i=0; i<nClusters_hodoY2; ++i ) {
+         if( nFibres_hodoY2[i]==2  )  {  
+	   ++nrOf2FibreClustersY2Hi;
+	   posOf2FibClustY2Hi=i;  } 
+       }
+
+       if((nrOf2FibreClustersY2Hi==1||nClusters_hodoY2==1)&& (nrOf2FibreClustersY1Hi==1 || nClusters_hodoY1==1) && abs(wc_y) <200 && nTdcHits->at(2)>0 && nTdcHits->at(3)>0 &&  nTdcHits->at(2)<3 && nTdcHits->at(3)<3 && ( nTdcHits->at(2) + nTdcHits->at(3))<4){
+	 h1_wc_y_hi->Fill( wc_y );
+	 h1_hodoY1_hi->Fill( pos_hodoY1[ posOf2FibClustY1Hi] );
+	 h1_hodoY2_hi->Fill( pos_hodoY2[posOf2FibClustY2Hi] );     
+     }
+     }
+
+
+  // x low
+     if( hodoSmallX_low>60. ) {
+
+     int posOf2FibClustX1Low = 0;
+    int   posOf2FibClustX2Low=0;
+
+     int nrOf2FibreClustersX1Low = 0;
+       for( int i=0; i<nClusters_hodoX1; ++i ) {
+         if( nFibres_hodoX1[i]==2  )  {  
+	   ++nrOf2FibreClustersX1Low;
+	   posOf2FibClustX1Low= i ;} 
+       }
+ 
+	  //And for X2 LOW:
+     int nrOf2FibreClustersX2Low = 0;
+       for( int i=0; i<nClusters_hodoX2; ++i ) {
+         if( nFibres_hodoX2[i]==2  )  {  
+	   ++nrOf2FibreClustersX2Low;
+	   posOf2FibClustX2Low=i;  } 
+       }
+
+       if((nrOf2FibreClustersX2Low==1||nClusters_hodoX2==1)&& (nrOf2FibreClustersX1Low==1 || nClusters_hodoX1==1) &&  abs(wc_x)<200 && nTdcHits->at(0)>0 && nTdcHits->at(1)>0 && nTdcHits->at(0)<3 && nTdcHits->at(1)<3 &&  ( nTdcHits->at(0) + nTdcHits->at(1) )<4){
+	 h1_wc_x_low->Fill( wc_x );
+	 h1_hodoX1_low->Fill( pos_hodoX1[ posOf2FibClustX1Low] );
+	 h1_hodoX2_low->Fill( pos_hodoX2[posOf2FibClustX2Low] );     
+     }
+     }
+
+   // x hi
+     if( hodoSmallX_hi>60. ) {
+
+     int posOf2FibClustX1Hi = 0;
+    int   posOf2FibClustX2Hi=0;
+
+     int nrOf2FibreClustersX1Hi = 0;
+       for( int i=0; i<nClusters_hodoX1; ++i ) {
+         if( nFibres_hodoX1[i]==2  )  {  
+	   ++nrOf2FibreClustersX1Hi;
+	   posOf2FibClustX1Hi= i ;} 
+       }
+ 
+	  //And for X2 HI:
+     int nrOf2FibreClustersX2Hi = 0;
+       for( int i=0; i<nClusters_hodoX2; ++i ) {
+         if( nFibres_hodoX2[i]==2  )  {  
+	   ++nrOf2FibreClustersX2Hi;
+	   posOf2FibClustX2Hi=i;  } 
+       }
+
+       if((nrOf2FibreClustersX2Hi==1||nClusters_hodoX2==1)&& (nrOf2FibreClustersX1Hi==1 || nClusters_hodoX1==1) && abs(wc_x) <200 && nTdcHits->at(0)>0 && nTdcHits->at(1)>0 &&  nTdcHits->at(0)<3 && nTdcHits->at(1)<3 && ( nTdcHits->at(0) + nTdcHits->at(1) )<4){
+	 h1_wc_x_hi->Fill( wc_x );
+	 h1_hodoX1_hi->Fill( pos_hodoX1[ posOf2FibClustX1Hi] );
+	 h1_hodoX2_hi->Fill( pos_hodoX2[posOf2FibClustX2Hi] );     
+     }
+     }
+
+     /*
+     // X low
+     if( hodoSmallX_low>60. ) {
+       if( nTdcHits->at(0)==1 && nTdcHits->at(1)==1 && nTdcHits->at(2)==1 && nTdcHits->at(3)==1 ) 
+      h1_wc_x_low->Fill( wc_x );
+       int posOf2FibClustX1Low = 0;
+       int posOf2FibClustX2Low=0;
+
+	 int nrOf2FibreClustersX1Low = 0;
+	 for( int i=0; i<nClusters_hodoX1; ++i ) {
+	   if( nFibres_hodoX1[i]==2  )  {  
+	     ++nrOf2FibreClustersX1Low;
+	     posOf2FibClustX1Low= i ; } 
+	 }
+	 if(nrOf2FibreClustersX1Low==1|| nClusters_hodoX1==1)
+	   h1_hodoX1_low->Fill( pos_hodoX1[ posOf2FibClustX1Low] );
+
+	  //And for X2 LOW:
+     int nrOf2FibreClustersX2Low = 0;
+       for( int i=0; i<nClusters_hodoX2; ++i ) {
+         if( nFibres_hodoX2[i]==2  )  {  
+	   ++nrOf2FibreClustersX2Low;
+	   posOf2FibClustX2Low=i;  } 
+       }
+       if(nrOf2FibreClustersX2Low==1||nClusters_hodoX2==1)
+	 h1_hodoX2_low->Fill( pos_hodoX2[posOf2FibClustX2Low] );
+     }
+       
+     // X hi
+     if( hodoSmallX_hi>60. ) {
+       if( nTdcHits->at(0)==1 && nTdcHits->at(1)==1 && nTdcHits->at(2)==1 && nTdcHits->at(3)==1 ){       h1_wc_x_hi->Fill( wc_x );}
+     int posOf2FibClustX1Hi = 0;
+    int   posOf2FibClustX2Hi=0;
+
+     int nrOf2FibreClustersX1Hi = 0;
+       for( int i=0; i<nClusters_hodoX1; ++i ) {
+         if( nFibres_hodoX1[i]==2  )  {  
+	   ++nrOf2FibreClustersX1Hi;
+	   posOf2FibClustX1Hi= i ;} 
+       }
+       if(nrOf2FibreClustersX1Hi==1 || nClusters_hodoX1==1)
+	 h1_hodoX1_hi->Fill( pos_hodoX1[ posOf2FibClustX1Hi] ); 
+	 
+	  //And for X2 HI:
+     int nrOf2FibreClustersX2Hi = 0;
+       for( int i=0; i<nClusters_hodoX2; ++i ) {
+         if( nFibres_hodoX2[i]==2  )  {  
+	   ++nrOf2FibreClustersX2Hi;
+	   posOf2FibClustX2Hi=i;  } 
+       }
+       if(nrOf2FibreClustersX2Hi==1||nClusters_hodoX2==1)
+	 h1_hodoX2_hi->Fill( pos_hodoX2[posOf2FibClustX2Hi] );     
+     }
+     */
+
+     /*
      // y low
      if( hodoSmallY_low>60. ) {
        h1_wc_y_low->Fill( wc_y );
@@ -290,57 +525,45 @@ int main( int argc, char* argv[] ) {
            h1_hodoY1_low->Fill( pos_hodoY1[i] );
          }
        } // for Y1
-       for( unsigned i=0; i<nClusters_hodoY2; ++i ) {
+       for( int i=0; i<nClusters_hodoY2; ++i ) {
          if( nFibres_hodoY2[i]!=1 ) {  // cut away some noise
            h1_hodoY2_low->Fill( pos_hodoY2[i] );
          }
        } // for Y2
      }
-
-     // y hi
-     if( hodoSmallY_hi>60. ) {
-       h1_wc_y_hi->Fill( wc_y );
-       for( unsigned i=0; i<nClusters_hodoY1; ++i ) {
-         if( nFibres_hodoY1[i]!=1 ) {  // cut away some noise
-           h1_hodoY1_hi->Fill( pos_hodoY1[i] );
-         }
-       } // for Y1
-       for( unsigned i=0; i<nClusters_hodoY2; ++i ) {
-         if( nFibres_hodoY2[i]!=1 ) {  // cut away some noise
-           h1_hodoY2_hi->Fill( pos_hodoY2[i] );
-         }
-       } // for Y2
-     }
-
+      
      // x low
      if( hodoSmallX_low>60. ) {
        h1_wc_x_low->Fill( wc_x );
-       for( unsigned i=0; i<nClusters_hodoX1; ++i ) {
+       for( int i=0; i<nClusters_hodoX1; ++i ) {
          if( nFibres_hodoX1[i]!=1 ) {  // cut away some noise
            h1_hodoX1_low->Fill( pos_hodoX1[i] );
          }
        } // for X1
-       for( unsigned i=0; i<nClusters_hodoX2; ++i ) {
+       for( int i=0; i<nClusters_hodoX2; ++i ) {
          if( nFibres_hodoX2[i]!=1 ) {  // cut away some noise
            h1_hodoX2_low->Fill( pos_hodoX2[i] );
          }
        } // for X2
      }
-
+   
      // x hi
      if( hodoSmallX_hi>60. ) {
        h1_wc_x_hi->Fill( wc_x );
-       for( unsigned i=0; i<nClusters_hodoX1; ++i ) {
+       for( int i=0; i<nClusters_hodoX1; ++i ) {
          if( nFibres_hodoX1[i]!=1 ) {  // cut away some noise
            h1_hodoX1_hi->Fill( pos_hodoX1[i] );
          }
        } // for X1
-       for( unsigned i=0; i<nClusters_hodoX2; ++i ) {
+       for( int i=0; i<nClusters_hodoX2; ++i ) {
          if( nFibres_hodoX2[i]!=1 ) {  // cut away some noise
            h1_hodoX2_hi->Fill( pos_hodoX2[i] );
          }
        } // for X2
      }
+*/
+
+
 
   } // for entries
 
@@ -425,7 +648,7 @@ float fitAndDraw( const std::string& outputdir, TH1F* h1 ) {
     f1->SetParameter( 1, maxPos );
     h1->Fit(f1, "QRN");
     
-    for( unsigned i=0; i<4; ++i ) {
+    for( int i=0; i<4; ++i ) {
 
       float m = f1->GetParameter(1);
       float s = f1->GetParameter(2);
@@ -453,7 +676,7 @@ float fitAndDraw( const std::string& outputdir, TH1F* h1 ) {
     int nBins = h1->GetNbinsX();
     TH1F* h1_usedBins = new TH1F( Form("usedBins_%s", h1->GetName()), "", nBins, xMin, xMax );
 
-    for( unsigned ibin=1; ibin<nBins; ++ibin ) {
+    for( int ibin=1; ibin<nBins; ++ibin ) {
 
       if( h1->GetBinContent(ibin)<thresh ) continue;
 
@@ -522,7 +745,7 @@ float fitAndDraw( const std::string& outputdir, TH1F* h1 ) {
 
 void assignValues( std::vector<float> &target, std::vector<float> source, unsigned int startPos ) {
 
-  for( unsigned i=0; i<target.size(); ++i ) 
+  for( int i=0; i<target.size(); ++i ) 
     target[i] = source[startPos+i];
 
 
@@ -536,7 +759,7 @@ std::vector<HodoCluster*> getHodoClusters( std::vector<float> hodo, float fibreW
 
   HodoCluster* currentCluster = new HodoCluster( hodo.size(), fibreWidth );
 
-  for( unsigned i=0; i<hodo.size(); ++i ) {
+  for( int  i=0; i<hodo.size(); ++i ) {
 
     if( hodo[i] > Cut) { // hit
 
@@ -583,7 +806,7 @@ void doHodoReconstruction( std::vector<float> values, int &nClusters, int *nFibr
   std::vector<HodoCluster*> clusters = getHodoClusters( values, fibreWidth, clusterMaxFibres, Cut );
 
   nClusters = clusters.size();
-  for( unsigned i=0; i<clusters.size(); ++i ) {
+  for( int i=0; i<clusters.size(); ++i ) {
     nFibres[i] = clusters[i]->getSize();
     pos[i] = clusters[i]->getPosition();
   }
@@ -596,7 +819,7 @@ void doHodoReconstruction( std::vector<float> values, int &nClusters, int *nFibr
 
 void assignValuesBool( std::vector<bool> &target, std::vector<bool> source, unsigned int startPos ) {
 
-  for( unsigned i=0; i<target.size(); ++i ) 
+  for( int  i=0; i<target.size(); ++i ) 
     target[i] = source[startPos+i];
 
 }
@@ -614,7 +837,7 @@ std::vector<HodoCluster*> getHodoClustersBool( std::vector<bool> hodo, float fib
 
   HodoCluster* currentCluster = new HodoCluster( hodo.size(), fibreWidth );
 
-  for( unsigned i=0; i<hodo.size(); ++i ) {
+  for( int i=0; i<hodo.size(); ++i ) {
 
     if( hodo[i] > Cut) { // hit
 
@@ -662,9 +885,20 @@ void doHodoReconstructionBool( std::vector<bool> values, int &nClusters, int *nF
   std::vector<HodoCluster*> clusters = getHodoClustersBool( values, fibreWidth, clusterMaxFibres, Cut );
 
   nClusters = clusters.size();
-  for( unsigned i=0; i<clusters.size(); ++i ) {
+  for( int i=0; i<clusters.size(); ++i ) {
     nFibres[i] = clusters[i]->getSize();
     pos[i] = clusters[i]->getPosition();
   }
 
 }
+
+
+
+
+
+
+
+
+
+
+

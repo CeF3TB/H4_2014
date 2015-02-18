@@ -11,10 +11,10 @@ class TagHelper {
 
  public:
 
-  TagHelper( const std::string& tag );
+  TagHelper( const std::string& tag, const std::string& Energy );
   ~TagHelper();
 
-  void setTag( const std::string& tag );
+  void setTag( const std::string& tag, const std::string& Energy );
 
   std::string getCeF3FileName() const;
   std::string getBGOFileName() const;

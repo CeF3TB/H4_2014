@@ -66,6 +66,8 @@ void findIntercalib()
       max_x_values[i]=findMaximum(p->GetFunction("pol4"),4);
       center_x_values[i]=p->GetFunction("pol4")->Eval(0);
 
+      p->GetXaxis()->SetRangeUser(-12,12);
+
       //Let's draw some shit
       TCanvas* canny = new TCanvas("canny","canny",800,600);
       p->GetYaxis()->SetTitleOffset(1.0);
