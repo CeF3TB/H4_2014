@@ -64,18 +64,18 @@ int main( int argc, char* argv[] ) {
 
   drawSingleVariable( outputdir, tree, "wc_x", "wc_x", "", 50, -20., 20., "X( WC ) [mm]"  );
   drawSingleVariable( outputdir, tree, "wc_y", "wc_y", "", 50, -20., 20., "Y( WC ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "hodoX1", "pos_hodoX1[0]", "nClusters_hodoX1==1 && nFibres_hodoSmallX >0 ", 50, -20., 20., "X( hodoX1 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "hodoY1", "pos_hodoY1[0]", "nClusters_hodoY1==1 && nFibres_hodoSmallY >0", 50, -20., 20., "Y( hodoY1 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "hodoX2", "pos_hodoX2[0]", "nClusters_hodoX2==1  && nFibres_hodoSmallX >0", 50, -20., 20., "X( hodoX2 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "hodoY2", "pos_hodoY2[0]", "nClusters_hodoY2==1  && nFibres_hodoSmallY >0", 50, -20., 20., "Y( hodoY2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoX1", "cluster_pos_hodoX1", "  cluster_pos_hodoX1>-300  && nFibres_hodoSmallX >0  ", 50, -20., 20., "X( hodoX1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY1", "cluster_pos_hodoY1", " nFibres_hodoSmallY >0", 50, -20., 20., "Y( hodoY1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoX2", "cluster_pos_hodoX2", " nFibres_hodoSmallX >0", 50, -20., 20., "X( hodoX2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY2", "cluster_pos_hodoY2", "nFibres_hodoSmallY >0", 50, -20., 20., "Y( hodoY2 ) [mm]"  );
 
-  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX1", "wc_x - pos_hodoX1[0]", "nClusters_hodoX1==1  && nFibres_hodoSmallX >0", 50, -10., 10., "X( WC - HodoX1 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY1", "wc_y - pos_hodoY1[0]", "nClusters_hodoY1==1  && nFibres_hodoSmallY >0", 50, -10., 10., "Y( WC - HodoY1 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX2", "wc_x - pos_hodoX2[0]", "nClusters_hodoX2==1 && nFibres_hodoSmallX >0", 50, -10., 10., "X( WC - HodoX2 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY2", "wc_y - pos_hodoY2[0]", "nClusters_hodoY2==1  && nFibres_hodoSmallY >0", 50, -10., 10., "Y( WC - HodoY2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX1", "wc_x - cluster_pos_hodoX1", " nFibres_hodoSmallX >0  && wc_x > -300 && nTDCHits[0]>0 && nTDCHits[1]>0 && nTDCHits[0]<3 && nTDCHits[1]<3 && (nTDCHits[0]+nTDCHits[1])<4 ", 50, -10., 10., "X( WC - HodoX1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY1", "wc_y - cluster_pos_hodoY1", "nFibres_hodoSmallY >0", 50, -10., 10., "Y( WC - HodoY1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX2", "wc_x - cluster_pos_hodoX2", "nFibres_hodoSmallX >0  && wc_x > -300 && nTDCHits[0]>0 && nTDCHits[1]>0 && nTDCHits[0]<3 && nTDCHits[1]<3 && (nTDCHits[0]+nTDCHits[1])<4", 50, -10., 10., "X( WC - HodoX2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY2", "wc_y - cluster_pos_hodoY2", "nFibres_hodoSmallY >0", 50, -10., 10., "Y( WC - HodoY2 ) [mm]"  );
 
-  drawSingleVariable( outputdir, tree, "hodoX1_vs_hodoX2", "pos_hodoX1[0] - pos_hodoX2[0]", "nClusters_hodoX1==1 && nClusters_hodoX2==1  && nFibres_hodoSmallX >0", 50, -10., 10., "X( HodoX1 - HodoX2 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "hodoY1_vs_hodoY2", "pos_hodoY1[0] - pos_hodoY2[0]", "nClusters_hodoY1==1 && nClusters_hodoY2==1  && nFibres_hodoSmallY >0", 50, -10., 10., "Y( HodoY1 - HodoY2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoX1_vs_hodoX2", "cluster_pos_hodoX1 - cluster_pos_hodoX2", "nFibres_hodoSmallX >0 && cluster_pos_hodoX1>-300 && cluster_pos_hodoX2>-300 ", 50, -10., 10., "X( HodoX1 - HodoX2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY1_vs_hodoY2", "cluster_pos_hodoY1 - cluster_pos_hodoY2", " nFibres_hodoSmallY >0 && cluster_pos_hodoY1 >-300  && cluster_pos_hodoY2 >-300", 50, -10., 10., "Y( HodoY1 - HodoY2 ) [mm]"  );
 
 
 
@@ -83,18 +83,24 @@ int main( int argc, char* argv[] ) {
 
   drawSingleVariable( outputdir, tree, "wc_x_corr", "wc_x_corr", "", 50, -20., 20., "X( WC ) [mm]"  );
   drawSingleVariable( outputdir, tree, "wc_y_corr", "wc_y_corr", "", 50, -20., 20., "Y( WC ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "hodoX1_corr", "pos_corr_hodoX1[0]", "nClusters_hodoX1==1  && nFibres_hodoSmallX >0", 50, -20., 20., "X( hodoX1 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "hodoY1_corr", "pos_corr_hodoY1[0]", "nClusters_hodoY1==1  && nFibres_hodoSmallY >0", 50, -20., 20., "Y( hodoY1 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "hodoX2_corr", "pos_corr_hodoX2[0]", "nClusters_hodoX2==1 && nFibres_hodoSmallX >0", 50, -20., 20., "X( hodoX2 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "hodoY2_corr", "pos_corr_hodoY2[0]", "nClusters_hodoY2==1 && nFibres_hodoSmallY >0", 50, -20., 20., "Y( hodoY2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoX1_corr", "cluster_pos_corr_hodoX1", " cluster_pos_hodoX1 >-300 && nFibres_hodoSmallX >0", 50, -20., 20., "X( hodoX1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY1_corr", "cluster_pos_corr_hodoY1", " cluster_pos_hodoY1 >-300 && nFibres_hodoSmallY >0", 50, -20., 20., "Y( hodoY1 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoX2_corr", "cluster_pos_corr_hodoX2", " cluster_pos_hodoX2 >-300 &&nFibres_hodoSmallX >0", 50, -20., 20., "X( hodoX2 ) [mm]"  );
+  drawSingleVariable( outputdir, tree, "hodoY2_corr", "cluster_pos_corr_hodoY2", "cluster_pos_hodoY2 >-300 && nFibres_hodoSmallY >0", 50, -20., 20., "Y( hodoY2 ) [mm]"  );
 
-  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX1_corr", "wc_x_corr - pos_corr_hodoX1[0]", "nClusters_hodoX1==1  && nFibres_hodoSmallX >0", 50, -10., 10., "X( WC - HodoX1 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY1_corr", "wc_y_corr - pos_corr_hodoY1[0]", "nClusters_hodoY1==1  && nFibres_hodoSmallY >0", 50, -10., 10., "Y( WC - HodoY1 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX2_corr", "wc_x_corr - pos_corr_hodoX2[0]", "nClusters_hodoX2==1  && nFibres_hodoSmallX >0", 50, -10., 10., "X( WC - HodoX2 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY2_corr", "wc_y_corr - pos_corr_hodoY2[0]", "nClusters_hodoY2==1  && nFibres_hodoSmallY >0", 50, -10., 10., "Y( WC - HodoY2 ) [mm]"  );
 
-  drawSingleVariable( outputdir, tree, "hodoX1_vs_hodoX2_corr", "pos_corr_hodoX1[0] - pos_corr_hodoX2[0]", "nClusters_hodoX1==1 && nClusters_hodoX2==1  && nFibres_hodoSmallX >0", 50, -10., 10., "X( HodoX1 - HodoX2 ) [mm]"  );
-  drawSingleVariable( outputdir, tree, "hodoY1_vs_hodoY2_corr", "pos_corr_hodoY1[0] - pos_corr_hodoY2[0]", "nClusters_hodoY1==1 && nClusters_hodoY2==1  && nFibres_hodoSmallY >0", 50, -10., 10., "Y( HodoY1 - HodoY2 ) [mm]"  );
+
+  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX1_corr", "wc_x_corr - cluster_pos_corr_hodoX1", " nFibres_hodoSmallX >0 && cluster_pos_hodoX1>-300 &&wc_x_corr>-400 && nTDCHits[0]>0 && nTDCHits[1]>0 && nTDCHits[0]<3 && nTDCHits[1]<3 && (nTDCHits[0]+nTDCHits[1])<4", 50, -10., 10., "X( WC - HodoX1 ) [mm]"  );
+
+  drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY1_corr", "wc_y_corr -  cluster_pos_corr_hodoY1", "nFibres_hodoSmallY >0  && cluster_pos_hodoY1>-300 &&wc_y_corr>-400 && nTDCHits[2]>0 && nTDCHits[3]>0 && nTDCHits[2]<3 && nTDCHits[3]<3 && (nTDCHits[2]+nTDCHits[3])<4 ", 50, -10., 10., "Y( WC - HodoY1 ) [mm]"  );
+
+  drawSingleVariable( outputdir, tree, "wc_x_vs_hodoX2_corr", "wc_x_corr - cluster_pos_corr_hodoX2", "nFibres_hodoSmallX >0 && cluster_pos_corr_hodoX2>-300 &&wc_x_corr>-400 && nTDCHits[0]>0 && nTDCHits[1]>0 && nTDCHits[0]<3 && nTDCHits[1]<3 && (nTDCHits[0]+nTDCHits[1])<4", 50, -10., 10., "X( WC - HodoX2 ) [mm]"  );
+ 
+ drawSingleVariable( outputdir, tree, "wc_y_vs_hodoY2_corr", "wc_y_corr -cluster_pos_corr_hodoY2", "nFibres_hodoSmallY >0 && cluster_pos_hodoY2>-300 &&wc_x_corr>-400 && nTDCHits[0]>0 && nTDCHits[1]>0 && nTDCHits[0]<3 && nTDCHits[1]<3 && (nTDCHits[0]+nTDCHits[1])<4", 50, -10., 10., "Y( WC - HodoY2 ) [mm]"  );
+
+  drawSingleVariable( outputdir, tree, "hodoX1_vs_hodoX2_corr", "cluster_pos_corr_hodoX1 - cluster_pos_corr_hodoX2", "nFibres_hodoSmallX >0 && cluster_pos_corr_hodoX1>-300 && cluster_pos_corr_hodoX2>-300", 50, -10., 10., "X( HodoX1 - HodoX2 ) [mm]"  );
+ 
+ drawSingleVariable( outputdir, tree, "hodoY1_vs_hodoY2_corr", "cluster_pos_corr_hodoY1 - cluster_pos_corr_hodoY2", "nFibres_hodoSmallY >0  && cluster_pos_hodoY2>-300 && cluster_pos_hodoY1>-300", 50, -10., 10., "Y( HodoY1 - HodoY2 ) [mm]"  );
 
 
 
