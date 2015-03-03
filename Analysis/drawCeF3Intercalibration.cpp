@@ -26,7 +26,7 @@
 int main ( int argc, char* argv[] ) {
 
 
-  std::string inputDir = "./analysisTrees";
+  std::string inputDir = "./analysisTrees_chaInt_04_12";
   std::string runName = "259";
   std::string tag = "default";
 
@@ -67,13 +67,16 @@ int main ( int argc, char* argv[] ) {
 
   //  gPad->SetLogy();
 
-  int nBins = 120;
-  // float xMin = 180000.;
-  //  float xMax = 501000.;
-  //float xMax = 375000.;
+  std::string cut = "abs(0.5* (position_X1+position_X2))< 3 && abs( 0.5* (position_Y1+position_Y2))< 3 && (wc_x_corr-cluster_pos_corr_hodoX2)<3 && (wc_y_corr-cluster_pos_corr_hodoY2)< 4  && abs( (position_X1-position_X2))<1.5 &&abs( (position_Y1-position_Y2))<1.5";
 
-  float xMin = 30.;
-  float xMax = 100.;
+  int nBins = 120;
+   float xMin = 30000.;
+   //   float xMin = 130000.;
+   float xMax = 210000.;
+   // float xMax = 375000.;
+
+  //float xMin = 30.;
+  //float xMax = 100.;
 
   TH1D* hu0 = new TH1D("hu0","",nBins,xMin,xMax);
   hu0->SetLineColor(kBlue);
@@ -101,15 +104,15 @@ int main ( int argc, char* argv[] ) {
   h3->SetLineColor(kMagenta-4);
   h3->SetLineWidth(2.);
 
-  TH2D* h2_axes = new TH2D( "axes", "", 10, xMin , xMax, 10, 0.,0.065 );
+  TH2D* h2_axes = new TH2D( "axes", "", 10, xMin , xMax, 10, 0.,0.06 );
   h2_axes->SetXTitle("CeF_{3} Response [ADC]");
   h2_axes->SetYTitle("");
   h2_axes->Draw("");
 
-  tree->Draw("cef3[0]>>hu0","","same");
-  tree->Draw("cef3[1]>>hu1","","same");
-  tree->Draw("cef3[2]>>hu2","","same");
-  tree->Draw("cef3[3]>>hu3","","same");
+  tree->Draw("cef3_chaInt[0]>>hu0",cut.c_str(),"same");
+  tree->Draw("cef3_chaInt[1]>>hu1",cut.c_str(),"same");
+  tree->Draw("cef3_chaInt[2]>>hu2",cut.c_str(),"same");
+  tree->Draw("cef3_chaInt[3]>>hu3",cut.c_str(),"same");
 
   hu0->Scale(1./hu0->Integral() );
   hu1->Scale(1./hu1->Integral() );
@@ -142,10 +145,10 @@ int main ( int argc, char* argv[] ) {
   //  gPad->SetLogy();
   h2_axes->Draw("");
 
-  tree->Draw("cef3_corr[0]>>h0","","same");
-  tree->Draw("cef3_corr[1]>>h1","","same");
-  tree->Draw("cef3_corr[2]>>h2","","same");
-  tree->Draw("cef3_corr[3]>>h3","","same");
+  tree->Draw("cef3_chaInt_corr[0]>>h0",cut.c_str(),"same");
+  tree->Draw("cef3_chaInt_corr[1]>>h1",cut.c_str(),"same");
+  tree->Draw("cef3_chaInt_corr[2]>>h2",cut.c_str(),"same");
+  tree->Draw("cef3_chaInt_corr[3]>>h3",cut.c_str(),"same");
 
   h0->Scale(1./h0->Integral() );
   h1->Scale(1./h1->Integral() );

@@ -75,7 +75,7 @@ int main( int argc, char* argv[] ) {
 
 
     std::string whatToProjectSim = Form("cef3_corr[0]+cef3_corr[1]+cef3_corr[2]+cef3_corr[3]");
-    std::string whatToProject = Form("cef3_chaInt[0]+cef3_chaInt[1]+cef3_chaInt[2]+cef3_chaInt[3]");
+    std::string whatToProject = Form("cef3_chaInt_bare_corr[0]+cef3_chaInt_bare_corr[1]+cef3_chaInt_bare_corr[2]+cef3_chaInt_bare_corr[3]");
    std::string whatToProjectCorr1 = Form("cef3_chaInt_corr1[0]+cef3_chaInt_corr1[1]+cef3_chaInt_corr1[2]+cef3_chaInt_corr1[3]"); 
    std::string whatToProjectCorr2 = Form("cef3_chaInt_corr2[0]+cef3_chaInt_corr2[1]+cef3_chaInt_corr2[2]+cef3_chaInt_corr2[3]");
    std::string whatToProjectMaxAmpCorr2 = Form("cef3_maxAmp_corr2[0]+cef3_maxAmp_corr2[1]+cef3_maxAmp_corr2[2]+cef3_maxAmp_corr2[3]");
@@ -104,9 +104,10 @@ int main( int argc, char* argv[] ) {
   runs950.push_back("377");   //runs950.push_back("387");
   beamEnergy950.push_back(200000);
 
-  TFile* file950 = TFile::Open(Form("analysisTrees_%s/Reco_%s.root", tag.c_str(), runs950[0].c_str()));
+  TFile* file950 = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%s.root", tag.c_str(), runs950[0].c_str()));
   TTree* tree950 = (TTree*)file950->Get("recoTree");
-  std::string cut = "";
+  // std::string cut = "";
+  std::string cut = "abs(0.5* (position_X1+position_X2))< 3 && abs( 0.5* (position_Y1+position_Y2))< 3 && (wc_x_corr-cluster_pos_corr_hodoX2)<4 && (wc_y_corr-cluster_pos_corr_hodoY2)< 4  && abs( (position_X1-position_X2))<1.5 &&abs( (position_Y1-position_Y2))<1.5  ";
 
   FitStruct fs950 = getFitResults( outputdir, tree950,  "950HV" , 50000,  900000, cut, whatToProject );
   float adcEnergyC950 = fs950.mean;
@@ -132,7 +133,7 @@ int main( int argc, char* argv[] ) {
   runs700.push_back("428");
   beamEnergy700.push_back(200000);
 
-  TFile* file700 = TFile::Open(Form("analysisTrees_%s/Reco_%s.root", tag.c_str(),runs700[0].c_str()));
+  TFile* file700 = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%s.root", tag.c_str(),runs700[0].c_str()));
   TTree* tree700 = (TTree*)file700->Get("recoTree");
 
   FitStruct fs700 = getFitResults( outputdir, tree700,  "700HV" , 500,  50000000, cut, whatToProject );
@@ -158,7 +159,7 @@ int main( int argc, char* argv[] ) {
   runs600.push_back("487");
   beamEnergy600.push_back(200000);
 
-  TFile* file600 = TFile::Open(Form("analysisTrees_%s/Reco_%s.root", tag.c_str(),runs600[0].c_str()));
+  TFile* file600 = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%s.root", tag.c_str(),runs600[0].c_str()));
   TTree* tree600 = (TTree*)file600->Get("recoTree");
 
   FitStruct fs600 = getFitResults( outputdir, tree600,  "600HV" , 500,  50000, cut, whatToProject );
@@ -186,11 +187,11 @@ int main( int argc, char* argv[] ) {
   simulation.push_back("Simulation200");
   beamEnergySimulation.push_back(200000.);
   
-  TFile* energyfileS = TFile::Open("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/H4UseThis/Reco_Simulation50.root" );
+  TFile* energyfileS = TFile::Open("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/H4UseThis1_5mmGap10mmBeam/Reco_Simulation50.root" );
   TTree* energytreeS = (TTree*)energyfileS->Get("recoTree");
   
-  
-  std::string SimCut = "";
+    std::string SimCut = "abs(xPos)< 3 && abs(yPos)< 3";
+    // std::string SimCut = "";
   FitStruct fsSim= getFitResults( outputdir, energytreeS , simulation[0] ,  5000. ,  20000., SimCut , whatToProjectSim );
   float energyS = fsSim.mean;
 
@@ -226,12 +227,12 @@ int main( int argc, char* argv[] ) {
 
   for( unsigned i=0; i<runs950.size(); ++i ) {
     
-    TFile* file = TFile::Open(Form("analysisTrees_%s/Reco_%s.root", tag.c_str(),  runs950[i].c_str() ));
+    TFile* file = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%s.root", tag.c_str(),  runs950[i].c_str() ));
     TTree* tree = (TTree*)file->Get("recoTree");
 
     //    TF1* thisFunc = fitSingleElectronPeak( outputdir, runs950[i], tree, 950. );
     
-    FitStruct fs  = getFitResults( outputdir, tree ,  runs950[i].c_str() , 100, 19000000   , cut, whatToProject );
+    FitStruct fs  = getFitResults( outputdir, tree ,  runs950[i].c_str() , 20000, 19000000   , cut, whatToProject );
 
     float energy = beamEnergy950[i];
     float energyErr = 0.005*energy;
@@ -257,7 +258,7 @@ int main( int argc, char* argv[] ) {
 
   for( unsigned i=0; i<runs700.size(); ++i ) {
     
-    TFile* file = TFile::Open(Form("analysisTrees_%s/Reco_%s.root", tag.c_str(),  runs700[i].c_str()));
+    TFile* file = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%s.root", tag.c_str(),  runs700[i].c_str()));
     TTree* tree = (TTree*)file->Get("recoTree");
     
     //  TF1* thisFunc = fitSingleElectronPeak( outputdir, runs700[i], tree , 700.);
@@ -290,7 +291,7 @@ int main( int argc, char* argv[] ) {
 
   for( unsigned i=0; i<runs600.size(); ++i ) {
     
-    TFile* file = TFile::Open(Form("analysisTrees_%s/Reco_%s.root", tag.c_str(),  runs600[i].c_str()));
+    TFile* file = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%s.root", tag.c_str(),  runs600[i].c_str()));
     TTree* tree = (TTree*)file->Get("recoTree");
     
     FitStruct fs  = getFitResults( outputdir, tree ,  runs600[i].c_str() , 100, 19000000   , cut, whatToProject );
@@ -321,7 +322,7 @@ int main( int argc, char* argv[] ) {
  for( unsigned i=0; i<simulation.size(); ++i ) {
 
     ///////////////// (1x1) Shashlik ("real setup") //////////////////////////////
-    TFile* fileS = TFile::Open(Form("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/H4UseThis/Reco_%s.root", simulation[i].c_str()));
+    TFile* fileS = TFile::Open(Form("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/H4UseThis1_5mmGap10mmBeam/Reco_%s.root", simulation[i].c_str()));
 
     TTree* treeS = (TTree*)fileS->Get("recoTree");
 
@@ -452,7 +453,7 @@ leg0->SetTextSize(0.038);
 
 
  ///////////////////////RESOLUTION///////////////////////////////
-  TH2D* h2_axes2 = new TH2D( "axes", "", 100, -0.0, 205. , 10, 0.0, 30 );
+  TH2D* h2_axes2 = new TH2D( "axes", "", 100, -0.0, 205. , 10, 0.0, 5 );
  h2_axes2->SetXTitle("Beam Energy [GeV]");
  h2_axes2->SetYTitle("Energy Resolution [%]");
  h2_axes2->Draw("");
@@ -469,26 +470,26 @@ leg0->SetTextSize(0.038);
  gr_reso_vs_energy->Fit(fun,"RN");
  fun->SetLineWidth(1.);
  fun->SetLineColor(46);
- fun->Draw("L same");
+ // fun->Draw("L same");
 
  // Data 700 V
  gr_reso_vs_energy700->SetMarkerStyle(20);
  gr_reso_vs_energy700->SetMarkerSize(1.6);
  gr_reso_vs_energy700->SetMarkerColor(38);
- gr_reso_vs_energy700->Draw("p same");
+ // gr_reso_vs_energy700->Draw("p same");
 
  TF1 *fun7= new TF1("fun",  "sqrt([0]*[0]/x+[1]*[1]+ [2]*[2]/(x*x))",0.9, xMax/1000.+5.);
  gr_reso_vs_energy700->Fit(fun7,"RN");
  fun7->SetLineWidth(1.);
  fun7->SetLineColor(38);
- fun7->Draw("L same");
+ // fun7->Draw("L same");
 
 
  // Data 600 V
  gr_reso_vs_energy600->SetMarkerStyle(20);
  gr_reso_vs_energy600->SetMarkerSize(1.6);
  gr_reso_vs_energy600->SetMarkerColor(41);
- gr_reso_vs_energy600->Draw("p same");
+ // gr_reso_vs_energy600->Draw("p same");
 
  TF1 *fun6= new TF1("fun",  "sqrt([0]*[0]/x+[1]*[1]+ [2]*[2]/(x*x))",1, xMax/1000.+5.);
  fun6->SetParameter(1, 1.);
@@ -497,12 +498,12 @@ leg0->SetTextSize(0.038);
  gr_reso_vs_energy600->Fit(fun6,"RN");
  fun6->SetLineWidth(1.);
  fun6->SetLineColor(41);
- fun6->Draw("L same");
+ // fun6->Draw("L same");
 
 
  // MC (1x1)
- gr_reso_vs_energy_simul->SetMarkerStyle(20);
- gr_reso_vs_energy_simul->SetMarkerSize(1.6);
+ gr_reso_vs_energy_simul->SetMarkerStyle(21);
+ gr_reso_vs_energy_simul->SetMarkerSize(1.4);
  gr_reso_vs_energy_simul->SetMarkerColor(kBlack);
  gr_reso_vs_energy_simul->Draw("p same");
  
@@ -510,6 +511,9 @@ leg0->SetTextSize(0.038);
  // TF1 *fun1= new TF1("fun1",  "sqrt([0]*[0]/x+[1]*[1]+[2]*[2]/(x*x))",0.02, xMax/1000.);
  //  fun1->SetParameter(2,0.01);
  gr_reso_vs_energy_simul->Fit(fun1,"RN");
+
+ fun1->SetMarkerStyle(21);
+ fun1->SetMarkerSize(1.4);
  fun1->SetLineWidth(1.);
  fun1->SetLineColor(kBlack);
  fun1->Draw("L same");
@@ -527,20 +531,22 @@ leg0->SetTextSize(0.038);
 // leg4->AddEntry( (TObject*)0,Form("N = %.2f\n #pm %.2f\n %s / E [GeV]",(fun1->GetParameter(2)), (fun1->GetParError(2)),"%" ),"");
 // leg4->AddEntry( (TObject*)0, Form("#chi^{2} / NDF = %.2f\n / %d",fun->GetChisquare(), fun->GetNDF() ), "");
 //
- leg4->AddEntry(gr_reso_vs_energy700,"Data 700 HV","p");
+
+// leg4->AddEntry(gr_reso_vs_energy700,"Data 700 HV","p");
  // leg4->AddEntry(fun7,Form("S = %.2f\n #pm %.2f\n %s / #sqrt{E [GeV]}",fun7->GetParameter(0), (fun7->GetParError(0)),"%" ),"L");
 // leg4->AddEntry( (TObject*)0,Form("C =   %.2f\n #pm %.2f\n %s",(fun7->GetParameter(1)), (fun7->GetParError(1)),"%" ),"");
 // leg4->AddEntry( (TObject*)0,Form("N =  %.2f\n #pm %.2f\n %s / E [GeV]",(fun7->GetParameter(2)), (fun7->GetParError(2)),"%" ),"");
 // leg4->AddEntry( (TObject*)0, Form("#chi^{2} / NDF = %.2f\n / %d",fun7->GetChisquare(), fun7->GetNDF() ), "");
 //
- leg4->AddEntry(gr_reso_vs_energy600,"Data 600 HV","p");
+
+// leg4->AddEntry(gr_reso_vs_energy600,"Data 600 HV","p");
 // leg4->AddEntry(fun6,Form("S = %.2f\n #pm %.2f\n %s / #sqrt{E [GeV]}",fun6->GetParameter(0), (fun6->GetParError(0)),"%" ),"L");
 // leg4->AddEntry( (TObject*)0,Form("C =   %.2f\n #pm %.2f\n %s",(fun6->GetParameter(1)), (fun6->GetParError(1)),"%" ),"");
 // leg4->AddEntry( (TObject*)0,Form("N = %.2f\n #pm %.2f\n %s / E [GeV]",(fun6->GetParameter(2)), (fun6->GetParError(2)),"%" ),"");
 // leg4->AddEntry( (TObject*)0, Form("#chi^{2} / NDF = %.2f\n / %d",fun6->GetChisquare(), fun6->GetNDF() ), "");
 
 
- leg4->AddEntry(fun1,"MC (1x1)","L");
+ leg4->AddEntry(fun1,"MC (1x1)","LP");
  // leg4->AddEntry(fun1,Form("S = %.2f\n #pm %.2f\n %s / #sqrt{E [GeV]}",fun1->GetParameter(0), (fun1->GetParError(0)),"%" ),"L");
  // leg4->AddEntry( (TObject*)0,Form("C =   %.2f\n #pm %.2f\n %s",(fun1->GetParameter(1)), (fun1->GetParError(1)),"%" ),"");
  // leg4->AddEntry( (TObject*)0,Form("N =   %.2f\n #pm %.2f\n %s / E [GeV]",(fun1->GetParameter(2)), (fun1->GetParError(2)),"%" ),"");
@@ -562,6 +568,7 @@ leg0->SetTextSize(0.038);
  
  c1->SaveAs( Form( "%s/resolution.pdf", outputdir.c_str() ) );
  c1->SaveAs( Form( "%s/resolution.png", outputdir.c_str() ) );
+ c1->SaveAs( Form( "%s/resolution.eps", outputdir.c_str() ) );
 
 
 
@@ -678,19 +685,19 @@ FitStruct getFitResults( const std::string& outputdir, TTree* tree, const std::s
   double fitmin;
   double fitmax;
   
-  if( (peakpos-8*sigma) < 400 ){ 
-    fitmin = 500;
+  if( (peakpos-5*sigma) < 1000 ){ 
+    fitmin = 1000;
   } else{ 
-    fitmin = peakpos-8*sigma;
+    fitmin = peakpos-5*sigma;
   }
 
   if(((peakpos>0) && (sigma > 2*peakpos)) ) { 
     fitmax = peakpos*2;
   } else{ 
-    fitmax = peakpos+8*sigma;
+    fitmax = peakpos+5*sigma;
   }
 
-  if (sigma < 10) sigma = 10;
+  if (sigma < 100) sigma = 100;
 
 
 
@@ -707,13 +714,13 @@ FitStruct getFitResults( const std::string& outputdir, TTree* tree, const std::s
   data.plotOn(frame);  //this will show histogram data points on canvas
   //  data.statOn(frame);  //this will display hist stat on canvas
   
-  RooRealVar meanr("meanr","Mean",peakpos,peakpos-sigma, peakpos+sigma);
-  RooRealVar width("width","#sigma",sigma, 100.0, 10.*sigma);
+  RooRealVar meanr("meanr","Mean",peakpos,peakpos-2*sigma, peakpos+2*sigma);
+  RooRealVar width("width","#sigma",sigma, 100.0, 5.*sigma);
   RooRealVar A("A","Dist",1., 0.0, 5.0);
   RooRealVar N("N","Deg",3, 0.0, 15);
 
-  meanr.setRange(1000. , 90000000.);
-  width.setRange(100, 100000);
+  meanr.setRange(1000. , 3000000.);
+  width.setRange(100, 1000000);
   
   RooCBShape fit_fct("fit_fct","fit_fct",x,meanr,width,A,N); int ndf = 4;
 
@@ -742,7 +749,7 @@ FitStruct getFitResults( const std::string& outputdir, TTree* tree, const std::s
   lego->AddEntry(  (TObject*)0 ,Form("#mu = %.0f #pm %.0f", meanr.getVal(), meanr.getError() ), "");
   lego->AddEntry(  (TObject*)0 ,Form("#sigma = %.0f #pm %.0f ", width.getVal(), width.getError() ), "");
   lego->AddEntry(  (TObject*)0 ,Form("#chi^{2} = %.2f / %d ", frame->chiSquare(ndf) , ndf ), "");
-  //lego->AddEntry(  (TObject*)0 ,Form("#sigma/#mu = %.2f #pm  %.2f ", reso , resoErr ), "");
+  lego->AddEntry(  (TObject*)0 ,Form("#sigma/#mu = %.2f #pm  %.2f ", reso , resoErr ), "");
   lego->SetFillColor(0);
   lego->Draw("same");
 

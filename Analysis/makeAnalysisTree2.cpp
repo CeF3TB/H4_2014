@@ -61,7 +61,7 @@ int main( int argc, char* argv[] ) {
 
    }
 
-   std::string fileName = "data/run_" + runName + ".root";
+   std::string fileName = "data/Corr04_12/run_" + runName + ".root";
    TFile* file = TFile::Open(fileName.c_str());
    if( file==0 ) {
      std::cout << "ERROR! Din't find file " << fileName << std::endl;
@@ -76,18 +76,7 @@ int main( int argc, char* argv[] ) {
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
  
 
-   //set the tag for calibration
-   TagHelper tagHelper(tag);
-   EnergyCalibration cef3Calib(tagHelper.getCeF3FileName());
-   EnergyCalibration bgoCalib(tagHelper.getBGOFileName());
-   AlignmentOfficer alignOfficer(tagHelper.getAlignmentFileName());
-
-
-
-
-
-
-
+   // Declaration of leaf types
    UInt_t          runNumber;
    UInt_t          spillNumber;
    UInt_t          evtNumber;
@@ -100,6 +89,7 @@ int main( int argc, char* argv[] ) {
    std::vector<float>   *digi_pedestal_rms;
    std::vector<float>   *digi_time_at_frac30;
    std::vector<float>   *digi_time_at_frac50;
+   std::vector<float>   *digi_fall_time_at_frac50;
    std::vector<float>   *digi_time_at_max;
    std::vector<bool>    *HODOX1;
    std::vector<bool>    *HODOX2;
@@ -112,6 +102,7 @@ int main( int argc, char* argv[] ) {
    Float_t         BeamEnergy;
    Float_t         BeamTilt;
    Int_t           IsPhysics;
+   std::vector<int>     *nTdcHits;
    std::vector<float>   *digi_charge_integrated_sub;
    std::vector<float>   *digi_max_amplitude_sub;
    std::vector<float>   *digi_pedestal_sub;
@@ -120,6 +111,12 @@ int main( int argc, char* argv[] ) {
    std::vector<float>   *digi_max_amplitude_corr1;
    std::vector<float>   *digi_charge_integrated_corr2;
    std::vector<float>   *digi_max_amplitude_corr2;
+
+   std::vector<float>   *digi_max_amplitude_bare;
+   std::vector<float>   *digi_charge_integrated_bare;
+   std::vector<float>   *digi_charge_integrated_frac10;
+   std::vector<float>   *digi_charge_integrated_frac30;
+   std::vector<float>   *digi_charge_integrated_frac50;
 
    // List of branches
    TBranch        *b_runNumber;   //!
@@ -134,6 +131,7 @@ int main( int argc, char* argv[] ) {
    TBranch        *b_digi_pedestal_rms;   //!
    TBranch        *b_digi_time_at_frac30;   //!
    TBranch        *b_digi_time_at_frac50;   //!
+   TBranch        *b_digi_fall_time_at_frac50;   //!
    TBranch        *b_digi_time_at_max;   //!
    TBranch        *b_HODOX1;   //!
    TBranch        *b_HODOX2;   //!
@@ -146,6 +144,7 @@ int main( int argc, char* argv[] ) {
    TBranch        *b_BeamEnergy;   //!
    TBranch        *b_BeamTilt;   //!
    TBranch        *b_IsPhysics;   //!
+   TBranch        *b_nTdcHits;   //!
    TBranch        *b_digi_charge_integrated_sub;   //!
    TBranch        *b_digi_max_amplitude_sub;   //!
    TBranch        *b_digi_pedestal_sub;   //!
@@ -154,6 +153,12 @@ int main( int argc, char* argv[] ) {
    TBranch        *b_digi_max_amplitude_corr1;   //!
    TBranch        *b_digi_charge_integrated_corr2;   //!
    TBranch        *b_digi_max_amplitude_corr2;   //!
+
+   TBranch *b_digi_max_amplitude_bare;
+   TBranch *b_digi_charge_integrated_bare;
+   TBranch *b_digi_charge_integrated_frac10;
+   TBranch *b_digi_charge_integrated_frac30;
+   TBranch *b_digi_charge_integrated_frac50;
 
    // Set object pointer
    BGOvalues = 0;
@@ -165,11 +170,13 @@ int main( int argc, char* argv[] ) {
    digi_pedestal_rms = 0;
    digi_time_at_frac30 = 0;
    digi_time_at_frac50 = 0;
+   digi_fall_time_at_frac50 = 0;
    digi_time_at_max = 0;
    HODOX1 = 0;
    HODOX2 = 0;
    HODOY1 = 0;
    HODOY2 = 0;
+   nTdcHits = 0;
    digi_charge_integrated_sub = 0;
    digi_max_amplitude_sub = 0;
    digi_pedestal_sub = 0;
@@ -179,11 +186,17 @@ int main( int argc, char* argv[] ) {
    digi_charge_integrated_corr2 = 0;
    digi_max_amplitude_corr2 = 0;
 
+   digi_max_amplitude_bare = 0;
+   digi_charge_integrated_bare = 0;
+   digi_charge_integrated_frac10 = 0;
+   digi_charge_integrated_frac30 = 0;
+   digi_charge_integrated_frac50 = 0;
+   
 
    // Set branch addresses and branch pointers
  fChain = tree;
 
- //  fChain->SetMakeClass(1);
+   fChain->SetMakeClass(1);
 
    fChain->SetBranchAddress("runNumber", &runNumber, &b_runNumber);
    fChain->SetBranchAddress("spillNumber", &spillNumber, &b_spillNumber);
@@ -197,6 +210,7 @@ int main( int argc, char* argv[] ) {
    fChain->SetBranchAddress("digi_pedestal_rms", &digi_pedestal_rms, &b_digi_pedestal_rms);
    fChain->SetBranchAddress("digi_time_at_frac30", &digi_time_at_frac30, &b_digi_time_at_frac30);
    fChain->SetBranchAddress("digi_time_at_frac50", &digi_time_at_frac50, &b_digi_time_at_frac50);
+   fChain->SetBranchAddress("digi_fall_time_at_frac50", &digi_fall_time_at_frac50, &b_digi_fall_time_at_frac50);
    fChain->SetBranchAddress("digi_time_at_max", &digi_time_at_max, &b_digi_time_at_max);
    fChain->SetBranchAddress("HODOX1", &HODOX1, &b_HODOX1);
    fChain->SetBranchAddress("HODOX2", &HODOX2, &b_HODOX2);
@@ -209,6 +223,7 @@ int main( int argc, char* argv[] ) {
    fChain->SetBranchAddress("BeamEnergy", &BeamEnergy, &b_BeamEnergy);
    fChain->SetBranchAddress("BeamTilt", &BeamTilt, &b_BeamTilt);
    fChain->SetBranchAddress("IsPhysics", &IsPhysics, &b_IsPhysics);
+   fChain->SetBranchAddress("nTdcHits", &nTdcHits, &b_nTdcHits);
    fChain->SetBranchAddress("digi_charge_integrated_sub", &digi_charge_integrated_sub, &b_digi_charge_integrated_sub);
    fChain->SetBranchAddress("digi_max_amplitude_sub", &digi_max_amplitude_sub, &b_digi_max_amplitude_sub);
    fChain->SetBranchAddress("digi_pedestal_sub", &digi_pedestal_sub, &b_digi_pedestal_sub);
@@ -218,12 +233,41 @@ int main( int argc, char* argv[] ) {
    fChain->SetBranchAddress("digi_charge_integrated_corr2", &digi_charge_integrated_corr2, &b_digi_charge_integrated_corr2);
    fChain->SetBranchAddress("digi_max_amplitude_corr2", &digi_max_amplitude_corr2, &b_digi_max_amplitude_corr2);
 
+   fChain->SetBranchAddress("digi_max_amplitude_bare", &digi_max_amplitude_bare, &b_digi_max_amplitude_bare);
+   fChain->SetBranchAddress("digi_charge_integrated_bare", &digi_charge_integrated_bare, &b_digi_charge_integrated_bare);
+   fChain->SetBranchAddress("digi_charge_integrated_frac10", &digi_charge_integrated_frac10, &b_digi_charge_integrated_frac10);
+   fChain->SetBranchAddress("digi_charge_integrated_frac30", &digi_charge_integrated_frac30, &b_digi_charge_integrated_frac30);
+   fChain->SetBranchAddress("digi_charge_integrated_frac50", &digi_charge_integrated_frac50, &b_digi_charge_integrated_frac50);
+
+
+
+
+
+   tree->GetEntry( 42 );
+   
+   std::string theBeamEnergy = Form("%.0f",BeamEnergy);
+   if( runNumber > 272 && runNumber < 298){
+     theBeamEnergy = "273"; //For the long position scan prior to tdc adjustment
+   }else if( runNumber  < 273){
+     theBeamEnergy = "259"; //For the long position scan prior to tdc adjustment
+   }
+   std::cout << "The used constant file has label = "<< theBeamEnergy  << std::endl;
+   
+
+   //set the tag for calibration
+   TagHelper tagHelper(tag,theBeamEnergy);
+   EnergyCalibration cef3Calib(tagHelper.getCeF3FileName());
+   EnergyCalibration bgoCalib(tagHelper.getBGOFileName());
+   AlignmentOfficer alignOfficer(tagHelper.getAlignmentFileName());
+
+
+
 
 
 
 
   ///AND FINALLY THE RECO TREE/////////  
-   std::string outdir = "analysisTrees_" + tag;
+   std::string outdir = "analysisTrees_chaInt_04_12_" + tag;
    system( Form("mkdir -p %s", outdir.c_str()) );
 
    std::string outfileName = outdir + "/Reco_" + runName + ".root";
@@ -290,17 +334,31 @@ int main( int argc, char* argv[] ) {
    std::vector<float> cef3_chaInt_corr1_corr( CEF3_CHANNELS, -1. );
    outTree->Branch( "cef3_chaInt_corr1_corr", &cef3_chaInt_corr1_corr );
 
-   //With Corr2
-   std::vector<float> cef3_maxAmpl_corr2( CEF3_CHANNELS, -1. );
-   outTree->Branch( "cef3_maxAmpl_corr2", &cef3_maxAmpl_corr2 );
-   std::vector<float> cef3_chaInt_corr2( CEF3_CHANNELS, -1. );
-   outTree->Branch( "cef3_chaInt_corr2", &cef3_chaInt_corr2 );
 
-  //With Corr2 Intercalibrated
-   std::vector<float> cef3_maxAmpl_corr2_corr( CEF3_CHANNELS, -1. );
-   outTree->Branch( "cef3_maxAmpl_corr2_corr", &cef3_maxAmpl_corr2_corr );
-   std::vector<float> cef3_chaInt_corr2_corr( CEF3_CHANNELS, -1. );
-   outTree->Branch( "cef3_chaInt_corr2_corr", &cef3_chaInt_corr2_corr );
+   std::vector<float> cef3_maxAmpl_bare( CEF3_CHANNELS, -1. );
+   outTree->Branch( "cef3_maxAmpl_bare", &cef3_maxAmpl_bare );
+   std::vector<float> cef3_chaInt_bare( CEF3_CHANNELS, -1. );
+   outTree->Branch( "cef3_chaInt_bare", &cef3_chaInt_bare );
+   std::vector<float> cef3_maxAmpl_bare_corr( CEF3_CHANNELS, -1. );
+   outTree->Branch( "cef3_maxAmpl_bare_corr", &cef3_maxAmpl_bare_corr );
+   std::vector<float> cef3_chaInt_bare_corr( CEF3_CHANNELS, -1. );
+   outTree->Branch( "cef3_chaInt_bare_corr", &cef3_chaInt_bare_corr );
+
+
+   std::vector<float> cef3_chaInt_frac10( CEF3_CHANNELS, -1. );
+   outTree->Branch( "cef3_chaInt_frac10", &cef3_chaInt_frac10 );
+   std::vector<float> cef3_chaInt_frac30( CEF3_CHANNELS, -1. );
+   outTree->Branch( "cef3_chaInt_frac30", &cef3_chaInt_frac30 );
+   std::vector<float> cef3_chaInt_frac50( CEF3_CHANNELS, -1. );
+   outTree->Branch( "cef3_chaInt_frac50", &cef3_chaInt_frac50 );
+
+   std::vector<float> cef3_chaInt_frac10_corr( CEF3_CHANNELS, -1. );
+   outTree->Branch( "cef3_chaInt_frac10_corr", &cef3_chaInt_frac10_corr );
+   std::vector<float> cef3_chaInt_frac30_corr( CEF3_CHANNELS, -1. );
+   outTree->Branch( "cef3_chaInt_frac30_corr", &cef3_chaInt_frac30_corr );
+   std::vector<float> cef3_chaInt_frac50_corr( CEF3_CHANNELS, -1. );
+   outTree->Branch( "cef3_chaInt_frac50_corr", &cef3_chaInt_frac50_corr );
+
 
    float xTable;
    outTree->Branch( "xTable", &xTable, "xTable/F");
@@ -378,6 +436,66 @@ int main( int argc, char* argv[] ) {
    outTree->Branch( "pos_corr_hodoSmallY", pos_corr_hodoSmallY, "pos_corr_hodoSmallY[nClusters_hodoSmallY]/F" );
 
 
+
+   
+   std::vector<int> nTDCHits( 4, -1. );
+   outTree->Branch( "nTDCHits", &nTDCHits );
+
+
+
+
+   float pos_2FibClust_hodoX1;
+   outTree->Branch( "pos_2FibClust_hodoX1", &pos_2FibClust_hodoX1, "pos_2FibClust_hodoX1/F" );
+   float pos_2FibClust_corr_hodoX1;
+   outTree->Branch( "pos_2FibClust_corr_hodoX1", &pos_2FibClust_corr_hodoX1, "pos_2FibClust_corr_hodoX1/F" );
+
+   float pos_2FibClust_hodoY1;
+   outTree->Branch( "pos_2FibClust_hodoY1", &pos_2FibClust_hodoY1, "pos_2FibClust_hodoY1/F" );
+   float pos_2FibClust_corr_hodoY1;
+   outTree->Branch( "pos_2FibClust_corr_hodoY1", &pos_2FibClust_corr_hodoY1, "pos_2FibClust_corr_hodoY1/F" );
+
+   float pos_2FibClust_hodoX2;
+   outTree->Branch( "pos_2FibClust_hodoX2", &pos_2FibClust_hodoX2, "pos_2FibClust_hodoX2/F" );
+   float pos_2FibClust_corr_hodoX2;
+   outTree->Branch( "pos_2FibClust_corr_hodoX2", &pos_2FibClust_corr_hodoX2, "pos_2FibClust_corr_hodoX2/F" );
+
+   float pos_2FibClust_hodoY2;
+   outTree->Branch( "pos_2FibClust_hodoY2", &pos_2FibClust_hodoY2, "pos_2FibClust_hodoY2/F" );
+   float pos_2FibClust_corr_hodoY2;
+   outTree->Branch( "pos_2FibClust_corr_hodoY2", &pos_2FibClust_corr_hodoY2, "pos_2FibClust_corr_hodoY2/F" );
+
+
+
+   float cluster_pos_hodoX1;
+   outTree->Branch( "cluster_pos_hodoX1", &cluster_pos_hodoX1, "cluster_pos_hodoX1/F" );
+   float cluster_pos_corr_hodoX1;
+   outTree->Branch( "cluster_pos_corr_hodoX1", &cluster_pos_corr_hodoX1, "cluster_pos_corr_hodoX1/F" );
+   float cluster_pos_hodoX2;
+   outTree->Branch( "cluster_pos_hodoX2", &cluster_pos_hodoX2, "cluster_pos_hodoX2/F" );
+   float cluster_pos_corr_hodoX2;
+   outTree->Branch( "cluster_pos_corr_hodoX2", &cluster_pos_corr_hodoX2, "cluster_pos_corr_hodoX2/F" );
+
+   float cluster_pos_hodoY1;
+   outTree->Branch( "cluster_pos_hodoY1", &cluster_pos_hodoY1, "cluster_pos_hodoY1/F" );
+   float cluster_pos_corr_hodoY1;
+   outTree->Branch( "cluster_pos_corr_hodoY1", &cluster_pos_corr_hodoY1, "cluster_pos_corr_hodoY1/F" );
+   float cluster_pos_hodoY2;
+   outTree->Branch( "cluster_pos_hodoY2", &cluster_pos_hodoY2, "cluster_pos_hodoY2/F" );
+   float cluster_pos_corr_hodoY2;
+   outTree->Branch( "cluster_pos_corr_hodoY2", &cluster_pos_corr_hodoY2, "cluster_pos_corr_hodoY2/F" );
+
+   //With the offset by eye s.t. centred ond CeF3 and not offset Hodo
+   float position_X1;
+   outTree->Branch( "position_X1", &position_X1, "position_X1/F" );
+   float position_X2;
+   outTree->Branch( "position_X2", &position_X2, "position_X2/F" );
+   float position_Y1;
+   outTree->Branch( "position_Y1", &position_Y1, "position_Y1/F" );
+   float position_Y2;
+   outTree->Branch( "position_Y2", &position_Y2, "position_Y2/F" );
+
+
+
    float wc_x;
    outTree->Branch( "wc_x", &wc_x, "wc_x/F");
    float wc_y;
@@ -388,12 +506,15 @@ int main( int argc, char* argv[] ) {
    outTree->Branch( "wc_y_corr", &wc_y_corr, "wc_y_corr/F");
 
 
-
+  std::vector<float> fwhm( 4, -1. );
+   outTree->Branch( "fwhm", &fwhm );
+  
 
    int nentries = tree->GetEntries();
 
+
    RunHelper::getBeamPosition( runName, xBeam, yBeam );
- 
+
    std::cout << nentries << std::endl;
  
  
@@ -402,7 +523,8 @@ int main( int argc, char* argv[] ) {
      tree->GetEntry( iEntry );     
      if( iEntry %  10000 == 0 ) std::cout << "Entry: " << iEntry << " / " << nentries << std::endl;
      //BACKWARDS COMPATIBILITY///
-     assignValues( cef3, *digi_charge_integrated_sub, CEF3_START_CHANNEL); 
+     assignValues( cef3, *digi_charge_integrated_sub, CEF3_START_CHANNEL);      
+
      assignValues( cef3_corr, *digi_charge_integrated_sub, CEF3_START_CHANNEL );  
      cef3Calib.applyCalibration(cef3_corr);
      //
@@ -412,12 +534,36 @@ int main( int argc, char* argv[] ) {
 
      assignValues( cef3_maxAmpl_corr1, *digi_max_amplitude_corr1, CEF3_START_CHANNEL);
      assignValues( cef3_chaInt_corr1, *digi_charge_integrated_corr1, CEF3_START_CHANNEL);
-  
-     assignValues( cef3_maxAmpl_corr2, *digi_max_amplitude_corr2, CEF3_START_CHANNEL);
-     assignValues( cef3_chaInt_corr2, *digi_charge_integrated_corr2, CEF3_START_CHANNEL);
  
 
+
+     //   assignValues( cef3_maxAmpl_corr2, *digi_max_amplitude_corr2, CEF3_START_CHANNEL);
+     //   assignValues( cef3_chaInt_corr2, *digi_charge_integrated_corr2, CEF3_START_CHANNEL);
+
+     assignValues( cef3_maxAmpl_bare, *digi_max_amplitude_bare, CEF3_START_CHANNEL);
+     assignValues( cef3_chaInt_bare, *digi_charge_integrated_bare, CEF3_START_CHANNEL);
+
+     assignValues( cef3_chaInt_frac10, *digi_charge_integrated_frac10, CEF3_START_CHANNEL);
+     assignValues( cef3_chaInt_frac30, *digi_charge_integrated_frac30, CEF3_START_CHANNEL);
+     assignValues( cef3_chaInt_frac50, *digi_charge_integrated_frac50, CEF3_START_CHANNEL);
+
+
+     assignValues( cef3_maxAmpl_bare_corr, *digi_max_amplitude_bare, CEF3_START_CHANNEL);
+     assignValues( cef3_chaInt_bare_corr, *digi_charge_integrated_bare, CEF3_START_CHANNEL);
+     cef3Calib.applyCalibration(cef3_maxAmpl_bare_corr);
+     cef3Calib.applyCalibration(cef3_chaInt_bare_corr);
+
+     assignValues( cef3_chaInt_frac10_corr, *digi_charge_integrated_frac10, CEF3_START_CHANNEL);
+     cef3Calib.applyCalibration(cef3_chaInt_frac10_corr);
+     assignValues( cef3_chaInt_frac30_corr, *digi_charge_integrated_frac30, CEF3_START_CHANNEL);
+    cef3Calib.applyCalibration(cef3_chaInt_frac30_corr);
+     assignValues( cef3_chaInt_frac50_corr, *digi_charge_integrated_frac50, CEF3_START_CHANNEL);   
+ cef3Calib.applyCalibration(cef3_chaInt_frac50_corr);
+ 
+     //BGO
      assignValues( bgo, *BGOvalues, 0);
+
+
 
   
      //"Intercalibrated" values
@@ -433,11 +579,11 @@ int main( int argc, char* argv[] ) {
      assignValues( cef3_chaInt_corr1_corr, *digi_charge_integrated_corr1, CEF3_START_CHANNEL );  
      cef3Calib.applyCalibration(cef3_chaInt_corr1_corr);
 
-     assignValues( cef3_maxAmpl_corr2_corr, *digi_max_amplitude_corr2, CEF3_START_CHANNEL );  
-     cef3Calib.applyCalibration(cef3_maxAmpl_corr2_corr);
+     //     assignValues( cef3_maxAmpl_corr2_corr, *digi_max_amplitude_corr2, CEF3_START_CHANNEL );  
+     //     cef3Calib.applyCalibration(cef3_maxAmpl_corr2_corr);
 
-     assignValues( cef3_chaInt_corr2_corr, *digi_charge_integrated_corr2, CEF3_START_CHANNEL );  
-     cef3Calib.applyCalibration(cef3_chaInt_corr2_corr);
+     //    assignValues( cef3_chaInt_corr2_corr, *digi_charge_integrated_corr2, CEF3_START_CHANNEL );  
+     //    cef3Calib.applyCalibration(cef3_chaInt_corr2_corr);
 
 
      assignValues( bgo_corr, *BGOvalues, 0 );
@@ -493,6 +639,10 @@ int main( int argc, char* argv[] ) {
      beamEnergy = BeamEnergy;
      angle = BeamTilt;
 
+     nTDCHits[0] = nTdcHits->at(0);
+     nTDCHits[1] = nTdcHits->at(1);
+     nTDCHits[2] = nTdcHits->at(2);
+     nTDCHits[3] = nTdcHits->at(3);
 
      wc_x = TDCreco->at(0);
      wc_y = TDCreco->at(1);
@@ -503,6 +653,107 @@ int main( int argc, char* argv[] ) {
      wc_y_corr = wc_y + alignOfficer.getOffset("wc_y");
 
  
+     fwhm[0] = digi_fall_time_at_frac50->at(0) - digi_time_at_frac50->at(0);
+     fwhm[1] = digi_fall_time_at_frac50->at(1) - digi_time_at_frac50->at(1);
+     fwhm[2] = digi_fall_time_at_frac50->at(2) - digi_time_at_frac50->at(2);
+     fwhm[3] = digi_fall_time_at_frac50->at(3) - digi_time_at_frac50->at(3);
+
+
+     int posOf2FibClustX1=0;
+     int nrOf2FibreClustersX1 = 0;
+     for( int i=0; i<nClusters_hodoX1; ++i ) {
+       if( nFibres_hodoX1[i]==2  )  {  
+	 ++nrOf2FibreClustersX1;
+	 posOf2FibClustX1 = i ; } 
+     }
+     if( nrOf2FibreClustersX1 == 1){
+     pos_2FibClust_hodoX1 =   pos_hodoX1[ posOf2FibClustX1] ;
+     }else{
+       pos_2FibClust_hodoX1 =  -999 ;}
+
+     if(nClusters_hodoX1==1){
+       cluster_pos_hodoX1 = pos_hodoX1[0];
+     }else if(nrOf2FibreClustersX1==1){
+       cluster_pos_hodoX1 = pos_hodoX1[ posOf2FibClustX1];
+     }else{ cluster_pos_hodoX1 = -999;}
+
+
+     int posOf2FibClustX2=0;
+     int nrOf2FibreClustersX2 = 0;
+     for( int i=0; i<nClusters_hodoX2; ++i ) {
+       if( nFibres_hodoX2[i]==2  )  {  
+	 ++nrOf2FibreClustersX2;
+	 posOf2FibClustX2 = i ; } 
+     }
+     if( nrOf2FibreClustersX2 == 1){
+     pos_2FibClust_hodoX2 =   pos_hodoX2[ posOf2FibClustX2] ;
+     }else{
+       pos_2FibClust_hodoX2 =  -999 ;}
+
+     if(nClusters_hodoX2==1){
+       cluster_pos_hodoX2 = pos_hodoX2[0];
+     }else if(nrOf2FibreClustersX2==1){
+       cluster_pos_hodoX2 = pos_hodoX2[ posOf2FibClustX2];
+     }else{ cluster_pos_hodoX2 = -999;}
+
+     int posOf2FibClustY1=0;
+     int nrOf2FibreClustersY1 = 0;
+     for( int i=0; i<nClusters_hodoY1; ++i ) {
+       if( nFibres_hodoY1[i]==2  )  {  
+	 ++nrOf2FibreClustersY1;
+	 posOf2FibClustY1 = i ; } 
+     }
+     if( nrOf2FibreClustersY1 == 1){
+     pos_2FibClust_hodoY1 =   pos_hodoY1[ posOf2FibClustY1] ;
+     }else{
+       pos_2FibClust_hodoY1 =  -999 ;}
+  
+     if(nClusters_hodoY1==1){
+       cluster_pos_hodoY1 = pos_hodoY1[0];
+     }else if(nrOf2FibreClustersY1==1){
+       cluster_pos_hodoY1 = pos_hodoY1[ posOf2FibClustY1];
+     }else{ cluster_pos_hodoY1 = -999;}
+   
+
+     int posOf2FibClustY2=0;
+     int nrOf2FibreClustersY2 = 0;
+     for( int i=0; i<nClusters_hodoY2; ++i ) {
+       if( nFibres_hodoY2[i]==2  )  {  
+	 ++nrOf2FibreClustersY2;
+	 posOf2FibClustY2 = i ; } 
+     }
+     if( nrOf2FibreClustersY2 == 1){
+     pos_2FibClust_hodoY2 =   pos_hodoY2[ posOf2FibClustY2] ;
+     }else{
+       pos_2FibClust_hodoY2 =  -999 ;}
+
+     if(nClusters_hodoY2==1){
+       cluster_pos_hodoY2 = pos_hodoY2[0];
+     }else if(nrOf2FibreClustersY2==1){
+       cluster_pos_hodoY2 = pos_hodoY2[ posOf2FibClustY2];
+     }else{ cluster_pos_hodoY2 = -999;}
+
+     pos_2FibClust_corr_hodoX1 = pos_2FibClust_hodoX1 + alignOfficer.getOffset("hodoX1");
+     pos_2FibClust_corr_hodoY1 = pos_2FibClust_hodoY1 + alignOfficer.getOffset("hodoY1");   
+     pos_2FibClust_corr_hodoX2 = pos_2FibClust_hodoX2 + alignOfficer.getOffset("hodoX2");   
+     pos_2FibClust_corr_hodoY2 = pos_2FibClust_hodoY2 + alignOfficer.getOffset("hodoY2");
+
+
+     cluster_pos_corr_hodoX1 = cluster_pos_hodoX1 + alignOfficer.getOffset("hodoX1");
+     cluster_pos_corr_hodoY1 = cluster_pos_hodoY1 + alignOfficer.getOffset("hodoY1");   
+     cluster_pos_corr_hodoX2 = cluster_pos_hodoX2 + alignOfficer.getOffset("hodoX2");   
+     cluster_pos_corr_hodoY2 = cluster_pos_hodoY2 + alignOfficer.getOffset("hodoY2");
+
+
+     position_X1 = cluster_pos_hodoX1 + alignOfficer.getOffset("hodoX1") -2.15;
+     position_Y1 = cluster_pos_hodoY1 + alignOfficer.getOffset("hodoY1") +0.08; 
+     position_X2 = cluster_pos_hodoX2 + alignOfficer.getOffset("hodoX2") -2.15; 
+     position_Y2 = cluster_pos_hodoY2 + alignOfficer.getOffset("hodoY2")+0.08;
+
+
+
+
+
 
        outTree->Fill();
     

@@ -34,9 +34,8 @@ int main( int argc, char* argv[] ) {
 
   DrawTools::setStyle();
 
-
   std::string inputDir = "./analysisTrees";
-  std::string runName = "259";
+  std::string runName = "323";
   std::string tag = "V01";
 
   if( argc == 3 ) {
@@ -135,17 +134,18 @@ TF1* fitSingleElectronPeak( const std::string& outputdir, int i, TTree* tree ) {
 
     gStyle->SetOptFit(1);
   std::string histoName(Form("h1_%d", i));
-  TH1D* h1 = new TH1D(histoName.c_str(), "", 120, 40., 100.);
-  //  TH1D* h1 = new TH1D(histoName.c_str(), "", 1000, 0., 390000.);
+  //TH1D* h1 = new TH1D(histoName.c_str(), "", 120, 40., 1000.);
+   TH1D* h1 = new TH1D(histoName.c_str(), "", 1000, 0., 250000.);
   //tree->Project( histoName.c_str(), Form("cef3_corr[%d]", i), "");
-  // tree->Project( histoName.c_str(), Form("cef3_corr[%d]", i), "nClusters_hodoSmallX==1 && nClusters_hodoSmallY==1 && pos_corr_hodoSmallX<5 && pos_corr_hodoSmallX>-5 && pos_corr_hodoSmallY<5 && pos_corr_hodoSmallY>-5");
+
   // tree->Project( histoName.c_str(), Form("cef3[%d]", i),  "nClusters_hodoSmallX==1 && nClusters_hodoSmallY==1 && pos_corr_hodoSmallX<5 && pos_corr_hodoSmallX>-5 && pos_corr_hodoSmallY<5 && pos_corr_hodoSmallY>-5");
-  tree->Project( histoName.c_str(), Form("cef3[%d]", i),  "nClusters_hodoSmallX>0 && nClusters_hodoSmallY==1 &&nFibres_hodoSmallX>0 && nFibres_hodoSmallY>0");
+  //tree->Project( histoName.c_str(), Form("cef3_maxAmpl[%d]", i),  "abs(cluster_pos_hodoX2)<5 ");
+  tree->Project( histoName.c_str(), Form("cef3_chaInt_corr[%d]", i),  "abs(cluster_pos_hodoX2)<2&& abs(cluster_pos_hodoY2)<2 ");
+  //tree->Project( histoName.c_str(), Form("cef3_maxAmpl_corr[%d]", i),  "abs(cluster_pos_hodoX2)<5&& abs(cluster_pos_hodoY2)<5 ");
 
-  //tree->Project( histoName.c_str(), Form("cef3_corr[%d]", i), "(isSingleEle_scintFront==1 && nHodoClustersX==1 && nHodoClustersY==1 )");
 
-  TF1* f1 = new TF1( Form("gaus_%d", i), "gaus", 5., 300.);
-  //  TF1* f1 = new TF1( Form("gaus_%d", i), "gaus", 400., 1200.);
+  //  TF1* f1 = new TF1( Form("gaus_%d", i), "gaus", 5., 1000.);
+    TF1* f1 = new TF1( Form("gaus_%d", i), "gaus", 400., 250000.);
     f1->SetParameter(0, 300000.);
     f1->SetParameter(1, 250000.);
     f1->SetParameter(2, 15000.);
@@ -165,14 +165,15 @@ TF1* fitSingleElectronPeak( const std::string& outputdir, int i, TTree* tree ) {
 TF1* checkTotalResolution( const std::string& outputdir, TTree* tree ) {
 
   std::string histoName("h1_tot");
-  // TH1D* h1 = new TH1D(histoName.c_str(), "", 2000, 200000.,1500000.);
-  TH1D* h1 = new TH1D(histoName.c_str(), "", 200, 0.,300.);
-  tree->Project( histoName.c_str(), "cef3[0]+cef3[1]+cef3[2]+cef3[3]", "nClusters_hodoX1==1 && nClusters_hodoY1==1 && pos_corr_hodoX1<2 && pos_corr_hodoX1>-2 && pos_corr_hodoY1<2 && pos_corr_hodoY1>-2");
+  TH1D* h1 = new TH1D(histoName.c_str(), "", 2000, 20000.,900000.);
+  //TH1D* h1 = new TH1D(histoName.c_str(), "", 200, 0.,4000.);
+  //tree->Project( histoName.c_str(), "cef3_maxAmpl[0]+cef3_maxAmpl[1]+cef3_maxAmpl[2]+cef3_maxAmpl[3]", "");
+ tree->Project( histoName.c_str(), "cef3_chaInt[0]+cef3_chaInt[1]+cef3_chaInt[2]+cef3_chaInt[3]", "");
   //  tree->Project( histoName.c_str(), "cef3_corr[0]+cef3_corr[1]+cef3_corr[2]+cef3_corr[3]", "nClusters_hodoX==1 && nClusters_hodoY==1 && pos_corr_hodoX1<5 && pos_corr_hodoX1>-5 && pos_corr_hodoY1<5 && pos_corr_hodoY1>-5");
 
 
-  TF1* f1 = new TF1("gaus_tot", "gaus", 100., 300.);
-  // TF1* f1 = new TF1("gaus_tot", "gaus", 200000.,1500000. );
+  //TF1* f1 = new TF1("gaus_tot", "gaus", 100., 4000.);
+  TF1* f1 = new TF1("gaus_tot", "gaus", 20000.,900000. );
   // f1->SetParameter(0, 3000000.);
   //f1->SetParameter(1, 3000000.);
   //f1->SetParameter(2, 60000.);
@@ -224,7 +225,7 @@ void doSingleFit( TH1D* h1, TF1* f1, const std::string& outputdir, const std::st
   h1->Draw();
 
   if(savePlots){
-    c1->SaveAs( Form("%s/fit_%s.png", outputdir.c_str(), name.c_str()) );
+    c1->SaveAs( Form("%s/chaInt_fit_%s.png", outputdir.c_str(), name.c_str()) );
   }
 
   delete c1;
@@ -283,7 +284,7 @@ void checkIntercalibration(std::vector<float> constant, std::vector<float> const
 
 
   multi->GetYaxis()->SetRangeUser(0.85,1.15);
-  //multi->GetYaxis()->SetRangeUser(0.9,1.1);
+  // multi->GetYaxis()->SetRangeUser(0.1,3.5);
   multi->Draw("AP");
   canny->Update();
 
@@ -298,7 +299,8 @@ void checkIntercalibration(std::vector<float> constant, std::vector<float> const
   leg->SetFillColor(0);
   leg->Draw("same");
 
-  if(savePlots==1){  canny->SaveAs( Form( "%s/corrPlot_%s_%s.pdf", outputdir.c_str(), runName.c_str(), tag.c_str()  ));
+  if(savePlots==1){  canny->SaveAs( Form( "%s/chaInt_corrPlot_%s_%s.pdf", outputdir.c_str(), runName.c_str(), tag.c_str()  ));
+    canny->SaveAs( Form( "%s/chaInt_corrPlot_%s_%s.eps", outputdir.c_str(), runName.c_str(), tag.c_str()  ));
 }
 
   delete canny;
