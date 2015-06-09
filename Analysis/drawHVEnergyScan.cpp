@@ -704,7 +704,7 @@ FitStruct getFitResults( const std::string& outputdir, TTree* tree, const std::s
   TH1D* h2 = new TH1D("h2", "", 200, fitmin,fitmax);
   tree->Project( "h2", whatToProject.c_str(), cut.c_str() );
 
-  RooRealVar x("x","ADC Channels", fitmin, fitmax);
+  RooRealVar x("x","ADC Channel", fitmin, fitmax);
   RooDataHist data("data","dataset with x",x,Import(*h2) );
   
   RooPlot* frame;

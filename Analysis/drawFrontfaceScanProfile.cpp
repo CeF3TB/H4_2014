@@ -121,9 +121,6 @@ int main( int argc, char* argv[] ) {
     */
 
 
-    //DATA RUNS// Let's start with the runs at 50 GeV and 950 V
-
-
     // TGraphErrors* gr_resp_vs_pos = new TGraphErrors(0);
 
   std::string cut = "";
@@ -171,12 +168,13 @@ int main( int argc, char* argv[] ) {
   chamferUL->SetLineWidth(3);
  
 
-  TPaveText* label_top2 = new TPaveText(0.3,0.88,0.9,0.91, "brNDC");
+  TPaveText* label_top2 = new TPaveText(0.3,0.88,0.88,0.91, "brNDC");
   label_top2->SetFillColor(kWhite);
   label_top2->SetTextSize(0.038);
   label_top2->SetTextAlign(31); // align right
   label_top2->SetTextFont(62);
   label_top2->AddText("50 GeV Electron Beam");
+  //  label_top2->AddText("100 GeV Electron Beam");
 
   TProfile2D* hprof2d_tot = new TProfile2D("hprof2d_tot","profile of values vs pos x&y",128, -16,16, 128,-16,16, 500, 1900000);
   hprof2d_tot->SetXTitle("Position X [mm]");
@@ -185,25 +183,30 @@ int main( int argc, char* argv[] ) {
 
   for(int j =0; j<4; j++){
 
-    TProfile2D* hprof2d = new TProfile2D("hprof2d","profile of values vs pos x&y",128, -16,16, 128  ,-16,16, 50, 390000);
+    TProfile2D* hprof2d = new TProfile2D("hprof2d","profile of values vs pos x&y",128, -16,16, 128  ,-16,16, 50, 3900000);
     hprof2d->SetXTitle("Position X [mm]");
     hprof2d->SetYTitle("Position Y [mm]");
 
 
+    //DATA RUNS//
+    // for(int i = 538; i< 554; i++){ //50 GeV 600 V
+    //     for(int i = 554; i< 571; i++){
+
     //  for(int i = 503; i< 508; i++){
-    //  for(int i = 487; i< 491; i++){
-    //  for(int i = 497; i< 503; i++){
-    //  for(int i = 363; i< 369; i++){
-    //  for(int i = 355; i< 362; i++){
+    // for(int i = 487; i< 492; i++){
+    //   for(int i = 497; i< 503; i++){
+    //   for(int i = 363; i< 369; i++){
+    // for(int i = 355; i< 362; i++){ 
+      //   if(i==357) continue;
 
-    //  for(int i = 329; i< 354; i++){ //100 GeV
+    // for(int i = 329; i< 354; i++){ //100 GeV
 
-      // for(int i = 273; i< 298; i++){ 
-      // for(int i = 398; i< 407; i++){
-      // for(int i = 538; i< 553; i++){
+    // for(int i = 398; i< 407; i++){
 
+
+  
        for(int i = 273; i< 298; i++){ 
-    //      for(int i = 273; i< 323; i++){ //First set 50 GeV
+    //  for(int i = 273; i< 323; i++){ //First set 50 GeV
       std::string name = Form("%d",i);
 
       TFile* file = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%d.root", tag.c_str(),  i ));
@@ -238,10 +241,10 @@ int main( int argc, char* argv[] ) {
       int nClusters_hodoY1;
       int nClusters_hodoY2;
       /*
-      float   pos_corr_hodoX1;
-      float   pos_corr_hodoY1;
-      float   pos_corr_hodoX2;
-      float   pos_corr_hodoY2;
+	float   pos_corr_hodoX1;
+	float   pos_corr_hodoY1;
+	float   pos_corr_hodoX2;
+	float   pos_corr_hodoY2;
       */
 
       std::vector<int> *nTDCHits;
@@ -368,19 +371,21 @@ int main( int argc, char* argv[] ) {
 	//	double deposite = cef3_maxAmpl_corr->at(j);
      
 
+	//	if( ( abs(cluster_pos_corr_hodoX1)<100 &&  abs(cluster_pos_corr_hodoX2)<100 && abs(cluster_pos_corr_hodoY1)<100 && abs(cluster_pos_corr_hodoY2)<100  && ( nTDCHits->at(0)==1 && nTDCHits->at(1)==1 && nTDCHits->at(2)==1 && nTDCHits->at(3)==1  ))  && abs(wc_x_corr-cluster_pos_corr_hodoX2)<5  && abs(wc_y_corr-cluster_pos_corr_hodoY2)<5 && (wc_x_corr-cluster_pos_corr_hodoX2)<3 && (wc_y_corr-cluster_pos_corr_hodoY2)< 4  && abs( (position_X1-position_X2))<1.5 &&abs( (position_Y1-position_Y2))<1.5  ){
+
 	if( ( abs(cluster_pos_corr_hodoX1)<100 &&  abs(cluster_pos_corr_hodoX2)<100 && abs(cluster_pos_corr_hodoY1)<100 && abs(cluster_pos_corr_hodoY2)<100  && ( nTDCHits->at(0)>0 && nTDCHits->at(1)>0 && nTDCHits->at(2)>0 && nTDCHits->at(3)>0 && (nTDCHits->at(0)+ nTDCHits->at(1)+ nTDCHits->at(2)+ nTDCHits->at(3))<7 &&   nTDCHits->at(0)<3 && nTDCHits->at(1)<3 && nTDCHits->at(2)<3 && nTDCHits->at(3)<3 ) )  && abs(wc_x_corr-cluster_pos_corr_hodoX2)<5  && abs(wc_y_corr-cluster_pos_corr_hodoY2)<5    ){
 	  //   if( ( abs(cluster_pos_corr_hodoX1)<250 &&  abs(cluster_pos_corr_hodoX2)<250 && abs(cluster_pos_corr_hodoY1)<250 && abs(cluster_pos_corr_hodoY2)<250  && ( nTDCHits->at(0)>0 && nTDCHits->at(1)>0 && nTDCHits->at(2)>0 && nTDCHits->at(3)>0 && (nTDCHits->at(0)+ nTDCHits->at(1)+ nTDCHits->at(2)+ nTDCHits->at(3))<7 &&   nTDCHits->at(0)<3 && nTDCHits->at(1)<3 && nTDCHits->at(2)<3 && nTDCHits->at(3)<3 ) )  && abs(wc_x_corr-cluster_pos_corr_hodoX2)<25  && abs(wc_y_corr-cluster_pos_corr_hodoY2)<25     ){
 	  double xPos = 0.5 * ( position_X2 + position_X1) - (xTable - 194.);
 	  double yPos = 0.5 * ( position_Y2 + position_Y1) + (yTable - 254.);
 	  //      double xPos =  0.5 * ( cluster_pos_corr_hodoX2 + cluster_pos_corr_hodoX1) - (xTable-194);
 	  //double yPos = 0.5 * ( cluster_pos_corr_hodoY2 + cluster_pos_corr_hodoY1) +(yTable -254);
-       // hprof2d->Fill( -xPos  ,- yPos , deposite , 1);
+	  // hprof2d->Fill( -xPos  ,- yPos , deposite , 1);
 
-       // if( abs(fwhm->at(j))< 12 && abs(fwhm->at(j))>2 ){
-	 hprof2d->Fill( -xPos  ,- yPos , deposite , 1);
+	  // if( abs(fwhm->at(j))< 12 && abs(fwhm->at(j))>2 ){
+	  hprof2d->Fill( -xPos , -yPos , deposite , 1);
 	  
-       // if( ( (abs(fwhm->at(0))< 12 && abs(fwhm->at(0))>2) || ( abs(fwhm->at(1))< 10 && abs(fwhm->at(1))>0.1) || ( abs(fwhm->at(2))< 10 && abs(fwhm->at(2))>0.1) || ( abs(fwhm->at(3))< 10 && abs(fwhm->at(3))>0.1) )){
-	 hprof2d_tot->Fill( -xPos  ,- yPos , deposite_tot , 1);
+	  // if( ( (abs(fwhm->at(0))< 12 && abs(fwhm->at(0))>2) || ( abs(fwhm->at(1))< 10 && abs(fwhm->at(1))>0.1) || ( abs(fwhm->at(2))< 10 && abs(fwhm->at(2))>0.1) || ( abs(fwhm->at(3))< 10 && abs(fwhm->at(3))>0.1) )){
+	  hprof2d_tot->Fill( -xPos  , -yPos , deposite_tot , 1);
 
      }
      
@@ -389,7 +394,7 @@ int main( int argc, char* argv[] ) {
    
     }
 
-    //gPad->SetLogz();
+   //  gPad->SetLogz();
     gStyle->SetPalette(51,0);
     hprof2d->GetZaxis()->SetRange(0, 2500);
     hprof2d->Draw("colz");
@@ -404,6 +409,7 @@ int main( int argc, char* argv[] ) {
     chamferDR->Draw("same"); chamferUR->Draw("same"); 
     chamferDL->Draw("same"); chamferUL->Draw("same"); 
     
+    gPad->RedrawAxis();
 
     c1->SaveAs( Form( "%s/chaInt_resp_vs_pos_50GeV_%d.pdf", outputdir.c_str(),j ) );
     c1->SaveAs( Form( "%s/chaInt_resp_vs_pos_50GeV_%d.png", outputdir.c_str(),j ) );
@@ -417,15 +423,16 @@ int main( int argc, char* argv[] ) {
      //  gPad->SetLogz();
     gStyle->SetPalette(51,0);
     hprof2d_tot->Draw("colz");
-    //   gr_resp_vs_pos->SetMarkerSize(100);
-    
+   
     label_top2->Draw("same");
     lineUpper->Draw("same");lineLower->Draw("same"); 
     lineRight->Draw("same");lineLeft->Draw("same");
     
     chamferDR->Draw("same"); chamferUR->Draw("same"); 
-    chamferDL->Draw("same"); chamferUL->Draw("same"); 
-    
+    chamferDL->Draw("same"); chamferUL->Draw("same");   
+
+    gPad->RedrawAxis();
+
 
     c1->SaveAs( Form( "%s/chaInt_resp_vs_pos_tot_50GeV.pdf", outputdir.c_str() ) );
     c1->SaveAs( Form( "%s/chaInt_resp_vs_pos_tot_50GeV.png", outputdir.c_str() ) );

@@ -19,6 +19,8 @@
 
 
 
+
+
 void assignValues( std::vector<float> &target, std::vector<float> source, unsigned int startPos );
 
 
@@ -39,7 +41,7 @@ void drawClusters(const std::string& outputdir, TH1F* h2, TH1F* h2BG );
 float fitBG( const std::string& outputdir, TH1F* h1, const float offset );
 
 void draw3Hodos( const std::string& outputdir, TH1F* h1, TH1F* h2, TH1F* h3 );
-void draw2Hodos( const std::string& outputdir, TH1F* h1, TH1F* h2 );
+void draw2Hodos( const std::string& outputdir, TH1F* h1, TH1F* h2, const std::string nFibs );
 
 int main( int argc, char* argv[] ) {
 
@@ -550,27 +552,26 @@ int main( int argc, char* argv[] ) {
   std::string outputdir = "AlignmentStudiesPlots_"+tag;
   system( Form("mkdir -p %s", outputdir.c_str()));
 
- draw3Hodos( outputdir,h1_hodoX1_singleClust_1Fibre, h1_hodoX1_singleClust_2Fibre, h1_hodoX1_singleClust_34Fibre  );
- draw3Hodos( outputdir,h1_hodoX2_singleClust_1Fibre, h1_hodoX2_singleClust_2Fibre, h1_hodoX2_singleClust_34Fibre  );
- draw3Hodos( outputdir,h1_hodoY1_singleClust_1Fibre, h1_hodoY1_singleClust_2Fibre, h1_hodoY1_singleClust_34Fibre  );
+  draw3Hodos(outputdir,h1_hodoX1_singleClust_1Fibre, h1_hodoX1_singleClust_2Fibre, h1_hodoX1_singleClust_34Fibre  );
+  draw3Hodos(outputdir,h1_hodoX2_singleClust_1Fibre, h1_hodoX2_singleClust_2Fibre, h1_hodoX2_singleClust_34Fibre  );
+  draw3Hodos(outputdir,h1_hodoY1_singleClust_1Fibre, h1_hodoY1_singleClust_2Fibre, h1_hodoY1_singleClust_34Fibre  );
+  draw3Hodos(outputdir,h1_hodoY2_singleClust_1Fibre, h1_hodoY2_singleClust_2Fibre, h1_hodoY2_singleClust_34Fibre  );
 
-  draw3Hodos( outputdir,h1_hodoY2_singleClust_1Fibre, h1_hodoY2_singleClust_2Fibre, h1_hodoY2_singleClust_34Fibre  );
+  draw2Hodos( outputdir,h1_hodoX1_SingleEvents_1Fib,h1_hodoX1_singleClust_1Fibre,"1");
+  draw2Hodos( outputdir,h1_hodoY2_SingleEvents_1Fib,h1_hodoY2_singleClust_1Fibre,"1");
+  draw2Hodos( outputdir,h1_hodoX2_SingleEvents_1Fib,h1_hodoX2_singleClust_1Fibre,"1");
+  draw2Hodos( outputdir,h1_hodoY1_SingleEvents_1Fib,h1_hodoY1_singleClust_1Fibre,"1");
 
-  draw2Hodos( outputdir,h1_hodoX1_SingleEvents_1Fib,h1_hodoX1_singleClust_1Fibre);
-  draw2Hodos( outputdir,h1_hodoY2_SingleEvents_1Fib,h1_hodoY2_singleClust_1Fibre);
-  draw2Hodos( outputdir,h1_hodoX2_SingleEvents_1Fib,h1_hodoX2_singleClust_1Fibre);
-  draw2Hodos( outputdir,h1_hodoY1_SingleEvents_1Fib,h1_hodoY1_singleClust_1Fibre);
-
-  draw2Hodos( outputdir,h1_hodoX1_SingleEvents_2Fib,h1_hodoX1_singleClust_2Fibre);
-  draw2Hodos( outputdir,h1_hodoY2_SingleEvents_2Fib,h1_hodoY2_singleClust_2Fibre);
-  draw2Hodos( outputdir,h1_hodoX2_SingleEvents_2Fib,h1_hodoX2_singleClust_2Fibre);
-  draw2Hodos( outputdir,h1_hodoY1_SingleEvents_2Fib,h1_hodoY1_singleClust_2Fibre);
+  draw2Hodos( outputdir,h1_hodoX1_SingleEvents_2Fib,h1_hodoX1_singleClust_2Fibre,"2");
+  draw2Hodos( outputdir,h1_hodoY2_SingleEvents_2Fib,h1_hodoY2_singleClust_2Fibre,"2");
+  draw2Hodos( outputdir,h1_hodoX2_SingleEvents_2Fib,h1_hodoX2_singleClust_2Fibre,"2");
+  draw2Hodos( outputdir,h1_hodoY1_SingleEvents_2Fib,h1_hodoY1_singleClust_2Fibre,"2");
 
 
-  draw2Hodos( outputdir,h1_hodoX1_SingleEvents_34Fib,h1_hodoX1_singleClust_34Fibre);
-  draw2Hodos( outputdir,h1_hodoX2_SingleEvents_34Fib,h1_hodoX2_singleClust_34Fibre);
-  draw2Hodos( outputdir,h1_hodoY1_SingleEvents_34Fib,h1_hodoY1_singleClust_34Fibre);
-  draw2Hodos( outputdir,h1_hodoY2_SingleEvents_34Fib,h1_hodoY2_singleClust_34Fibre);
+  draw2Hodos( outputdir,h1_hodoX1_SingleEvents_34Fib,h1_hodoX1_singleClust_34Fibre,"3/4");
+  draw2Hodos( outputdir,h1_hodoX2_SingleEvents_34Fib,h1_hodoX2_singleClust_34Fibre,"3/4");
+  draw2Hodos( outputdir,h1_hodoY1_SingleEvents_34Fib,h1_hodoY1_singleClust_34Fibre,"3/4");
+  draw2Hodos( outputdir,h1_hodoY2_SingleEvents_34Fib,h1_hodoY2_singleClust_34Fibre,"3/4");
   
   float offset_wc_y_low = fitAndDraw( outputdir, h1_wc_y_low );
   float offset_wc_y_hi  = fitAndDraw( outputdir, h1_wc_y_hi );
@@ -1855,7 +1856,7 @@ void draw3Hodos( const std::string& outputdir, TH1F* h1, TH1F* h2, TH1F* h3 ) {
   float  yMax = 1.1 * h2->GetMaximum();
 
   TH2D* axes = new TH2D( "axes", "", 10, xMin, xMax, 10, 0.1, yMax );
-  axes->SetXTitle(h1->GetName());
+  axes->SetXTitle("Cluster Position [mm]");
   axes->SetYTitle("Events");
   axes->Draw();
 
@@ -1886,6 +1887,7 @@ void draw3Hodos( const std::string& outputdir, TH1F* h1, TH1F* h2, TH1F* h3 ) {
 
   c1->SaveAs(Form("%s/SingleClusters%s.eps", outputdir.c_str(), h1->GetName()));
   c1->SaveAs(Form("%s/SingleClusters%s.png", outputdir.c_str(), h1->GetName()));
+  c1->SaveAs(Form("%s/SingleClusters%s.pdf", outputdir.c_str(), h1->GetName()));
 
   delete c1;
   delete axes;
@@ -1893,7 +1895,7 @@ void draw3Hodos( const std::string& outputdir, TH1F* h1, TH1F* h2, TH1F* h3 ) {
 
 
 
-void draw2Hodos( const std::string& outputdir, TH1F* h1, TH1F* h2 ) {
+void draw2Hodos( const std::string& outputdir, TH1F* h1, TH1F* h2, const std::string nFibs ) {
 
   TCanvas* c1 = new TCanvas("c1", "", 600, 600);
   c1->cd();
@@ -1903,7 +1905,7 @@ void draw2Hodos( const std::string& outputdir, TH1F* h1, TH1F* h2 ) {
   float  yMax = 1.1 * h2->GetMaximum();
 
   TH2D* axes = new TH2D( "axes", "", 10, xMin, xMax, 10, 0.1, yMax );
-  axes->SetXTitle(h1->GetName());
+  axes->SetXTitle("Cluster Position [mm]");
   axes->SetYTitle("Events");
   axes->Draw();
 
@@ -1922,8 +1924,8 @@ void draw2Hodos( const std::string& outputdir, TH1F* h1, TH1F* h2 ) {
   TLegend* legend = new TLegend( 0.2, 0.9-2.*0.06, 0.5, 0.9 );
   legend->SetTextSize(0.035);
   legend->SetFillColor(0);
-  legend->AddEntry( h2, "All Clusters with nFibres=X", "L" );
-  legend->AddEntry( h1, "X Fibre && nCluster==1", "L" );
+  legend->AddEntry( h2, Form("All Clusters with nFibres=%s",nFibs.c_str() ), "L" );
+  legend->AddEntry( h1, Form("Single Clusters with nFibres=%s",nFibs.c_str() ), "L" );
 
   legend->Draw("same"); 
 
@@ -1932,6 +1934,7 @@ void draw2Hodos( const std::string& outputdir, TH1F* h1, TH1F* h2 ) {
 
   c1->SaveAs(Form("%s/CSC_%s.eps", outputdir.c_str(), h1->GetName()));
   c1->SaveAs(Form("%s/CSC_%s.png", outputdir.c_str(), h1->GetName()));
+  c1->SaveAs(Form("%s/CSC_%s.pdf", outputdir.c_str(), h1->GetName()));
 
   delete c1;
   delete axes;

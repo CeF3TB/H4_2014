@@ -162,7 +162,7 @@ int main( int argc, char* argv[] ) {
   TLine* chamferUL = new TLine(- 12+2.1, 12., -12 , 12-2.1 );
   chamferUL->SetLineColor(kOrange);
   chamferUL->SetLineWidth(3);
-    */
+  */
 
   TPaveText* label_top2 = new TPaveText();
   label_top2 = DrawTools::getLabelTop("50 GeV Electron Beam");
@@ -190,14 +190,19 @@ int main( int argc, char* argv[] ) {
   hprofX_tot->SetYTitle("Response [ADC]");
   outHistos[hprofX_tot->GetName()]=(TObject*) hprofX_tot;
   
-  TProfile* hprofY_tot = new TProfile("hprofY_tot","profile of values vs pos y",60 , -15, 15, 50, 2500000) ;
+  TProfile* hprofY_tot = new TProfile("hprofY_tot","profile of values vs pos y",60 , -15, 15, 50, 2500000);
   hprofY_tot->SetXTitle("Position Y [mm]");
   hprofY_tot->SetYTitle("Response [ADC]");  
   outHistos[hprofY_tot->GetName()]=(TObject*) hprofY_tot;
   
+
+
   //   int i = 323;
-  //for(int i = 274; i< 276 ; i++){
-  for(int i = 274; i< 323; i++){
+  //  for(int i = 274; i< 276 ; i++){
+  //  for(int i = 274; i< 323; i++){
+
+  for(int i = 329; i< 354; i++){ //100 GeV
+
 
       std::string name = Form("%d", i);
 
@@ -378,9 +383,12 @@ int main( int argc, char* argv[] ) {
 	}
 	
       }
-  }
+
+  }//THE ENTRIES LOOOP
   
- TFile *fOut=TFile::Open("respVsXnY.root","RECREATE");   //THE ENTRIES LOOOP      
+  // TFile *fOut=TFile::Open("respVsXnY.root","RECREATE");         
+
+ TFile *fOut=TFile::Open("respVsXnY_100GeV.root","RECREATE");         
  for (std::map<string,TObject*>::iterator it=outHistos.begin();it!=outHistos.end();++it)
    it->second->Write();
  fOut->Close();

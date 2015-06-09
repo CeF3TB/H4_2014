@@ -556,9 +556,9 @@ int main( int argc, char* argv[] ) {
      assignValues( cef3_chaInt_frac10_corr, *digi_charge_integrated_frac10, CEF3_START_CHANNEL);
      cef3Calib.applyCalibration(cef3_chaInt_frac10_corr);
      assignValues( cef3_chaInt_frac30_corr, *digi_charge_integrated_frac30, CEF3_START_CHANNEL);
-    cef3Calib.applyCalibration(cef3_chaInt_frac30_corr);
+     cef3Calib.applyCalibration(cef3_chaInt_frac30_corr);
      assignValues( cef3_chaInt_frac50_corr, *digi_charge_integrated_frac50, CEF3_START_CHANNEL);   
- cef3Calib.applyCalibration(cef3_chaInt_frac50_corr);
+     cef3Calib.applyCalibration(cef3_chaInt_frac50_corr);
  
      //BGO
      assignValues( bgo, *BGOvalues, 0);
@@ -579,11 +579,10 @@ int main( int argc, char* argv[] ) {
      assignValues( cef3_chaInt_corr1_corr, *digi_charge_integrated_corr1, CEF3_START_CHANNEL );  
      cef3Calib.applyCalibration(cef3_chaInt_corr1_corr);
 
-     //     assignValues( cef3_maxAmpl_corr2_corr, *digi_max_amplitude_corr2, CEF3_START_CHANNEL );  
-     //     cef3Calib.applyCalibration(cef3_maxAmpl_corr2_corr);
-
-     //    assignValues( cef3_chaInt_corr2_corr, *digi_charge_integrated_corr2, CEF3_START_CHANNEL );  
-     //    cef3Calib.applyCalibration(cef3_chaInt_corr2_corr);
+     //assignValues( cef3_maxAmpl_corr2_corr, *digi_max_amplitude_corr2, CEF3_START_CHANNEL );
+     //cef3Calib.applyCalibration(cef3_maxAmpl_corr2_corr);
+     //assignValues( cef3_chaInt_corr2_corr, *digi_charge_integrated_corr2, CEF3_START_CHANNEL );
+     //cef3Calib.applyCalibration(cef3_chaInt_corr2_corr);
 
 
      assignValues( bgo_corr, *BGOvalues, 0 );
@@ -608,10 +607,10 @@ int main( int argc, char* argv[] ) {
 
      // hodo cluster reconstruction
      int clusterMaxFibres = 4;
-     doHodoReconstructionBool( hodoX1_values    , nClusters_hodoX1    , nFibres_hodoX1    , pos_hodoX1    , 0.5, clusterMaxFibres, 0. );
-     doHodoReconstructionBool( hodoY1_values    , nClusters_hodoY1    , nFibres_hodoY1    , pos_hodoY1    , 0.5, clusterMaxFibres, 0. );
-     doHodoReconstructionBool( hodoX2_values    , nClusters_hodoX2    , nFibres_hodoX2    , pos_hodoX2    , 0.5, clusterMaxFibres , 0.);
-     doHodoReconstructionBool( hodoY2_values    , nClusters_hodoY2    , nFibres_hodoY2    , pos_hodoY2    , 0.5, clusterMaxFibres, 0. );
+     doHodoReconstructionBool( hodoX1_values, nClusters_hodoX1, nFibres_hodoX1, pos_hodoX1, 0.5, clusterMaxFibres, 0. );
+     doHodoReconstructionBool( hodoY1_values, nClusters_hodoY1, nFibres_hodoY1, pos_hodoY1, 0.5, clusterMaxFibres, 0. );
+     doHodoReconstructionBool( hodoX2_values, nClusters_hodoX2, nFibres_hodoX2, pos_hodoX2, 0.5, clusterMaxFibres , 0.);
+     doHodoReconstructionBool( hodoY2_values, nClusters_hodoY2, nFibres_hodoY2, pos_hodoY2, 0.5, clusterMaxFibres, 0. );
      doHodoReconstruction( hodoSmallX_values, nClusters_hodoSmallX, nFibres_hodoSmallX, pos_hodoSmallX, 1.0, 1, 60.);
      doHodoReconstruction( hodoSmallY_values, nClusters_hodoSmallY, nFibres_hodoSmallY, pos_hodoSmallY, 1.0, 1, 60.);
 
@@ -745,19 +744,16 @@ int main( int argc, char* argv[] ) {
      cluster_pos_corr_hodoY2 = cluster_pos_hodoY2 + alignOfficer.getOffset("hodoY2");
 
 
-     position_X1 = cluster_pos_hodoX1 + alignOfficer.getOffset("hodoX1") -2.15;
-     position_Y1 = cluster_pos_hodoY1 + alignOfficer.getOffset("hodoY1") +0.08; 
-     position_X2 = cluster_pos_hodoX2 + alignOfficer.getOffset("hodoX2") -2.15; 
-     position_Y2 = cluster_pos_hodoY2 + alignOfficer.getOffset("hodoY2")+0.08;
+     position_X1 = cluster_pos_hodoX1 + alignOfficer.getOffset("hodoX1") - 2.15;
+     position_Y1 = cluster_pos_hodoY1 + alignOfficer.getOffset("hodoY1") + 0.08; 
+     position_X2 = cluster_pos_hodoX2 + alignOfficer.getOffset("hodoX2") - 2.15; 
+     position_Y2 = cluster_pos_hodoY2 + alignOfficer.getOffset("hodoY2") + 0.08;
 
 
 
 
-
-
-       outTree->Fill();
+     outTree->Fill();
     
-   
    } // for entries
 
  

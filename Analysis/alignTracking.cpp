@@ -64,14 +64,14 @@ int main( int argc, char* argv[] ) {
 
   //  TFile* file = TFile::Open("data/run_487.root");
   // TFile* file = TFile::Open("data/run_428.root"); //200 GeV
-  //   TFile* file = TFile::Open("data/run_407.root"); //150 GeV
+  //  TFile* file = TFile::Open("data/run_407.root"); //150 GeV
   //  TFile* file = TFile::Open("data/run_418.root"); //100 GeV  
 //TFile* file = TFile::Open("data/run_398.root"); //50 GeV
   // TFile* file = TFile::Open("data/run_455.root"); //20 GeV
-  TFile* file = TFile::Open("data/run_508.root"); //20 GeV seems to be better than run 455
+  // TFile* file = TFile::Open("data/run_508.root"); //20 GeV seems to be better than run 455
   //  TFile* file = TFile::Open("data/run_457.root"); //15 GeV
   //TFile* file = TFile::Open("data/run_431.root"); //10 GeV
-  // TFile* file = TFile::Open("data/run_273.root");
+  TFile* file = TFile::Open("data/run_273.root");
   TTree* tree = (TTree*)file->Get("outputTree");
 
 
@@ -630,7 +630,8 @@ float fitAndDraw( const std::string& outputdir, TH1F* h1 ) {
 
 
   TH2D* axes = new TH2D( "axes", "", 10, xMin, xMax, 10, 0., yMax );
-  axes->SetXTitle(h1->GetName());
+  axes->SetXTitle("Cluster Position [mm]");
+  //  axes->SetXTitle(h1->GetName());
   axes->SetYTitle("Events");
   axes->Draw();
 
@@ -732,6 +733,7 @@ float fitAndDraw( const std::string& outputdir, TH1F* h1 ) {
 
   c1->SaveAs(Form("%s/%s.eps", outputdir.c_str(), h1->GetName()));
   c1->SaveAs(Form("%s/%s.png", outputdir.c_str(), h1->GetName()));
+  c1->SaveAs(Form("%s/%s.pdf", outputdir.c_str(), h1->GetName()));
 
   delete c1;
   delete axes;
