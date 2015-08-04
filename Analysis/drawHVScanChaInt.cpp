@@ -121,7 +121,6 @@ public:
       if (g != 0) {  for (int i = 0; i < 4; ++i) g[i] = 0;       }
       //      if (g != 0) {  for (int i = 0; i < 4; ++i) g[i] = 0;       }
       
-
       if (ipoint < fChi2_1->NPoints() ) {
 	
 	if (g != 0) { 
@@ -286,6 +285,17 @@ int main( int argc, char* argv[] ) {
   runs200GeV.push_back("377"); //950 V 
   beamEnergy950.push_back(200000);
 
+  std::vector<std::string> simulation_noBGO; 
+ std::vector<float> beamEnergySimulation_noBGO; 
+
+  ///////SIMULATION w/o BGO////////////
+  simulation_noBGO.push_back("Simulation50");
+  simulation_noBGO.push_back("Simulation20");
+  simulation_noBGO.push_back("Simulation100");
+  simulation_noBGO.push_back("Simulation150");
+  simulation_noBGO.push_back("Simulation200");
+   
+
 
   ///////SIMULATION////////////
   simulation.push_back("Simulation50");
@@ -342,14 +352,14 @@ int main( int argc, char* argv[] ) {
   fun_rere150->SetParameter(0, 500000);
   fun_rere150->SetParameter(1, 1.0);
   //  gr_reso_vs_resp_150GeV->Fit(fun_rere150,"RN");
-  fun_rere150->SetLineColor(kCyan-7);
+  fun_rere150->SetLineColor(kCyan-6);
   //  fun_rere150->SetLineColor(kCyan-9);
 
   TF1 *fun_rere200= new TF1("fun_rere200", "sqrt([0]*[0]/(x*x) +[1]*[1])",  20000, 700000);
-   fun_rere200->SetParameter(0, 470000);
-    fun_rere200->SetParameter(1, 1.0);
+  fun_rere200->SetParameter(0, 470000);
+  fun_rere200->SetParameter(1, 1.0);
   // gr_reso_vs_resp_200GeV->Fit(fun_rere200,"RN");
-    fun_rere200->SetLineColor(kBlack);
+  fun_rere200->SetLineColor(kBlack);
 
 
 
@@ -363,656 +373,690 @@ int main( int argc, char* argv[] ) {
   // while (globalChiSquare > 1.0){
 
   //NO, this is not beautiful, but it works and I don't want to spend an hour making it nicer
- for(int i=20; i<50; i++){
+  for(int i=20; i<50; i++){
     for(int j=17; j < i; j++){
       double fermi = i/100.;
       double fermi_50 = j/100.;
 
-  TGraphErrors* gr_reso_vs_HV = new TGraphErrors(0);
-  TGraphErrors* gr_resp_vs_HV = new TGraphErrors(0);
+      TGraphErrors* gr_reso_vs_HV = new TGraphErrors(0);
+      TGraphErrors* gr_resp_vs_HV = new TGraphErrors(0);
   
-  TGraphErrors* gr_reso_vs_HV_50GeV = new TGraphErrors(0);
-  TGraphErrors* gr_resp_vs_HV_50GeV = new TGraphErrors(0);
+      TGraphErrors* gr_reso_vs_HV_50GeV = new TGraphErrors(0);
+      TGraphErrors* gr_resp_vs_HV_50GeV = new TGraphErrors(0);
   
-  TGraphErrors* gr_reso_vs_HV_100GeV = new TGraphErrors(0);
-  TGraphErrors* gr_resp_vs_HV_100GeV = new TGraphErrors(0);
+      TGraphErrors* gr_reso_vs_HV_100GeV = new TGraphErrors(0);
+      TGraphErrors* gr_resp_vs_HV_100GeV = new TGraphErrors(0);
   
-  TGraphErrors* gr_reso_vs_HV_150GeV = new TGraphErrors(0);
-  TGraphErrors* gr_resp_vs_HV_150GeV = new TGraphErrors(0);
+      TGraphErrors* gr_reso_vs_HV_150GeV = new TGraphErrors(0);
+      TGraphErrors* gr_resp_vs_HV_150GeV = new TGraphErrors(0);
   
-  TGraphErrors* gr_resp_vs_energy = new TGraphErrors(0);
-  TGraphErrors* gr_reso_vs_energy = new TGraphErrors(0);
-  TGraphErrors* gr_dev = new TGraphErrors(0);
+      TGraphErrors* gr_resp_vs_energy = new TGraphErrors(0);
+      TGraphErrors* gr_reso_vs_energy = new TGraphErrors(0);
+      TGraphErrors* gr_dev = new TGraphErrors(0);
   
-  TGraphErrors* gr_resp_vs_energy_simul = new TGraphErrors(0);
-  TGraphErrors* gr_reso_vs_energy_simul = new TGraphErrors(0);
-  TGraphErrors* gr_dev_simul = new TGraphErrors(0);
+      TGraphErrors* gr_resp_vs_energy_simul_noBGO = new TGraphErrors(0);
+      TGraphErrors* gr_reso_vs_energy_simul_noBGO = new TGraphErrors(0);
+ 
+      TGraphErrors* gr_resp_vs_energy_simul = new TGraphErrors(0);
+      TGraphErrors* gr_reso_vs_energy_simul = new TGraphErrors(0);
+      TGraphErrors* gr_dev_simul = new TGraphErrors(0);
 
-  TGraphErrors* gr_resp_vs_energy_simul_ideal = new TGraphErrors(0);
-  TGraphErrors* gr_reso_vs_energy_simul_ideal = new TGraphErrors(0);
-  TGraphErrors* gr_dev_simul_ideal = new TGraphErrors(0);
+      TGraphErrors* gr_resp_vs_energy_simul_ideal = new TGraphErrors(0);
+      TGraphErrors* gr_reso_vs_energy_simul_ideal = new TGraphErrors(0);
+      TGraphErrors* gr_dev_simul_ideal = new TGraphErrors(0);
   
-  TGraphErrors* gr_reso_vs_resp_20GeV = new TGraphErrors(0);
-  TGraphErrors* gr_reso_vs_resp_50GeV = new TGraphErrors(0);
-  TGraphErrors* gr_reso_vs_resp_100GeV = new TGraphErrors(0);
-  TGraphErrors* gr_reso_vs_resp_150GeV = new TGraphErrors(0);
-  TGraphErrors* gr_reso_vs_resp_200GeV = new TGraphErrors(0);
+      TGraphErrors* gr_reso_vs_resp_20GeV = new TGraphErrors(0);
+      TGraphErrors* gr_reso_vs_resp_50GeV = new TGraphErrors(0);
+      TGraphErrors* gr_reso_vs_resp_100GeV = new TGraphErrors(0);
+      TGraphErrors* gr_reso_vs_resp_150GeV = new TGraphErrors(0);
+      TGraphErrors* gr_reso_vs_resp_200GeV = new TGraphErrors(0);
 
-  TGraphErrors* gr_reso_vs_energy_stat = new TGraphErrors(0);
-  /*
-  TGraph* gr_reso_vs_resp_20GeV1 = new TGraph(0);
-  TGraph* gr_reso_vs_resp_50GeV1 = new TGraph(0);
-  TGraph* gr_reso_vs_resp_100GeV1 = new TGraph(0);
-  TGraph* gr_reso_vs_resp_150GeV1 = new TGraph(0);
-  TGraph* gr_reso_vs_resp_200GeV1 = new TGraph(0);
-  */
-
+      TGraphErrors* gr_reso_vs_energy_stat = new TGraphErrors(0);
   
-  TGraphErrors* gr_reso_corr = new TGraphErrors(0);
+      TGraphErrors* gr_reso_corr = new TGraphErrors(0);
 
-  float xMax = 205000;
-  float yMax = 2350000;
+      float xMax = 205000;
+      float yMax = 2350000;
 
   
 
 
-  for( unsigned i=0; i<runs950.size(); ++i ) {
+      for( unsigned i=0; i<runs950.size(); ++i ) {
     
-    TFile* file = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%s.root", tag.c_str(),  runs950[i].c_str() ));
-    TTree* tree = (TTree*)file->Get("recoTree");
+	TFile* file = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%s.root", tag.c_str(),  runs950[i].c_str() ));
+	TTree* tree = (TTree*)file->Get("recoTree");
 
-    FitStruct fs  = getFitResults( outputdir, tree ,  runs950[i].c_str() , 500, 140000000, cut, whatToProject );
+  
 
-    float energy = beamEnergy950[i];
-    float energyErr = 0.005*energy;
-    float mean = fs.mean;
-    float meanErr = fs.mean_err;
-    float reso = fs.reso;
-    float resoErr = fs.reso_err;
+	FitStruct fs  = getFitResults( outputdir, tree ,  runs950[i].c_str() , 500, 140000000, cut, whatToProject );
+	if(i==1) FitStruct fs  = getFitResults( outputdir, tree ,  Form("%d",i) , 50, 9900000, cut, whatToProject );
+ 
+
+	float energy = beamEnergy950[i];
+	float energyErr = 0.005*energy;
+	float mean = fs.mean;
+	float meanErr = fs.mean_err;
+	float reso = fs.reso;
+	float resoErr = fs.reso_err;
     
-    std::cout << "mean at "<< energy << " = " << mean << std::endl;
-    gr_resp_vs_energy->SetPoint( i, energy/1000., mean /adcEnergyC950 * adcEnergyC950);
-    gr_resp_vs_energy->SetPointError( i, energyErr/1000., meanErr);
+	std::cout << "mean at "<< energy << " = " << mean << std::endl;
+	gr_resp_vs_energy->SetPoint( i, energy/1000., mean /adcEnergyC950 * adcEnergyC950);
+	gr_resp_vs_energy->SetPointError( i, energyErr/1000., meanErr);
     
-    gr_reso_vs_energy->SetPoint( i, energy/1000., reso );
-    gr_reso_vs_energy->SetPointError( i, energyErr/1000., resoErr );
+	gr_reso_vs_energy->SetPoint( i, energy/1000., reso );
+	gr_reso_vs_energy->SetPointError( i, energyErr/1000., resoErr );
     
-    gr_dev->SetPoint(i, energy/1000. , mean / energy / ( adcEnergyC950 / energyC950) );
-    gr_dev->SetPointError(i, 0, meanErr / energy / ( adcEnergyC950 / energyC950) );
+	gr_dev->SetPoint(i, energy/1000. , mean / energy / ( adcEnergyC950 / energyC950) );
+	gr_dev->SetPointError(i, 0, meanErr / energy / ( adcEnergyC950 / energyC950) );
 
      
-    if(i == 0) {   
-      gr_reso_vs_resp_50GeV->SetPoint(465-459+1, mean, reso);   
-      gr_reso_vs_resp_50GeV->SetPointError(465-459+1, meanErr, sqrt(resoErr* resoErr +fermi_50*fermi_50) );
-      //      gr_reso_vs_resp_50GeV->SetPointError(465-459+1, meanErr, sqrt(resoErr* resoErr +fermi*fermi) );
-      //    gr_reso_vs_resp_50GeV->SetPointError(465-459+1, meanErr, resoErr );
-    }
-    //   if(i == 1)    gr_reso_vs_resp_20GeV->SetPoint( 453 - 432, mean, reso);
-    //  if(i == 2)    gr_reso_vs_resp_100GeV->SetPoint(472 - 466, mean, reso);
-    //  if(i == 3)    gr_reso_vs_resp_150GeV->SetPoint(480 - 474, mean, reso);
-   
-    //  gr_reso_corr->SetPoint(i, energy/1000. , reso);
-    // gr_reso_corr->SetPointError(i, energyErr/1000. , resoErr); // commenting it out
+	if(i == 0) {   
+	  gr_reso_vs_resp_50GeV->SetPoint(465-459+1, mean, reso);   
+	  gr_reso_vs_resp_50GeV->SetPointError(465-459+1, meanErr, sqrt(resoErr* resoErr +fermi_50*fermi_50) );
+	  //      gr_reso_vs_resp_50GeV->SetPointError(465-459+1, meanErr, sqrt(resoErr* resoErr +fermi*fermi) );
+	  //    gr_reso_vs_resp_50GeV->SetPointError(465-459+1, meanErr, resoErr );
+	}
+	/*
+	  if(i == 1) {
+	  gr_reso_vs_resp_20GeV->SetPoint( 453 - 432, mean, reso);
+	  gr_reso_vs_resp_20GeV->SetPointError( 453 - 432, meanErr, sqrt(resoErr* resoErr +fermi *fermi) );	  }
+	*/
 
-    delete file;
-  }
+	/*
+	//Anyway out of range//
+	if(i == 2) {
+	gr_reso_vs_resp_100GeV->SetPoint(472 - 466, mean, reso);
+	gr_reso_vs_resp_100GeV->SetPointError(472 - 466, meanErr, resoErr);	}
+
+	if(i == 3){
+	gr_reso_vs_resp_150GeV->SetPoint(480 - 474, mean, reso);
+	gr_reso_vs_resp_150GeV->SetPointError(480 - 474, meanErr, resoErr);	}
+
+	//  gr_reso_corr->SetPoint(i, energy/1000. , reso);
+	// gr_reso_corr->SetPointError(i, energyErr/1000. , resoErr); // commenting it out
+	*/
+
+	delete file;
+      }
 
 
 
 
-  for( unsigned i=0; i<runs200GeV.size(); ++i ) {
-    TFile* file = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%s.root", tag.c_str(),  runs200GeV[i].c_str() ));
-    TTree* tree = (TTree*)file->Get("recoTree");
-    FitStruct fs  = getFitResults( outputdir, tree ,  runs200GeV[i].c_str() , 500, 14000000, cut, whatToProject );
+      for( unsigned i=0; i<runs200GeV.size(); ++i ) {
+	TFile* file = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%s.root", tag.c_str(),  runs200GeV[i].c_str() ));
+	TTree* tree = (TTree*)file->Get("recoTree");
+	FitStruct fs  = getFitResults( outputdir, tree ,  runs200GeV[i].c_str() , 500, 14000000, cut, whatToProject );
     
-    float energy = beamEnergy[i];
-    //    float energyErr = 0.005*energy;
-    float mean = fs.mean;
-    float meanErr = fs.mean_err;
-    float reso = fs.reso;
-    float resoErr = fs.reso_err;
+	float energy = beamEnergy[i];
+	//    float energyErr = 0.005*energy;
+	float mean = fs.mean;
+	float meanErr = fs.mean_err;
+	float reso = fs.reso;
+	float resoErr = fs.reso_err;
 
-    //  gr_reso_vs_resp_200GeV1->SetPoint(i , mean , reso);
+	gr_reso_vs_resp_200GeV->SetPoint(i , mean , reso);
+	gr_reso_vs_resp_200GeV->SetPointError(i, meanErr,  resoErr);
 
-    gr_reso_vs_resp_200GeV->SetPoint(i , mean , reso);
-    gr_reso_vs_resp_200GeV->SetPointError(i, meanErr,  resoErr);
-
-    delete file;
- }
+	delete file;
+      }
 
 
 
 
 
- for( unsigned i=0; i<simulation.size(); ++i ) {
-   ///////////////// (1x1) Calorimeter //////////////////////////////
-   TFile* fileS = TFile::Open(Form("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/H4UseThis1_5mmGap10mmBeam/Reco_%s.root", simulation[i].c_str()));
+      for( unsigned i=0; i<simulation.size(); ++i ) {
+	///////////////// (1x1) Calorimeter //////////////////////////////
+	TFile* fileS = TFile::Open(Form("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/H4UseThis1_5mmGap10mmBeam/Reco_%s.root", simulation[i].c_str()));
    
-   TTree* treeS = (TTree*)fileS->Get("recoTree");
+	TTree* treeS = (TTree*)fileS->Get("recoTree");
    
-   FitStruct fsSim= getFitResults( outputdir, treeS , simulation[i] , beamEnergySimulation[i]/10. ,  beamEnergySimulation[i]*1.5, SimCut , whatToProjectSim );
-   float energySim = fsSim.mean;
+	FitStruct fsSim= getFitResults( outputdir, treeS , simulation[i] , beamEnergySimulation[i]/10. ,  beamEnergySimulation[i]*1.5, SimCut , whatToProjectSim );
+	float energySim = fsSim.mean;
    
-   FitStruct fsSim_ps = addPhotoStatistics( fsSim );
+	FitStruct fsSim_ps = addPhotoStatistics( fsSim );
 
-   gr_resp_vs_energy_simul->SetPoint(i,beamEnergySimulation[i]/1000., energySim*adcEnergyC950/energyS );
-   gr_resp_vs_energy_simul->SetPointError( i,0, fsSim.mean_err * adcEnergyC950/energyS);
+	gr_resp_vs_energy_simul->SetPoint(i,beamEnergySimulation[i]/1000., energySim*adcEnergyC950/energyS );
+	gr_resp_vs_energy_simul->SetPointError( i,0, fsSim.mean_err * adcEnergyC950/energyS);
    
-   gr_reso_vs_energy_simul->SetPoint( i, beamEnergySimulation[i]/1000., fsSim_ps.reso );
-   gr_reso_vs_energy_simul->SetPointError( i,0,  fsSim_ps.reso_err );
+	gr_reso_vs_energy_simul->SetPoint( i, beamEnergySimulation[i]/1000., fsSim_ps.reso );
+	gr_reso_vs_energy_simul->SetPointError( i,0,  fsSim_ps.reso_err );
    
-   gr_dev_simul->SetPoint(i, beamEnergySimulation[i]/1000. , fsSim.mean/beamEnergySimulation[i]/(energyS/energyC950) );
-   gr_dev_simul->SetPointError(i, 0, fsSim.mean_err/beamEnergySimulation[i]/(energyS/energyC950) );
+	gr_dev_simul->SetPoint(i, beamEnergySimulation[i]/1000. , fsSim.mean/beamEnergySimulation[i]/(energyS/energyC950) );
+	gr_dev_simul->SetPointError(i, 0, fsSim.mean_err/beamEnergySimulation[i]/(energyS/energyC950) );
 
-    delete fileS;
-   }
+	delete fileS;
+      }
 
 
-   ///////////////// (5x5) Calo  ///////////////////  
- for( unsigned i=0; i<simulation.size(); ++i ) {
-   TFile* fileS = TFile::Open(Form("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/H4Ideal/Reco_%s.root", simulation[i].c_str()));
-   
-   TTree* treeS = (TTree*)fileS->Get("recoTree");
-   
-   FitStruct fsSim= getFitResults( outputdir, treeS , simulation[i] , beamEnergySimulation[i]/10. ,  beamEnergySimulation[i]*1.5, SimCut , whatToProjectSim );
-   float energySim = fsSim.mean;
-   
-   FitStruct fsSim_ps = addPhotoStatistics( fsSim );
 
-   gr_resp_vs_energy_simul_ideal->SetPoint(i,beamEnergySimulation[i]/1000., energySim*adcEnergyC950/energyS );
-   gr_resp_vs_energy_simul_ideal->SetPointError( i,0, fsSim.mean_err * adcEnergyC950/energyS);
-   
-   gr_reso_vs_energy_simul_ideal->SetPoint( i, beamEnergySimulation[i]/1000., fsSim_ps.reso );
-   gr_reso_vs_energy_simul_ideal->SetPointError( i,0,  fsSim_ps.reso_err );
-   
-   gr_dev_simul_ideal->SetPoint(i, beamEnergySimulation[i]/1000. , fsSim.mean/beamEnergySimulation[i]/(energyS/energyC950) );
-   gr_dev_simul_ideal->SetPointError(i, 0, fsSim.mean_err/beamEnergySimulation[i]/(energyS/energyC950) );
 
-    delete fileS;
+      ///////////////// (5x5) Calo  ///////////////////  
+      for( unsigned i=0; i<simulation.size(); ++i ) {
+	TFile* fileS = TFile::Open(Form("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/H4Ideal/Reco_%s.root", simulation[i].c_str()));
+   
+	TTree* treeS = (TTree*)fileS->Get("recoTree");
+   
+	FitStruct fsSim= getFitResults( outputdir, treeS , simulation[i] , beamEnergySimulation[i]/10. ,  beamEnergySimulation[i]*1.5, SimCut , whatToProjectSim );
+	float energySim = fsSim.mean;
+   
+	FitStruct fsSim_ps = addPhotoStatistics( fsSim );
+
+	gr_resp_vs_energy_simul_ideal->SetPoint(i,beamEnergySimulation[i]/1000., energySim*adcEnergyC950/energyS );
+	gr_resp_vs_energy_simul_ideal->SetPointError( i,0, fsSim.mean_err * adcEnergyC950/energyS);
+   
+	gr_reso_vs_energy_simul_ideal->SetPoint( i, beamEnergySimulation[i]/1000., fsSim_ps.reso );
+	gr_reso_vs_energy_simul_ideal->SetPointError( i,0,  fsSim_ps.reso_err );
+   
+	gr_dev_simul_ideal->SetPoint(i, beamEnergySimulation[i]/1000. , fsSim.mean/beamEnergySimulation[i]/(energyS/energyC950) );
+	gr_dev_simul_ideal->SetPointError(i, 0, fsSim.mean_err/beamEnergySimulation[i]/(energyS/energyC950) );
+
+	delete fileS;
+      }
+ 
+ 
+
+
+      //Resolution vs HV at 20GeV
+      for( unsigned i=432; i < 454; ++i ) { 
+	TFile* file = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%d.root", tag.c_str(),  i ));
+	TTree* tree = (TTree*)file->Get("recoTree");
+
+	float HV;
+	tree->SetBranchAddress("HVCeF3",&HV);
+	tree->GetEntry(5);
+	std::cout << HV << std::endl;
+	FitStruct fs  = getFitResults( outputdir, tree ,  Form("%d",i) , 50, 9900000, cut, whatToProject );
+	if(i==449) fs  = getFitResults( outputdir, tree ,  Form("%d",i) , 5000, 9900000, cut, whatToProject );
   
- }
- 
- 
-
-
- //Resolution vs HV at 20GeV
- for( unsigned i=432; i < 454; ++i ) { 
-   TFile* file = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%d.root", tag.c_str(),  i ));
-   TTree* tree = (TTree*)file->Get("recoTree");
-
-   float HV;
-   tree->SetBranchAddress("HVCeF3",&HV);
-   tree->GetEntry(5);
-   std::cout << HV << std::endl;
-   FitStruct fs  = getFitResults( outputdir, tree ,  Form("%d",i) , 50, 9900000, cut, whatToProject );
-   if(i==449) fs  = getFitResults( outputdir, tree ,  Form("%d",i) , 5000, 9900000, cut, whatToProject );
-  
-   if(fs.reso > 10. || fs.chi2 > 1.1) continue;
-   float mean = fs.mean;
-   float meanErr = fs.mean_err; 
-   float reso = fs.reso;
-   float resoErr = fs.reso_err;
+	if(fs.reso > 10. || fs.chi2 > 1.1) continue;
+	float mean = fs.mean;
+	float meanErr = fs.mean_err; 
+	float reso = fs.reso;
+	float resoErr = fs.reso_err;
    
-   gr_reso_vs_HV->SetPoint(i, HV, reso);
-   gr_reso_vs_HV->SetPointError(i, 0, resoErr);
-   gr_resp_vs_HV->SetPoint(i, HV, mean);
-   gr_resp_vs_HV->SetPointError(i, 0, meanErr);
+	gr_reso_vs_HV->SetPoint(i, HV, reso);
+	gr_reso_vs_HV->SetPointError(i, 0, resoErr);
+	gr_resp_vs_HV->SetPoint(i, HV, mean);
+	gr_resp_vs_HV->SetPointError(i, 0, meanErr);
    
-   //  gr_reso_vs_resp_20GeV1->SetPoint(i, mean, reso);
- 
+	//  gr_reso_vs_resp_20GeV1->SetPoint(i, mean, reso);
+	gr_reso_vs_resp_20GeV->SetPoint(i, mean, reso);
+	//   gr_reso_vs_resp_20GeV->SetPointError(i, meanErr, resoErr);
+	gr_reso_vs_resp_20GeV->SetPointError(i, meanErr, sqrt(resoErr*resoErr + fermi*fermi));
 
-   gr_reso_vs_resp_20GeV->SetPoint(i, mean, reso);
-   //   gr_reso_vs_resp_20GeV->SetPointError(i, meanErr, resoErr);
-   gr_reso_vs_resp_20GeV->SetPointError(i, meanErr, sqrt(resoErr*resoErr + fermi*fermi));
-
-    delete file;
- }
+	delete file;
+      }
 
 
- //Resolution vs HV at 50GeV
- for( unsigned i=459; i < 466; ++i ) {
-   TFile* file = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%d.root", tag.c_str(),  i ));
-   TTree* tree = (TTree*)file->Get("recoTree");
-   float HV;
-   tree->SetBranchAddress("HVCeF3",&HV);
-   tree->GetEntry(5);
-   std::cout << HV << std::endl;
+      //Resolution vs HV at 50GeV
+      for( unsigned i=459; i < 466; ++i ) {
+	TFile* file = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%d.root", tag.c_str(),  i ));
+	TTree* tree = (TTree*)file->Get("recoTree");
+	float HV;
+	tree->SetBranchAddress("HVCeF3",&HV);
+	tree->GetEntry(5);
+	std::cout << HV << std::endl;
 
-   FitStruct fs  = getFitResults( outputdir, tree ,  Form("%d",i) ,250, 70000000, cut, whatToProject ); 
-   if(i==465) fs  = getFitResults( outputdir, tree ,  Form("%d",i) , 10000,  90000000, cut, whatToProject );
-   if(fs.reso > 10. || fs.chi2 > 1.1) continue; 
-   float mean = fs.mean;
-   float meanErr = fs.mean_err; 
-   float reso = fs.reso;
-   float resoErr = fs.reso_err;
+	FitStruct fs  = getFitResults( outputdir, tree ,  Form("%d",i) ,250, 70000000, cut, whatToProject ); 
+	if(i==465) fs  = getFitResults( outputdir, tree ,  Form("%d",i) , 10000,  90000000, cut, whatToProject );
+	if(fs.reso > 10. || fs.chi2 > 1.1) continue; 
+	float mean = fs.mean;
+	float meanErr = fs.mean_err; 
+	float reso = fs.reso;
+	float resoErr = fs.reso_err;
    
-   gr_reso_vs_HV_50GeV->SetPoint(i, HV, reso);
-   gr_reso_vs_HV_50GeV->SetPointError(i, 0, resoErr);
-   gr_resp_vs_HV_50GeV->SetPoint(i, HV, mean);
-   gr_resp_vs_HV_50GeV->SetPointError(i, 0, meanErr);
+	gr_reso_vs_HV_50GeV->SetPoint(i, HV, reso);
+	gr_reso_vs_HV_50GeV->SetPointError(i, 0, resoErr);
+	gr_resp_vs_HV_50GeV->SetPoint(i, HV, mean);
+	gr_resp_vs_HV_50GeV->SetPointError(i, 0, meanErr);
 
-   //   gr_reso_vs_resp_50GeV1->SetPoint(i, mean, reso);
+	//   gr_reso_vs_resp_50GeV1->SetPoint(i, mean, reso);
 
-   gr_reso_vs_resp_50GeV->SetPoint(i, mean, reso);
-   /*
-   if( resoErr > fermi){
-     gr_reso_vs_resp_50GeV->SetPointError(i, meanErr, resoErr);
-   }else{
-   gr_reso_vs_resp_50GeV->SetPointError(i, meanErr, sqrt(resoErr*resoErr + fermi*fermi) );
-   }
-   */
-   gr_reso_vs_resp_50GeV->SetPointError(i, meanErr, sqrt(resoErr*resoErr + fermi_50*fermi_50) );
-   //   gr_reso_vs_resp_50GeV->SetPointError(i, meanErr, sqrt(resoErr*resoErr + fermi*fermi) );
-   //gr_reso_vs_resp_50GeV->SetPointError(i, meanErr, resoErr);
+	gr_reso_vs_resp_50GeV->SetPoint(i, mean, reso);
+	/*
+	  if( resoErr > fermi){
+	  gr_reso_vs_resp_50GeV->SetPointError(i, meanErr, resoErr);
+	  }else{
+	  gr_reso_vs_resp_50GeV->SetPointError(i, meanErr, sqrt(resoErr*resoErr + fermi*fermi) );
+	  }
+	*/
+	gr_reso_vs_resp_50GeV->SetPointError(i, meanErr, sqrt(resoErr*resoErr + fermi_50*fermi_50) );
+	//   gr_reso_vs_resp_50GeV->SetPointError(i, meanErr, sqrt(resoErr*resoErr + fermi*fermi) );
+	//gr_reso_vs_resp_50GeV->SetPointError(i, meanErr, resoErr);
 
-    delete file;
- }
+	delete file;
+      }
 
 
- //Resolution vs HV at 100GeV
- for( unsigned i=466; i < 473; ++i ) {
-   TFile* file = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%d.root", tag.c_str(),  i ));
-   TTree* tree = (TTree*)file->Get("recoTree");
-   float HV;
-   tree->SetBranchAddress("HVCeF3",&HV);
-   tree->GetEntry(5);
-   std::cout << HV << std::endl;
-   FitStruct fs  = getFitResults( outputdir, tree ,  Form("%d",i) , 25, 19000000, cut, whatToProject );  
-   if(fs.reso < 0 || fs.reso > 10. || fs.chi2 > 1.1) continue;
-   float mean = fs.mean;
-   float meanErr = fs.mean_err; 
-   float reso = fs.reso;
-   float resoErr = fs.reso_err;
+      //Resolution vs HV at 100GeV
+      for( unsigned i=466; i < 473; ++i ) {
+	TFile* file = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%d.root", tag.c_str(),  i ));
+	TTree* tree = (TTree*)file->Get("recoTree");
+	float HV;
+	tree->SetBranchAddress("HVCeF3",&HV);
+	tree->GetEntry(5);
+	std::cout << HV << std::endl;
+	FitStruct fs  = getFitResults( outputdir, tree ,  Form("%d",i) , 25, 19000000, cut, whatToProject );  
+	if(fs.reso < 0 || fs.reso > 10. || fs.chi2 > 1.1) continue;
+	float mean = fs.mean;
+	float meanErr = fs.mean_err; 
+	float reso = fs.reso;
+	float resoErr = fs.reso_err;
    
-   gr_reso_vs_HV_100GeV->SetPoint(i, HV, reso);
-   gr_reso_vs_HV_100GeV->SetPointError(i, 0, resoErr);
-   gr_resp_vs_HV_100GeV->SetPoint(i, HV, mean);
-   gr_resp_vs_HV_100GeV->SetPointError(i, 0, meanErr);
+	gr_reso_vs_HV_100GeV->SetPoint(i, HV, reso);
+	gr_reso_vs_HV_100GeV->SetPointError(i, 0, resoErr);
+	gr_resp_vs_HV_100GeV->SetPoint(i, HV, mean);
+	gr_resp_vs_HV_100GeV->SetPointError(i, 0, meanErr);
 
-   //   gr_reso_vs_resp_100GeV1->SetPoint(i, mean, reso);
+	//   gr_reso_vs_resp_100GeV1->SetPoint(i, mean, reso);
  
-   gr_reso_vs_resp_100GeV->SetPoint(i, mean, reso);
-   gr_reso_vs_resp_100GeV->SetPointError(i, meanErr, resoErr );
- /*
-   if( resoErr > fermi){
-   gr_reso_vs_resp_100GeV->SetPointError(i, meanErr, resoErr);
-   }else{
-     //gr_reso_vs_resp_100GeV->SetPointError(i, meanErr, fermi/5. );
-      gr_reso_vs_resp_100GeV->SetPointError(i, meanErr, sqrt( resoErr* resoErr + fermi*fermi/25.) );
-   }
- */
+	gr_reso_vs_resp_100GeV->SetPoint(i, mean, reso);
+	gr_reso_vs_resp_100GeV->SetPointError(i, meanErr, resoErr );
+	/*
+	  if( resoErr > fermi){
+	  gr_reso_vs_resp_100GeV->SetPointError(i, meanErr, resoErr);
+	  }else{
+	  //gr_reso_vs_resp_100GeV->SetPointError(i, meanErr, fermi/5. );
+	  gr_reso_vs_resp_100GeV->SetPointError(i, meanErr, sqrt( resoErr* resoErr + fermi*fermi/25.) );
+	  }
+	*/
 
-    delete file;
- }
+	delete file;
+      }
 
 
 
- //Resolution vs HV at 150GeV
- for( unsigned i=474; i < 481; ++i ) {
-   TFile* file = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%d.root", tag.c_str(),  i ));
-   TTree* tree = (TTree*)file->Get("recoTree");
-   float HV;
-   tree->SetBranchAddress("HVCeF3",&HV);
-   tree->GetEntry(5);
-   std::cout << HV << std::endl;
-   FitStruct fs  = getFitResults( outputdir, tree ,  Form("%d",i) ,50 , 140000000, cut, whatToProject );  
-   if(fs.reso > 10. || fs.chi2 > 1.1) continue;
-   float mean = fs.mean;
-   float meanErr = fs.mean_err; 
-   float reso = fs.reso;
-   float resoErr = fs.reso_err;
+      //Resolution vs HV at 150GeV
+      for( unsigned i=474; i < 481; ++i ) {
+	TFile* file = TFile::Open(Form("analysisTrees_chaInt_04_12_%s/Reco_%d.root", tag.c_str(),  i ));
+	TTree* tree = (TTree*)file->Get("recoTree");
+	float HV;
+	tree->SetBranchAddress("HVCeF3",&HV);
+	tree->GetEntry(5);
+	std::cout << HV << std::endl;
+	FitStruct fs  = getFitResults( outputdir, tree ,  Form("%d",i) ,50 , 140000000, cut, whatToProject );  
+	if(fs.reso > 10. || fs.chi2 > 1.1) continue;
+	float mean = fs.mean;
+	float meanErr = fs.mean_err; 
+	float reso = fs.reso;
+	float resoErr = fs.reso_err;
    
-   gr_reso_vs_HV_150GeV->SetPoint(i, HV, reso);
-   gr_reso_vs_HV_150GeV->SetPointError(i, 0, resoErr);
-   gr_resp_vs_HV_150GeV->SetPoint(i, HV, mean);
-   gr_resp_vs_HV_150GeV->SetPointError(i, 0, meanErr);
+	gr_reso_vs_HV_150GeV->SetPoint(i, HV, reso);
+	gr_reso_vs_HV_150GeV->SetPointError(i, 0, resoErr);
+	gr_resp_vs_HV_150GeV->SetPoint(i, HV, mean);
+	gr_resp_vs_HV_150GeV->SetPointError(i, 0, meanErr);
 
-   //   gr_reso_vs_resp_150GeV1->SetPoint(i, mean, reso);
+	//   gr_reso_vs_resp_150GeV1->SetPoint(i, mean, reso);
  
-   gr_reso_vs_resp_150GeV->SetPoint(i, mean, reso);
-   // gr_reso_vs_resp_150GeV->SetPointError(i, meanErr, sqrt(resoErr*resoErr + fermi*fermi) );
-   gr_reso_vs_resp_150GeV->SetPointError(i, meanErr, resoErr);
+	gr_reso_vs_resp_150GeV->SetPoint(i, mean, reso);
+	// gr_reso_vs_resp_150GeV->SetPointError(i, meanErr, sqrt(resoErr*resoErr + fermi*fermi) );
+	gr_reso_vs_resp_150GeV->SetPointError(i, meanErr, resoErr);
 
-   delete file;
- }
+	delete file;
+      }
 
+
+
+      //SIMULATION WIHTOUT BGO
+      for( unsigned i=0; i<simulation_noBGO.size(); ++i ) {
+	///////////////// (1x1) Calorimeter //////////////////////////////
+	TFile* fileS = TFile::Open(Form("/home/myriam/BTFAnalysis/PositionAnalysis/OriginalSimulationData/noBGO/Reco_%s.root", simulation[i].c_str()));
+	TTree* treeS = (TTree*)fileS->Get("recoTree");
+   
+	FitStruct fsSim= getFitResults( outputdir, treeS , simulation[i] , beamEnergySimulation[i]/10. ,  beamEnergySimulation[i]*1.5, SimCut , whatToProjectSim );
+	float energySim = fsSim.mean;
+   
+	FitStruct fsSim_ps = addPhotoStatistics( fsSim );
+
+	gr_resp_vs_energy_simul_noBGO->SetPoint(i,beamEnergySimulation[i]/1000., energySim*adcEnergyC950/energyS );
+	gr_resp_vs_energy_simul_noBGO->SetPointError( i,0, fsSim.mean_err * adcEnergyC950/energyS);
+   
+	gr_reso_vs_energy_simul_noBGO->SetPoint( i, beamEnergySimulation[i]/1000., fsSim_ps.reso );
+	gr_reso_vs_energy_simul_noBGO->SetPointError( i,0,  fsSim_ps.reso_err );
+   
+	delete fileS;
+      }
 
 
 
  
- //PLOTTING THINGS///////////////////
+      //PLOTTING THINGS///////////////////
 
-  TH2D* h2_axes = new TH2D( "axes", "", 10, 0., xMax/1000.+1, 10, 0., yMax );
-  h2_axes->SetXTitle("Beam Energy [GeV]");
-  h2_axes->SetYTitle("CeF_{3} Response [ADC]");
-  h2_axes->Draw("");
+      TH2D* h2_axes = new TH2D( "axes", "", 10, 0., xMax/1000.+1, 10, 0., yMax );
+      h2_axes->SetXTitle("Beam Energy [GeV]");
+      h2_axes->SetYTitle("CeF_{3} Response [ADC]");
+      h2_axes->Draw("");
 
-  gr_resp_vs_energy->SetMarkerStyle(20);
-  gr_resp_vs_energy->SetMarkerSize(1.6);
-  gr_resp_vs_energy->SetMarkerColor(46);
-  gr_resp_vs_energy->Draw("p same");
+      gr_resp_vs_energy->SetMarkerStyle(20);
+      gr_resp_vs_energy->SetMarkerSize(1.6);
+      gr_resp_vs_energy->SetMarkerColor(46);
+      gr_resp_vs_energy->Draw("p same");
 
-  TF1* f1_line = new TF1("line", "[0] + [1]*x", 0., xMax/1000.+5 );
-  gr_resp_vs_energy->Fit(f1_line,"RN");
-  f1_line->SetLineWidth(1.);
-  f1_line->SetLineColor(46);
-  // f1_line->Draw("L same");
+      TF1* f1_line = new TF1("line", "[0] + [1]*x", 0., xMax/1000.+5 );
+      gr_resp_vs_energy->Fit(f1_line,"RN");
+      f1_line->SetLineWidth(1.);
+      f1_line->SetLineColor(46);
+      // f1_line->Draw("L same");
 
-  gr_resp_vs_energy_simul->SetMarkerStyle(21);
-  gr_resp_vs_energy_simul->SetMarkerSize(1.3);
-  gr_resp_vs_energy_simul->SetMarkerColor(kBlack);
-  gr_resp_vs_energy_simul->Draw("p same");
+      gr_resp_vs_energy_simul->SetMarkerStyle(21);
+      gr_resp_vs_energy_simul->SetMarkerSize(1.3);
+      gr_resp_vs_energy_simul->SetMarkerColor(kBlack);
+      gr_resp_vs_energy_simul->Draw("p same");
 
+      TF1* f1_lines = new TF1("lines", "[0] + [1]*x", 0., xMax/1000.+5 );
+      gr_resp_vs_energy_simul->Fit(f1_lines,"RN");
+      f1_lines->SetLineWidth(1.);
+      f1_lines->SetLineColor(kBlack);
+      f1_lines->Draw("L same");
 
-  TF1* f1_lines = new TF1("lines", "[0] + [1]*x", 0., xMax/1000.+5 );
-  gr_resp_vs_energy_simul->Fit(f1_lines,"RN");
-  f1_lines->SetLineWidth(1.);
-  f1_lines->SetLineColor(kBlack);
-  f1_lines->Draw("L same");
+      TLegend* leg0 = new TLegend(0.6, 0.4-3*0.06, 0.9, 0.4);
+      leg0->SetTextSize(0.038);
+      leg0->AddEntry(gr_resp_vs_energy,"Data ","p");
+      //leg0->AddEntry(f1_line,Form("Offset = %.1f\n #pm %.2f\n",f1_line->GetParameter(0), f1_line->GetParError(0) ),"L");
+      //leg0->AddEntry( (TObject*)0, Form("#chi^{2} / NDF = %.0f\n / %d",f1_line->GetChisquare(), f1_line->GetNDF() ), "");
+      leg0->AddEntry(f1_lines,"MC","L");
 
-  TLegend* leg0 = new TLegend(0.6, 0.4-3*0.06, 0.9, 0.4);
- leg0->SetTextSize(0.038);
-  leg0->AddEntry(gr_resp_vs_energy,"Data ","p");
-  //leg0->AddEntry(f1_line,Form("Offset = %.1f\n #pm %.2f\n",f1_line->GetParameter(0), f1_line->GetParError(0) ),"L");
-  //leg0->AddEntry( (TObject*)0, Form("#chi^{2} / NDF = %.0f\n / %d",f1_line->GetChisquare(), f1_line->GetNDF() ), "");
-  leg0->AddEntry(f1_lines,"MC","L");
+      leg0->SetFillColor(0);
+      leg0->Draw("same");
 
-  leg0->SetFillColor(0);
-  leg0->Draw("same");
+      TPaveText* label_top2 = new TPaveText();
+      label_top2 = DrawTools::getLabelTop("Electron Beam");
+      label_top2->Draw("same");
 
-  TPaveText* label_top2 = new TPaveText();
-  label_top2 = DrawTools::getLabelTop("Electron Beam");
-  label_top2->Draw("same");
-
-  c1->SaveAs( Form( "%s/resp_vs_energy.eps", outputdir.c_str() ) );
-  c1->SaveAs( Form( "%s/resp_vs_energy.png", outputdir.c_str() ) );
+      c1->SaveAs( Form( "%s/resp_vs_energy.eps", outputdir.c_str() ) );
+      c1->SaveAs( Form( "%s/resp_vs_energy.png", outputdir.c_str() ) );
     
-  c1->Clear();
+      c1->Clear();
 
 
 
 
-  gStyle->SetOptFit(0);
+      gStyle->SetOptFit(0);
   
-  gPad->SetLeftMargin(0.11);
-  gPad->SetRightMargin(0.09);
-  gPad->SetBottomMargin(0.15);
-  gStyle->SetTitleYOffset(1.01); // => 1.15 if exponents
+      gPad->SetLeftMargin(0.11);
+      gPad->SetRightMargin(0.09);
+      gPad->SetBottomMargin(0.15);
+      gStyle->SetTitleYOffset(1.01); // => 1.15 if exponents
   
-  c1->Clear();
+      c1->Clear();
 
-  //////////////////Reso vs Response for correction///////////////////////////
+      //////////////////Reso vs Response for correction///////////////////////////
 
-  h2_axes_all2->Draw("");
+      h2_axes_all2->Draw("");
 
-  gr_reso_vs_resp_150GeV->SetMarkerStyle(34);
-  gr_reso_vs_resp_150GeV->SetMarkerSize(1.6);
-  gr_reso_vs_resp_150GeV->SetMarkerColor(kCyan-7);
-  //  gr_reso_vs_resp_150GeV->SetMarkerColor(kCyan-9);
+      gr_reso_vs_resp_150GeV->SetMarkerStyle(34);
+      gr_reso_vs_resp_150GeV->SetMarkerSize(1.6);
+      gr_reso_vs_resp_150GeV->SetMarkerColor(kCyan-6);
+      //  gr_reso_vs_resp_150GeV->SetMarkerColor(kCyan-9);
 
-  gr_reso_vs_resp_100GeV->SetMarkerStyle(29);
-  gr_reso_vs_resp_100GeV->SetMarkerSize(1.6);
-  gr_reso_vs_resp_100GeV->SetMarkerColor(kAzure+7);
+      gr_reso_vs_resp_100GeV->SetMarkerStyle(29);
+      gr_reso_vs_resp_100GeV->SetMarkerSize(1.6);
+      gr_reso_vs_resp_100GeV->SetMarkerColor(kAzure+7);
 
-  gr_reso_vs_resp_50GeV->SetMarkerStyle(20);
-  gr_reso_vs_resp_50GeV->SetMarkerSize(1.4);
-  gr_reso_vs_resp_50GeV->SetMarkerColor(kAzure);
+      gr_reso_vs_resp_50GeV->SetMarkerStyle(20);
+      gr_reso_vs_resp_50GeV->SetMarkerSize(1.4);
+      gr_reso_vs_resp_50GeV->SetMarkerColor(kAzure);
  
-  gr_reso_vs_resp_20GeV->SetMarkerStyle(21);
-  gr_reso_vs_resp_20GeV->SetMarkerSize(1.3);
-  gr_reso_vs_resp_20GeV->SetMarkerColor(kBlue+3);
+      gr_reso_vs_resp_20GeV->SetMarkerStyle(21);
+      gr_reso_vs_resp_20GeV->SetMarkerSize(1.3);
+      gr_reso_vs_resp_20GeV->SetMarkerColor(kBlue+3);
 
-  gr_reso_vs_resp_200GeV->SetMarkerStyle(20);
-  gr_reso_vs_resp_200GeV->SetMarkerSize(1.6);
-  gr_reso_vs_resp_200GeV->SetMarkerColor(kBlack);
-
-
+      gr_reso_vs_resp_200GeV->SetMarkerStyle(20);
+      gr_reso_vs_resp_200GeV->SetMarkerSize(1.6);
+      gr_reso_vs_resp_200GeV->SetMarkerColor(kBlack);
 
 
 
-  //SIMULTANEOUUUS//
-  ROOT::Math::WrappedMultiTF1 wf20GeV(*fun_rere20,1);
-  ROOT::Math::WrappedMultiTF1 wf50GeV(*fun_rere50,1);
-  ROOT::Math::WrappedMultiTF1 wf100GeV(*fun_rere100,1);
-  ROOT::Math::WrappedMultiTF1 wf150GeV(*fun_rere150,1);
-  ROOT::Math::WrappedMultiTF1 wf200GeV(*fun_rere200,1);
-  ROOT::Fit::DataOptions opt; 
 
-  // set the data range
-  ROOT::Fit::DataRange range20GeV; 
-  // range20GeV.SetRange(  200, 2000000 ); //Full range//
-  // range20GeV.SetRange(  60000, 700000 );//use this
-  range20GeV.SetRange(  90, 700000 );//use this (nice ones)
-  // range20GeV.SetRange(  90000, 600000 );
-  ROOT::Fit::BinData data20GeV(opt,range20GeV); 
-  data20GeV.Opt().fCoordErrors = false; 
- ROOT::Fit::FillData(data20GeV, gr_reso_vs_resp_20GeV);
+
+      //SIMULTANEOUUUS//
+      ROOT::Math::WrappedMultiTF1 wf20GeV(*fun_rere20,1);
+      ROOT::Math::WrappedMultiTF1 wf50GeV(*fun_rere50,1);
+      ROOT::Math::WrappedMultiTF1 wf100GeV(*fun_rere100,1);
+      ROOT::Math::WrappedMultiTF1 wf150GeV(*fun_rere150,1);
+      ROOT::Math::WrappedMultiTF1 wf200GeV(*fun_rere200,1);
+      ROOT::Fit::DataOptions opt; 
+
+      // set the data range
+      ROOT::Fit::DataRange range20GeV; 
+      // range20GeV.SetRange(  200, 2000000 ); //Full range//
+      // range20GeV.SetRange(  60000, 700000 );//use this
+      range20GeV.SetRange(  90, 700000 );//use this (nice ones)
+      // range20GeV.SetRange(  90000, 600000 );
+      ROOT::Fit::BinData data20GeV(opt,range20GeV); 
+      data20GeV.Opt().fCoordErrors = false; 
+      ROOT::Fit::FillData(data20GeV, gr_reso_vs_resp_20GeV);
   
-  ROOT::Fit::DataRange range50GeV; 
-  // range50GeV.SetRange(  200, 2000000 ); //full range
-  // range50GeV.SetRange(  30000, 2000000 );
-  range50GeV.SetRange(  10, 700000 ); //use this (nice fits)
-  //  range50GeV.SetRange(  30000, 700000 ); //use this
-  // range50GeV.SetRange(  100000, 800000 );
-  ROOT::Fit::BinData data50GeV(opt,range50GeV);
-  data50GeV.Opt().fCoordErrors = false; 
-  ROOT::Fit::FillData(data50GeV, gr_reso_vs_resp_50GeV );
+      ROOT::Fit::DataRange range50GeV; 
+      // range50GeV.SetRange(  200, 2000000 ); //full range
+      // range50GeV.SetRange(  30000, 2000000 );
+      range50GeV.SetRange(  10, 700000 ); //use this (nice fits)
+      //  range50GeV.SetRange(  30000, 700000 ); //use this
+      // range50GeV.SetRange(  100000, 800000 );
+      ROOT::Fit::BinData data50GeV(opt,range50GeV);
+      data50GeV.Opt().fCoordErrors = false; 
+      ROOT::Fit::FillData(data50GeV, gr_reso_vs_resp_50GeV );
   
-  ROOT::Fit::DataRange range100GeV; 
-  // range100GeV.SetRange( 200, 2000000 ); //full range
-  //  range100GeV.SetRange(  60000, 2000000 );
-  range100GeV.SetRange(  20, 700000 );//use this nice
-  //range100GeV.SetRange(  60000, 700000 );//use this
-  //  range100GeV.SetRange(  60000, 700000 ); //one more point
-  //  range100GeV.SetRange(  200000, 1000000 );
-  ROOT::Fit::BinData data100GeV(opt,range100GeV); 
-  data100GeV.Opt().fCoordErrors = false; 
-  ROOT::Fit::FillData(data100GeV, gr_reso_vs_resp_100GeV );
+      ROOT::Fit::DataRange range100GeV; 
+      // range100GeV.SetRange( 200, 2000000 ); //full range
+      //  range100GeV.SetRange(  60000, 2000000 );
+      range100GeV.SetRange(  20, 700000 );//use this nice
+      //range100GeV.SetRange(  60000, 700000 );//use this
+      //  range100GeV.SetRange(  60000, 700000 ); //one more point
+      //  range100GeV.SetRange(  200000, 1000000 );
+      ROOT::Fit::BinData data100GeV(opt,range100GeV); 
+      data100GeV.Opt().fCoordErrors = false; 
+      ROOT::Fit::FillData(data100GeV, gr_reso_vs_resp_100GeV );
   
-  ROOT::Fit::DataRange range150GeV; 
-  // range150GeV.SetRange(  200, 2000000 );//full range
-  //  range150GeV.SetRange(  30000, 1200000 ); //two more points
-  range150GeV.SetRange(  20, 700000 );//use this
-  // range150GeV.SetRange(  100000, 700000 );//use this
-  //  range150GeV.SetRange(  100000, 700000 );//one more point
-  // range150GeV.SetRange(  200000, 1200000 ); //original
-  ROOT::Fit::BinData data150GeV(opt,range150GeV); 
-  data150GeV.Opt().fCoordErrors = false; 
-  ROOT::Fit::FillData(data150GeV, gr_reso_vs_resp_150GeV );
+      ROOT::Fit::DataRange range150GeV; 
+      // range150GeV.SetRange(  200, 2000000 );//full range
+      //  range150GeV.SetRange(  30000, 1200000 ); //two more points
+      range150GeV.SetRange(  20, 700000 );//use this
+      // range150GeV.SetRange(  100000, 700000 );//use this
+      //  range150GeV.SetRange(  100000, 700000 );//one more point
+      // range150GeV.SetRange(  200000, 1200000 ); //original
+      ROOT::Fit::BinData data150GeV(opt,range150GeV); 
+      data150GeV.Opt().fCoordErrors = false; 
+      ROOT::Fit::FillData(data150GeV, gr_reso_vs_resp_150GeV );
   
-  ROOT::Fit::DataRange range200GeV; 
-  //  range200GeV.SetRange(  1000000, 2000000 );
-   range200GeV.SetRange(  400000, 1000000 );
-  ROOT::Fit::BinData data200GeV(opt,range200GeV);
-  data200GeV.Opt().fCoordErrors = false; 
-  ROOT::Fit::FillData(data200GeV, gr_reso_vs_resp_200GeV );
+      ROOT::Fit::DataRange range200GeV; 
+      //  range200GeV.SetRange(  1000000, 2000000 );
+      range200GeV.SetRange(  400000, 1000000 );
+      ROOT::Fit::BinData data200GeV(opt,range200GeV);
+      data200GeV.Opt().fCoordErrors = false; 
+      ROOT::Fit::FillData(data200GeV, gr_reso_vs_resp_200GeV );
 
 
-  ROOT::Fit::Chi2Function chi2_20GeV(data20GeV, wf20GeV);
-  ROOT::Fit::Chi2Function chi2_50GeV(data50GeV, wf50GeV);
-  ROOT::Fit::Chi2Function chi2_100GeV(data100GeV, wf100GeV);
-  ROOT::Fit::Chi2Function chi2_150GeV(data150GeV, wf150GeV);
-  ROOT::Fit::Chi2Function chi2_200GeV(data200GeV, wf200GeV);
-  
-
-  ROOT::Fit::Fitter fitter;
-  const int Npar = 5; 
-  double par0[Npar] = { 460000, 2.9 , 1.9, 1.23 , 1.1 };
-
-  //  const int Npar = 6; 
-  //  double par0[Npar] = { 460000, 2.9 , 1.9, 1.23 , 1.2,  0.87};
-
-  // create before the parameter settings in order to fix or set range on them
-  fitter.Config().SetParamsSettings(Npar,par0);
-  fitter.Config().ParSettings(0).SetLimits(100000, 650000);
-  // fitter.Config().ParSettings(0).SetLimits(450000, 650000);
-  fitter.Config().ParSettings(1).SetLimits( 2.5,3.5); 
-  fitter.Config().ParSettings(2).SetLimits(1,3);
-  fitter.Config().ParSettings(3).SetLimits(0.5,2);
-  fitter.Config().ParSettings(4).SetLimits(0.5,2);
-  
-  fitter.Config().MinimizerOptions().SetPrintLevel(3);
-
-  // fitter.Config().MinimizerOptions().SetMinimizerType("GSLMultiMin");
-  // fitter.Config().MinimizerOptions().SetMinimizerType("GSLMultiFit");
-  // fitter.Config().MinimizerOptions().SetMinimizerType("Genetic");
-  // fitter.Config().MinimizerOptions().SetMinimizerType("Fumili2");
-   fitter.Config().MinimizerOptions().SetMinimizerType("Minuit2");
-  
-  //fit FCN function directly (specify optionally data size and flag to indicate that is a chi2 fit)
-  GlobalChi2 globalChi2(Npar, (data20GeV.Size()+data50GeV.Size()+data100GeV.Size()+data150GeV.Size() ) ,chi2_20GeV, chi2_50GeV, chi2_100GeV, chi2_150GeV );
-
-  fitter.FitFCN(globalChi2, 0, data20GeV.Size() + data50GeV.Size() + data100GeV.Size() + data150GeV.Size() , true);
-  //  fitter.FitFCN(globalChi2, 0, data20GeV.Size() + data50GeV.Size() + data100GeV.Size() + data150GeV.Size() , true);
-  ROOT::Fit::FitResult result = fitter.Result();
-
-  std::cout << std::endl;
-  std::cout << std::endl;
-  result.Print(std::cout);
-  std::cout << std::endl;
-  std::cout << std::endl;  
-  std::cout << std::endl;
-  std::cout << result.Chi2() / result.Ndf() << std::endl;
-  std::cout << std::endl;
-  std::cout << std::endl;
-  std::cout << std::endl;
-  std::cout << "----------- END of first fit results ---------------- " << std::endl;
-
-
-
-  //  ipar200GeV[0] = 0.9 ;
-  fun_rere20->SetFitResult( result, ipar20GeV );
-  fun_rere20->Draw("L same");
-  fun_rere50->SetFitResult( result, ipar50GeV );
-  fun_rere50->Draw("L same");
-  fun_rere100->SetFitResult( result, ipar100GeV );
-  fun_rere100->Draw("L same");
-  fun_rere150->SetFitResult( result, ipar150GeV );
-  fun_rere150->Draw("L same");
-  //  fun_rere200->SetFitResult( result, ipar200GeV );
-  // fun_rere200->Draw("L same");
-
-  gr_reso_vs_resp_20GeV ->Draw("p same");
-  gr_reso_vs_resp_50GeV ->Draw("p same");
-  gr_reso_vs_resp_100GeV->Draw("p same");
-  gr_reso_vs_resp_150GeV->Draw("p same");
+      ROOT::Fit::Chi2Function chi2_20GeV(data20GeV, wf20GeV);
+      ROOT::Fit::Chi2Function chi2_50GeV(data50GeV, wf50GeV);
+      ROOT::Fit::Chi2Function chi2_100GeV(data100GeV, wf100GeV);
+      ROOT::Fit::Chi2Function chi2_150GeV(data150GeV, wf150GeV);
+      ROOT::Fit::Chi2Function chi2_200GeV(data200GeV, wf200GeV);
   
 
+      ROOT::Fit::Fitter fitter;
+      const int Npar = 5; 
+      double par0[Npar] = { 460000, 2.9 , 1.9, 1.23 , 1.1 };
 
-  TLegend* leggie_all_resp = new TLegend(0.45, 0.92 - 0.06 *8 , 0.85, 0.92);
-  leggie_all_resp->SetTextSize(0.038);
-  leggie_all_resp->AddEntry(gr_reso_vs_resp_20GeV,"Data 20GeV","p");
-  leggie_all_resp->AddEntry( fun_rere20,Form("N =  %.00f\n #pm %.0f\n kADC",(fun_rere20->GetParameter(0))/1000., (fun_rere20->GetParError(0))/1000. ),"");
-  leggie_all_resp->AddEntry( (TObject*)0,Form("C = %.2f\n #pm %.2f\n %s",(fun_rere20->GetParameter(1)), (fun_rere20->GetParError(1)),"%" ),"");
-  
-  leggie_all_resp->AddEntry(gr_reso_vs_resp_50GeV,"Data 50GeV","p");
-  leggie_all_resp->AddEntry( fun_rere50,Form("N =  %.00f\n #pm %.0f\n kADC",(fun_rere50->GetParameter(0))/1000., (fun_rere50->GetParError(0))/1000. ),"");
-  leggie_all_resp->AddEntry( (TObject*)0,Form("C = %.2f\n #pm %.2f\n %s",(fun_rere50->GetParameter(1)), (fun_rere50->GetParError(1)) ,"%"),"");
-  
-  leggie_all_resp->AddEntry(gr_reso_vs_resp_100GeV,"Data 100GeV","p");
-  leggie_all_resp->AddEntry( fun_rere100,Form("N =  %.00f\n #pm %.0f\n kADC",(fun_rere100->GetParameter(0))/1000., (fun_rere100->GetParError(0))/1000. ),"");
-  leggie_all_resp->AddEntry( (TObject*)0,Form("C = %.2f\n #pm %.2f\n %s",(fun_rere100->GetParameter(1)), (fun_rere100->GetParError(1)),"%" ),"");
-  
-  leggie_all_resp->AddEntry(gr_reso_vs_resp_150GeV,"Data 150GeV","p");
-  leggie_all_resp->AddEntry( fun_rere150,Form("N =  %.00f\n #pm %.0f\n kADC",(fun_rere150->GetParameter(0))/1000., (fun_rere150->GetParError(0))/1000.),"");
-  leggie_all_resp->AddEntry( (TObject*)0,Form("C  = %.2f\n #pm %.2f\n %s",(fun_rere150->GetParameter(1)), (fun_rere150->GetParError(1)) ,"%"),"");
-  /*
-    leggie_all_resp->AddEntry(gr_reso_vs_resp_200GeV,"Data 200GeV","p");
-    leggie_all_resp->AddEntry( fun_rere200,Form("N =  %.00f\n #pm %.0f\n ADC",(fun_rere200->GetParameter(0)), (fun_rere200->GetParError(0)) ),"");
-    leggie_all_resp->AddEntry( (TObject*)0,Form("C  = %.2f\n #pm %.2f\n %s",(fun_rere200->GetParameter(1)), (fun_rere200->GetParError(1)),"%" ),"");
-  */
+      //  const int Npar = 6; 
+      //  double par0[Npar] = { 460000, 2.9 , 1.9, 1.23 , 1.2,  0.87};
 
-  leggie_all_resp->AddEntry( (TObject*)0, Form("#chi^{2}/NDF = %.0f/%d = %.3f", result.Chi2() , result.Ndf(), result.Chi2()/ result.Ndf()  ), "" );
-  leggie_all_resp->SetFillColor(0);
-  leggie_all_resp->Draw("same");
+      // create before the parameter settings in order to fix or set range on them
+      fitter.Config().SetParamsSettings(Npar,par0);
+      fitter.Config().ParSettings(0).SetLimits(100000, 650000);
+      // fitter.Config().ParSettings(0).SetLimits(450000, 650000);
+      fitter.Config().ParSettings(1).SetLimits( 2.5,3.5); 
+      fitter.Config().ParSettings(2).SetLimits(1,3);
+      fitter.Config().ParSettings(3).SetLimits(0.5,2);
+      fitter.Config().ParSettings(4).SetLimits(0.5,2);
   
+      fitter.Config().MinimizerOptions().SetPrintLevel(3);
+
+      // fitter.Config().MinimizerOptions().SetMinimizerType("GSLMultiMin");
+      // fitter.Config().MinimizerOptions().SetMinimizerType("GSLMultiFit");
+      // fitter.Config().MinimizerOptions().SetMinimizerType("Genetic");
+      // fitter.Config().MinimizerOptions().SetMinimizerType("Fumili2");
+      fitter.Config().MinimizerOptions().SetMinimizerType("Minuit2");
   
-  
-  
-  TPaveText* label_top =  new TPaveText(0.3,0.953,0.945,0.975, "brNDC");
-  label_top->SetFillColor(kWhite);
-  label_top->SetTextSize(0.038);
-  label_top->SetTextAlign(31); // align right
-  label_top->SetTextFont(62);
-  label_top->AddText("Electron Beam");
-  label_top->Draw("same");
-  
-  
-  // label_top2->Draw("same");
-  
-  c1->SaveAs( Form( "%s/reso_vs_resp_all_%d_%d.eps", outputdir.c_str(), int(fermi*100), int(fermi_50*100) ) );
-  c1->SaveAs( Form( "%s/reso_vs_resp_all_%d_%d.png", outputdir.c_str(), int(fermi*100), int(fermi_50*100) ) );
+      //fit FCN function directly (specify optionally data size and flag to indicate that is a chi2 fit)
+      GlobalChi2 globalChi2(Npar, (data20GeV.Size()+data50GeV.Size()+data100GeV.Size()+data150GeV.Size() ) ,chi2_20GeV, chi2_50GeV, chi2_100GeV, chi2_150GeV );
+
+      fitter.FitFCN(globalChi2, 0, data20GeV.Size() + data50GeV.Size() + data100GeV.Size() + data150GeV.Size() , true);
+      //  fitter.FitFCN(globalChi2, 0, data20GeV.Size() + data50GeV.Size() + data100GeV.Size() + data150GeV.Size() , true);
+      ROOT::Fit::FitResult result = fitter.Result();
+
+      std::cout << std::endl;
+      std::cout << std::endl;
+      result.Print(std::cout);
+      std::cout << std::endl;
+      std::cout << std::endl;  
+      std::cout << std::endl;
+      std::cout << result.Chi2() / result.Ndf() << std::endl;
+      std::cout << std::endl;
+      std::cout << std::endl;
+      std::cout << std::endl;
+      std::cout << "----------- END of first fit results ---------------- " << std::endl;
 
 
 
+      //  ipar200GeV[0] = 0.9 ;
+      fun_rere20->SetFitResult( result, ipar20GeV );
+      fun_rere20->Draw("L same");
+      fun_rere50->SetFitResult( result, ipar50GeV );
+      fun_rere50->Draw("L same");
+      fun_rere100->SetFitResult( result, ipar100GeV );
+      fun_rere100->Draw("L same");
+      fun_rere150->SetFitResult( result, ipar150GeV );
+      fun_rere150->Draw("L same");
+      //  fun_rere200->SetFitResult( result, ipar200GeV );
+      // fun_rere200->Draw("L same");
 
-  c1->Clear();
-
-  //NEAT VERSION FOR FRANNY ///////////////////////////////////////////
-  TH2D* h2_axes_neat2 = new TH2D( "axes_neat2", "", 10, 10000 , 900000, 10, 0, 7 );
-  h2_axes_neat2->SetXTitle("CeF_{3} Response [ADC]");
-  h2_axes_neat2->SetYTitle("#sigma_{R} [%]");
-  h2_axes_neat2->Draw("");
-
-  fun_rere20->Draw("L same");
-  fun_rere50->Draw("L same");
-  fun_rere100->Draw("L same");
-  fun_rere150->Draw("L same");
-
-  gr_reso_vs_resp_20GeV ->Draw("p same");
-  gr_reso_vs_resp_50GeV ->Draw("p same");
-  gr_reso_vs_resp_100GeV->Draw("p same");
-  gr_reso_vs_resp_150GeV->Draw("p same");
-  
-  TLegend* leggie_neat_resp = new TLegend(0.65, 0.9 - 0.06 *4 , 0.85, 0.9);
-  leggie_neat_resp->SetTextSize(0.038);
-  leggie_neat_resp->AddEntry(gr_reso_vs_resp_20GeV,"20GeV","p");
-  leggie_neat_resp->AddEntry(gr_reso_vs_resp_50GeV,"50GeV","p");
-  leggie_neat_resp->AddEntry(gr_reso_vs_resp_100GeV,"100GeV","p");
-  leggie_neat_resp->AddEntry(gr_reso_vs_resp_150GeV,"150GeV","p");
-  leggie_neat_resp->SetFillColor(0);
-  leggie_neat_resp->Draw("same");
+      gr_reso_vs_resp_20GeV ->Draw("p same");
+      gr_reso_vs_resp_50GeV ->Draw("p same");
+      gr_reso_vs_resp_100GeV->Draw("p same");
+      gr_reso_vs_resp_150GeV->Draw("p same");
   
 
 
-  TLine* line = new TLine( 700000, 0  , 700000, 7 );//x1y1x2y2
-  line ->SetLineColor(kGray+2);
-  line ->SetLineWidth(3);
-  line ->SetLineStyle(2);
-  //  line->Draw("same"); 
+      TLegend* leggie_all_resp = new TLegend(0.45, 0.92 - 0.06 *8 , 0.85, 0.92);
+      leggie_all_resp->SetTextSize(0.038);
+      leggie_all_resp->AddEntry(gr_reso_vs_resp_20GeV,"Data 20GeV","p");
+      leggie_all_resp->AddEntry( fun_rere20,Form("N =  %.00f\n #pm %.0f\n kADC",(fun_rere20->GetParameter(0))/1000., (fun_rere20->GetParError(0))/1000. ),"");
+      leggie_all_resp->AddEntry( (TObject*)0,Form("C = %.2f\n #pm %.2f\n %s",(fun_rere20->GetParameter(1)), (fun_rere20->GetParError(1)),"%" ),"");
+  
+      leggie_all_resp->AddEntry(gr_reso_vs_resp_50GeV,"Data 50GeV","p");
+      leggie_all_resp->AddEntry( fun_rere50,Form("N =  %.00f\n #pm %.0f\n kADC",(fun_rere50->GetParameter(0))/1000., (fun_rere50->GetParError(0))/1000. ),"");
+      leggie_all_resp->AddEntry( (TObject*)0,Form("C = %.2f\n #pm %.2f\n %s",(fun_rere50->GetParameter(1)), (fun_rere50->GetParError(1)) ,"%"),"");
+  
+      leggie_all_resp->AddEntry(gr_reso_vs_resp_100GeV,"Data 100GeV","p");
+      leggie_all_resp->AddEntry( fun_rere100,Form("N =  %.00f\n #pm %.0f\n kADC",(fun_rere100->GetParameter(0))/1000., (fun_rere100->GetParError(0))/1000. ),"");
+      leggie_all_resp->AddEntry( (TObject*)0,Form("C = %.2f\n #pm %.2f\n %s",(fun_rere100->GetParameter(1)), (fun_rere100->GetParError(1)),"%" ),"");
+  
+      leggie_all_resp->AddEntry(gr_reso_vs_resp_150GeV,"Data 150GeV","p");
+      leggie_all_resp->AddEntry( fun_rere150,Form("N =  %.00f\n #pm %.0f\n kADC",(fun_rere150->GetParameter(0))/1000., (fun_rere150->GetParError(0))/1000.),"");
+      leggie_all_resp->AddEntry( (TObject*)0,Form("C  = %.2f\n #pm %.2f\n %s",(fun_rere150->GetParameter(1)), (fun_rere150->GetParError(1)) ,"%"),"");
+      /*
+	leggie_all_resp->AddEntry(gr_reso_vs_resp_200GeV,"Data 200GeV","p");
+	leggie_all_resp->AddEntry( fun_rere200,Form("N =  %.00f\n #pm %.0f\n ADC",(fun_rere200->GetParameter(0)), (fun_rere200->GetParError(0)) ),"");
+	leggie_all_resp->AddEntry( (TObject*)0,Form("C  = %.2f\n #pm %.2f\n %s",(fun_rere200->GetParameter(1)), (fun_rere200->GetParError(1)),"%" ),"");
+      */
 
-  TPaveText* label_low2 = new TPaveText(0.123,0.175,0.5,0.23, "brNDC");
-  label_low2->SetFillColor(kWhite);
-  label_low2->SetTextSize(0.038);
-  label_low2->SetTextAlign(11); // align right
-  label_low2->SetTextFont(62);
-  label_low2->AddText( "W-CeF_{3} Single Tower");
-  label_low2->Draw("same");
+      leggie_all_resp->AddEntry( (TObject*)0, Form("#chi^{2}/NDF = %.0f/%d = %.3f", result.Chi2() , result.Ndf(), result.Chi2()/ result.Ndf()  ), "" );
+      leggie_all_resp->SetFillColor(0);
+      leggie_all_resp->Draw("same");
+  
+  
+  
+  
+      TPaveText* label_top =  new TPaveText(0.3,0.953,0.945,0.975, "brNDC");
+      label_top->SetFillColor(kWhite);
+      label_top->SetTextSize(0.038);
+      label_top->SetTextAlign(31); // align right
+      label_top->SetTextFont(62);
+      label_top->AddText("Electron Beam");
+      label_top->Draw("same");
+  
+  
+      // label_top2->Draw("same");
+  
+      c1->SaveAs( Form( "%s/reso_vs_resp_all_%d_%d.eps", outputdir.c_str(), int(fermi*100), int(fermi_50*100) ) );
+      c1->SaveAs( Form( "%s/reso_vs_resp_all_%d_%d.png", outputdir.c_str(), int(fermi*100), int(fermi_50*100) ) );
+      c1->SaveAs( Form( "%s/reso_vs_resp_all_%d_%d.pdf", outputdir.c_str(), int(fermi*100), int(fermi_50*100) ) );
+
+
+
+
+      c1->Clear();
+
+      //NEAT VERSION FOR FRANNY ///////////////////////////////////////////
+      TH2D* h2_axes_neat2 = new TH2D( "axes_neat2", "", 10, 10000 , 900000, 10, 0, 7 );
+      h2_axes_neat2->SetXTitle("CeF_{3} Response [ADC]");
+      h2_axes_neat2->SetYTitle("#sigma_{R} [%]");
+      h2_axes_neat2->Draw("");
+
+      fun_rere20->Draw("L same");
+      fun_rere50->Draw("L same");
+      fun_rere100->Draw("L same");
+      fun_rere150->Draw("L same");
+
+      gr_reso_vs_resp_20GeV ->Draw("p same");
+      gr_reso_vs_resp_50GeV ->Draw("p same");
+      gr_reso_vs_resp_100GeV->Draw("p same");
+      gr_reso_vs_resp_150GeV->Draw("p same");
+  
+      TLegend* leggie_neat_resp = new TLegend(0.65, 0.9 - 0.06 *4 , 0.85, 0.9);
+      leggie_neat_resp->SetTextSize(0.038);
+      leggie_neat_resp->AddEntry(gr_reso_vs_resp_20GeV,"20GeV","p");
+      leggie_neat_resp->AddEntry(gr_reso_vs_resp_50GeV,"50GeV","p");
+      leggie_neat_resp->AddEntry(gr_reso_vs_resp_100GeV,"100GeV","p");
+      leggie_neat_resp->AddEntry(gr_reso_vs_resp_150GeV,"150GeV","p");
+      leggie_neat_resp->SetFillColor(0);
+      leggie_neat_resp->Draw("same");
+  
+
+
+      TLine* line = new TLine( 700000, 0  , 700000, 7 );//x1y1x2y2
+      line ->SetLineColor(kGray+2);
+      line ->SetLineWidth(3);
+      line ->SetLineStyle(2);
+      //  line->Draw("same"); 
+
+      TPaveText* label_low2 = new TPaveText(0.123,0.175,0.5,0.23, "brNDC");
+      label_low2->SetFillColor(kWhite);
+      label_low2->SetTextSize(0.038);
+      label_low2->SetTextAlign(11); // align right
+      label_low2->SetTextFont(62);
+      label_low2->AddText( "W-CeF_{3} Single Tower");
+      label_low2->Draw("same");
  
-  label_top->Draw("same");
+      label_top->Draw("same");
 
-  gPad->RedrawAxis();
+      gPad->RedrawAxis();
  
-  c1->SaveAs( Form( "%s/reso_vs_resp_all_neat_%d.eps", outputdir.c_str(), int(fermi*100) ) );
-  c1->SaveAs( Form( "%s/reso_vs_resp_all_neat_%d.png", outputdir.c_str(), int(fermi*100) ) );
-  c1->SaveAs( Form( "%s/reso_vs_resp_all_neat_%d.pdf", outputdir.c_str(), int(fermi*100) ) );
+      c1->SaveAs( Form( "%s/reso_vs_resp_all_neat_%d.eps", outputdir.c_str(), int(fermi*100) ) );
+      c1->SaveAs( Form( "%s/reso_vs_resp_all_neat_%d.png", outputdir.c_str(), int(fermi*100) ) );
+      c1->SaveAs( Form( "%s/reso_vs_resp_all_neat_%d.pdf", outputdir.c_str(), int(fermi*100) ) );
   
+    c1->SaveAs( Form( "%s/reso_vs_resp_all_neat_%d_%d.pdf", outputdir.c_str(), int(fermi*100), int(fermi_50*100) ) );
+  
+    c1->SaveAs( Form( "%s/reso_vs_resp_all_neat_%d_%d.png", outputdir.c_str(), int(fermi*100), int(fermi_50*100) ) );
 
 
-  c1->Clear();
+
+      c1->Clear();
 
 
   
-  double reso200 = fun_rere200->GetParameter(1);
-  double reso200_err = fun_rere200->GetParError(1);
-  double reso150 = fun_rere150->GetParameter(1);
-  double reso150_err = fun_rere150->GetParError(1);
-  double reso100 = fun_rere100->GetParameter(1);
-  double reso100_err = fun_rere100->GetParError(1);
-  double reso50 = fun_rere50->GetParameter(1);
-  double reso50_err = fun_rere50->GetParError(1);
-  double reso20 = fun_rere20->GetParameter(1);
-  double reso20_err = fun_rere20->GetParError(1);
+      double reso200 = fun_rere200->GetParameter(1);
+      double reso200_err = fun_rere200->GetParError(1);
+      double reso150 = fun_rere150->GetParameter(1);
+      double reso150_err = fun_rere150->GetParError(1);
+      double reso100 = fun_rere100->GetParameter(1);
+      double reso100_err = fun_rere100->GetParError(1);
+      double reso50 = fun_rere50->GetParameter(1);
+      double reso50_err = fun_rere50->GetParError(1);
+      double reso20 = fun_rere20->GetParameter(1);
+      double reso20_err = fun_rere20->GetParError(1);
   
   
 
@@ -1154,6 +1198,7 @@ int main( int argc, char* argv[] ) {
 
   c1->SaveAs( Form( "%s/reso_vs_resp_all_up.eps", outputdir.c_str() ) );
   c1->SaveAs( Form( "%s/reso_vs_resp_all_up.png", outputdir.c_str() ) );
+ c1->SaveAs( Form( "%s/reso_vs_resp_all_up.pdf", outputdir.c_str() ) );
 
 
 
@@ -1291,6 +1336,7 @@ int main( int argc, char* argv[] ) {
 
   c1->SaveAs( Form( "%s/reso_vs_resp_all_low.eps", outputdir.c_str() ) );
   c1->SaveAs( Form( "%s/reso_vs_resp_all_low.png", outputdir.c_str() ) );
+  c1->SaveAs( Form( "%s/reso_vs_resp_all_low.pdf", outputdir.c_str() ) );
 
 
 
@@ -1396,7 +1442,7 @@ int main( int argc, char* argv[] ) {
   gr_reso_vs_energy->SetMarkerStyle(20);
   gr_reso_vs_energy->SetMarkerSize(1.6);
   gr_reso_vs_energy->SetMarkerColor(kRed);
-  gr_reso_vs_energy->Draw("p same");
+  // gr_reso_vs_energy->Draw("p same");
   
   TF1 *fun= new TF1("fun",  "sqrt([0]*[0]/x+[1]*[1])",0.9, xMax/1000.+5.);
   // TF1 *fun= new TF1("fun",  "sqrt([0]*[0]/x+[1]*[1]+ [2]*[2]/(x*x))",0.9, xMax/1000.);
@@ -1407,13 +1453,12 @@ int main( int argc, char* argv[] ) {
   fun->SetLineColor(46);
   //fun->Draw("L same");
   
-  
+ 
   // MC (1x1)
   gr_reso_vs_energy_simul->SetMarkerStyle(24);
   gr_reso_vs_energy_simul->SetMarkerSize(1.6);
   gr_reso_vs_energy_simul->SetMarkerColor(kBlue);
-  gr_reso_vs_energy_simul->Draw("p same");
-  
+
   // MC (5x5)
   gr_reso_vs_energy_simul_ideal->SetMarkerStyle(21);
   gr_reso_vs_energy_simul_ideal->SetMarkerSize(1.2);
@@ -1446,7 +1491,7 @@ int main( int argc, char* argv[] ) {
   gr_reso_corr->SetMarkerStyle(20);
   gr_reso_corr->SetMarkerSize(1.6);
   gr_reso_corr->SetMarkerColor(kBlue);
-  gr_reso_corr->Draw("p same");
+  // gr_reso_corr->Draw("p same");
   
   
   
@@ -1464,9 +1509,27 @@ int main( int argc, char* argv[] ) {
   gr_reso_vs_energy_stat->SetMarkerStyle(20);
   gr_reso_vs_energy_stat->SetMarkerSize(1.6);
   gr_reso_vs_energy_stat->SetMarkerColor(kBlue);
-  gr_reso_vs_energy_stat->Draw("p same");
+  //  gr_reso_vs_energy_stat->Draw("p same");
   
-  
+
+  // MC (1x1) NOBGO
+  gr_reso_vs_energy_simul_noBGO->SetMarkerStyle(24);
+  gr_reso_vs_energy_simul_noBGO->SetMarkerSize(1.6);
+  gr_reso_vs_energy_simul_noBGO->SetMarkerColor(kBlack);
+  gr_reso_vs_energy_simul_noBGO->Draw("p same");
+
+  TF1 *fun_noBGO= new TF1("fun_noBGO","sqrt([0]*[0]/x+[1]*[1])",5.5, xMax/1000.+5.);
+  fun_noBGO->SetMarkerSize(1.6); fun_noBGO->SetMarkerStyle(24);
+  fun_noBGO->SetMarkerColor(kBlack);
+  fun_noBGO->SetParameter(1,0.5); fun_noBGO->SetParameter(0, 10);
+  gr_reso_vs_energy_simul_noBGO->Fit(fun_noBGO,"RN");
+  fun_noBGO->SetLineWidth(1.);
+  fun_noBGO->SetLineColor(kBlack);
+  fun_noBGO->Draw("L same");
+
+
+  gr_reso_vs_energy_simul->Draw("p same");
+    
 
   TLegend* leg4 = new TLegend(0.32, 0.92-0.06*7 , 0.9, 0.92);
   leg4->SetTextSize(0.038);
@@ -1484,12 +1547,19 @@ int main( int argc, char* argv[] ) {
   // leg4->AddEntry( (TObject*)0 ,Form("N =   %.2f\n #pm %.2f\n GeV",(fun1->GetParameter(2)), (fun1->GetParError(2)) ),"");
   // leg4->AddEntry( (TObject*)0, Form("#chi^{2} / NDF = %.2f\n / %d",fun1->GetChisquare(), fun1->GetNDF() ), "");
 
+  leg4->AddEntry(gr_reso_vs_energy_simul_noBGO ,"MC (1x1) no BGOs","P");
+  leg4->AddEntry((TObject*)0 ,Form("S = %.2f\n #pm %.2f\n %s / #sqrt{E [GeV]}",fun_noBGO->GetParameter(0), (fun_noBGO->GetParError(0)),"%" ),"");
+  leg4->AddEntry( (TObject*)0 ,Form("C =   %.2f\n #pm %.2f\n %s",(fun_noBGO->GetParameter(1)), (fun_noBGO->GetParError(1)),"%" ),"");
+
+
+ 
   leg4->AddEntry( fun_ideal ,"MC (5x5)","L");
+ /*
   leg4->AddEntry((TObject*)0 ,Form("S =   %.2f\n #pm %.2f\n %s / #sqrt{E [GeV]}",fun_ideal->GetParameter(0), (fun_ideal->GetParError(0)),"%" ),"");
   leg4->AddEntry( (TObject*)0 ,Form("C =   %.2f\n #pm %.2f\n %s",(fun_ideal->GetParameter(1)), (fun_ideal->GetParError(1)),"%" ),"");
   //leg4->AddEntry( (TObject*)0 ,Form("N =   %.2f\n #pm %.2f\n GeV",(fun_ideal->GetParameter(2)), (fun_ideal->GetParError(2)) ),"");
    leg4->AddEntry( (TObject*)0, Form("#chi^{2} / NDF = %.2f\n / %d",fun_ideal->GetChisquare(), fun_ideal->GetNDF() ), "");
-
+  */
   leg4->SetFillColor(0);
   leg4->Draw("same");
  
@@ -1537,7 +1607,8 @@ int main( int argc, char* argv[] ) {
   fun_ideal->Draw("L same");
 
   gr_reso_corr->Draw("p same");
-   gr_reso_vs_energy_stat->Draw("p same");
+   
+  //gr_reso_vs_energy_stat->Draw("p same");
 
   gr_reso_vs_energy_simul_ideal->Draw("p same");
  
@@ -1569,14 +1640,27 @@ int main( int argc, char* argv[] ) {
 
 
 
+  double x, with, without;
 
+  gr_resp_vs_energy_simul->GetPoint(1, x,with);
+
+
+  gr_resp_vs_energy_simul_noBGO->GetPoint(1, x,without);
+
+
+
+  std::cout << "With BGOs = " << with /  adcEnergyC950 *energyS  << std::endl;
+
+  std::cout << "Without BGOs = " << without  /  adcEnergyC950*energyS   << std::endl;
+
+  std::cout << "With / Without BGOs = " << with/without << std::endl;
 
 
 
   globalChiSquare = result.Chi2() / result.Ndf();
 
 
-  if(globalChiSquare<1.006)
+  if(globalChiSquare<1.0005)
     {doTheBreak=1;
       break;}
   // fermi += 0.05;
@@ -1615,8 +1699,14 @@ int main( int argc, char* argv[] ) {
 
   }  
 
+ 
+
     if(doTheBreak==1) break;
   }
+
+
+
+ 
 
   return 0;
 
@@ -1684,6 +1774,16 @@ FitStruct getFitResults( const std::string& outputdir, TTree* tree, const std::s
   fitmax = fitmin+ int((fitmax-fitmin)/20000)*20000; 
   }
 
+  /*
+  if(peakpos < 500000 && peakpos >400000 ) {
+     fitmax = fitmax - 3000; 
+    fitmin = fitmin -6000; 
+  fitmin = int(fitmin/1000) *1000;
+
+  fitmax = fitmin+ int((fitmax-fitmin)/2000)*2000; 
+  }
+  */
+
   //  fitmax = fitmax -9000; fitmax = int(fitmax/10000) *10000;
 
   //  fitmax = peakpos + 4 * sigma;  //  fitmax = peakpos+2.7*sigma;
@@ -1691,7 +1791,10 @@ FitStruct getFitResults( const std::string& outputdir, TTree* tree, const std::s
   if(fitmin <5) fitmin =5;
   if(fitmax < 100) fitmax = 100;
 
-   TH1D* h2 = new TH1D("h2", "", 200, fitmin,fitmax);
+  int nBins = 200;
+  // int nBins = 60.;
+   TH1D* h2 = new TH1D("h2", "", nBins, fitmin,fitmax);
+   //   TH1D* h2 = new TH1D("h2", "", 200, fitmin,fitmax);
   //  TH1D* h2 = new TH1D("h2", "", int((fitmax-fitmin)/3000), fitmin,fitmax);
   tree->Project( "h2", whatToProject.c_str(), cut.c_str() );
 
@@ -1745,7 +1848,7 @@ FitStruct getFitResults( const std::string& outputdir, TTree* tree, const std::s
   gPad->SetBottomMargin(0.15);
   gStyle->SetTitleYOffset(0.7); // => 1.15 if exponents
   
-  frame->GetYaxis()->SetTitle(Form("Events / (%.0f ADC Channel)", (fitmax-fitmin)/200.  ) );
+  frame->GetYaxis()->SetTitle(Form("Events / (%.0f ADC Channel)", (fitmax-fitmin)/nBins  ) );
   frame->GetXaxis()->SetNdivisions(5, 5, 0, kTRUE);
   //  frame->GetXaxis()->SetNdivisions(5, 5, 0, kFALSE);
   frame->Draw(""); 
@@ -1770,9 +1873,9 @@ FitStruct getFitResults( const std::string& outputdir, TTree* tree, const std::s
   label_fit->SetTextFont(62);
   label_fit->AddText("W-CeF_{3} Single Tower");
 
-  std::string mu_str = Form("#mu = %.0f #pm %.0f ", meanr.getVal(), meanr.getError() );
+  std::string mu_str = Form("#mu = (%.1f#pm%.1f)#upoint10^{3}", meanr.getVal()/1000., meanr.getError()/1000. );
   label_fit->AddText(mu_str.c_str());
-  std::string sigma_str = Form("#sigma = %.0f #pm %.0f ", width.getVal(), width.getError() );
+  std::string sigma_str = Form("#sigma = (%.1f#pm%.1f)#upoint10^{3}", width.getVal()/1000., width.getError()/1000. );
   label_fit->AddText(sigma_str.c_str());
   /*
   std::string reso_str =Form("#sigma/#mu = %.2f #pm  %.2f %s ", reso , resoErr, "%" );
@@ -1791,7 +1894,7 @@ FitStruct getFitResults( const std::string& outputdir, TTree* tree, const std::s
   label_top->SetTextSize(0.038);
   label_top->SetTextAlign(31); // align right
   label_top->SetTextFont(62);
-  if(name == "329")
+  if(name == "329" || name == "471")
   label_top->AddText("100 GeV Electron Beam");
   label_top->Draw("same");
 
